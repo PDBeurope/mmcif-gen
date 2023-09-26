@@ -27,7 +27,6 @@ def download_and_create_investigation(pdb_ids, investigation_id):
     try:
         for pdb_code in pdb_ids:
             url = FTP_URL_ARCHIVE.format(pdb_code[1:3], pdb_code)
-            # url = f"https://ftp.ebi.ac.uk/pub/databases/pdb/data/structures/divided/mmCIF/{pdb_code[1:3]}/{pdb_code}.cif.gz"
 
             compressed_file_path = os.path.join(temp_dir, f"{pdb_code}.cif.gz")
             uncompressed_file_path = os.path.join(temp_dir, f"{pdb_code}.cif")
@@ -37,7 +36,6 @@ def download_and_create_investigation(pdb_ids, investigation_id):
                 with open(compressed_file_path, "wb") as f:
                     f.write(response.content)
 
-                # Unzip the compressed CIF file
                 with gzip.open(compressed_file_path, "rb") as gz:
                     with open(uncompressed_file_path, "wb") as f:
                         f.write(gz.read())
@@ -59,7 +57,7 @@ def download_and_create_investigation(pdb_ids, investigation_id):
             if os.path.exists(uncompressed_file_path):
                 os.remove(uncompressed_file_path)
 
-        shutil.rmtree(temp_dir)  # Remove the temporary directory
+        shutil.rmtree(temp_dir)
 
 
 def get_cif_file_paths(folder_path):
@@ -74,7 +72,7 @@ def get_cif_file_paths(folder_path):
     return cif_file_paths
 
 
-def run_investigations(folder_path, investigation_id="I-12345"):
+def run_investigations(folder_path, investigation_id):
     model_file_path = get_cif_file_paths(folder_path)
     print("List of CIF file paths:")
     for file_path in model_file_path:
@@ -86,7 +84,9 @@ def run_investigations(folder_path, investigation_id="I-12345"):
 
 def main():
     parser = argparse.ArgumentParser(
-        prog="Investigation", description="What the program does", epilog="Epilogue..."
+        prog="Investigation",
+        description="This creates an investigation file from a collection of model files\
+             which can be provided as folder path, pdb_ids, or a csv file. The model files can be provided",
     )
     parser.add_argument(
         "-m", "--model-folder", help="Directory which contains model files"
@@ -100,13 +100,19 @@ def main():
         nargs="+",
         help="Create investigation from set of pdb ids, space seperated",
     )
+    parser.add_argument(
+        "-i",
+        "--investigation-id",
+        help="Investigation ID to assign to the resulting investigation file",
+        default="I_1234",
+    )
 
     args = parser.parse_args()
 
     if args.model_folder:
-        run_investigations(args.model_folder)
+        run_investigations(args.model_folder, args.investigation_id)
     elif args.pdb_ids:
-        download_and_create_investigation(args.pdb_ids, None)
+        download_and_create_investigation(args.pdb_ids, args.investigation_id)
     elif args.csv_file:
         group_data = {}
         with open(args.csv_file) as file:

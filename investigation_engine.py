@@ -95,8 +95,6 @@ class InvestigationEngine:
         for operation_data in self.operations:
             try:
                 operation_type = operation_data.get("operation", "")
-
-                # Create an instance of the appropriate operation subclass
                 operation = self.operation_factory(operation_type)
                 operation.perform_operation(operation_data)
             except Exception as e:
