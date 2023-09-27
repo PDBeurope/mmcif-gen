@@ -23,7 +23,7 @@ class CIFReader:
 
     @contextmanager
     def sqlite_db_connection(self):
-        logging.info("Creating In-memory DB connection")
+        logging.debug("Creating In-memory DB connection")
         conn = sqlite3.connect(":memory:?cache=shared", uri=True)
         try:
             yield conn
