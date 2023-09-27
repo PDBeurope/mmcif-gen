@@ -32,7 +32,7 @@ class CIFReader:
             conn.close()
 
     def sql_execute(self, query):
-        logging.info(f"Executing query: {query}")
+        logging.debug(f"Executing query: {query}")
         result = []
         with self.sqlite_db_connection() as conn:
             response = conn.execute(query)
@@ -436,11 +436,15 @@ class CIFReader:
 
     def item_exists_across_all(self, category, item):
         logging.info(f"Checking existence across all model files for {category}.{item}")
-        for file_name, sole_block in self.data.items():
-            if sole_block.find_mmcif_category(category):
-                if not sole_block.get_mmcif_category(category)[item]:
-                    logging.info("Does not exist across all files")
-                    return False
+        try:
+            for file_name, sole_block in self.data.items():
+                if sole_block.find_mmcif_category(category):
+                    if not sole_block.get_mmcif_category(category)[item]:
+                        logging.info("Does not exist across all files")
+                        return False
+        except KeyError as e:
+            logging.exception(f"{file_name} has missing value:  {category}.{item}")
+            raise Exception(e)
         logging.info("Exists across all files")
         return True
 
