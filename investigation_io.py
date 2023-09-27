@@ -5,7 +5,7 @@ import csv
 import sqlite3
 from contextlib import contextmanager
 
-logging.basicConfig(stream=sys.stdout, encoding="utf-8", level=logging.DEBUG)
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 
 class CIFReader:

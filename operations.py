@@ -6,7 +6,7 @@ import sys
 from typing import Dict, List, TYPE_CHECKING
 from investigation_io import CIFReader, InvestigationStorage
 
-logging.basicConfig(stream=sys.stdout, encoding="utf-8", level=logging.DEBUG)
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 
 class ItemDoNotExist(Exception):

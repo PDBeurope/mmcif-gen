@@ -16,7 +16,7 @@ FTP_URL_UPDATED = (
 FTP_URL_ARCHIVE = (
     "https://ftp.ebi.ac.uk/pub/databases/pdb/data/structures/divided/mmCIF/{}/{}.cif.gz"
 )
-logging.basicConfig(stream=sys.stdout, encoding="utf-8", level=logging.INFO)
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 model_file_path = []
 

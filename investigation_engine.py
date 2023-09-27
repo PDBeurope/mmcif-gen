@@ -22,7 +22,7 @@ import json
 import logging
 import sys
 
-logging.basicConfig(stream=sys.stdout, encoding="utf-8", level=logging.DEBUG)
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 
 class InvestigationEngine:
