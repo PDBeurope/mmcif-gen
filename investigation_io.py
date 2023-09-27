@@ -444,7 +444,8 @@ class CIFReader:
                         return False
         except KeyError as e:
             logging.exception(f"{file_name} has missing value:  {category}.{item}")
-            raise Exception(e)
+            logging.info("Does not exist across all files")
+            return False
         logging.info("Exists across all files")
         return True
 
