@@ -443,7 +443,7 @@ class CIFReader:
                         logging.info("Does not exist across all files")
                         return False
         except KeyError as e:
-            logging.exception(f"{file_name} has missing value:  {category}.{item}")
+            logging.warning(f"Missing {category}.{item} from {file_name}")
             logging.info("Does not exist across all files")
             return False
         logging.info("Exists across all files")
@@ -453,10 +453,14 @@ class CIFReader:
         logging.info(f"Checking if any items is empty in {category}.{item}")
         for file_name, sole_block in self.data.items():
             if sole_block.find_mmcif_category(category):
-                for value in sole_block.get_mmcif_category(category)[item]:
-                    if value in [None, "?"]:
-                        logging.info(f"Value is empty in {file_name}")
-                        return True
+                try:
+                    for value in sole_block.get_mmcif_category(category)[item]:
+                        if value in [None, "?"]:
+                            logging.info(f"Value is empty in {file_name} for {category}.{item}")
+                            return True
+                except Exception as e:
+                    logging.warning(f"Missing field {category}.{item} from {file_name}")
+                    return True
         logging.info("Value is non empty in all files")
         return False
 
@@ -479,7 +483,7 @@ class CIFReader:
                     for values in sole_block.get_mmcif_category(category)[item]:
                         collated_data.append(values)
         except KeyError as e:
-            logging.exception(f"{file_name} has missing value:  {category}.{item}")
+            logging.exception(f"Missing {category}.{item} from {file_name}")
             raise Exception(e)
         return collated_data
 
@@ -487,11 +491,15 @@ class CIFReader:
         logging.info(f"Collating multiple items in {category} items: {items}")
         collated_data = {}
         for file_name, sole_block in self.data.items():
-            if sole_block.find_mmcif_category(category):
-                for item in items:
-                    collated_data.setdefault(item, [])
-                    for values in sole_block.get_mmcif_category(category)[item]:
-                        collated_data[item].append(values)
+            try:
+                if sole_block.find_mmcif_category(category):
+                    for item in items:
+                        collated_data.setdefault(item, [])
+                        for values in sole_block.get_mmcif_category(category)[item]:
+                            collated_data[item].append(values)
+            except Exception as e:
+                logging.exception(f"Missing {category}.{item} from {file_name}")
+                raise Exception(e)
         return collated_data
 
     def collate_category(self, category):
