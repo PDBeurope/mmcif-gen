@@ -116,17 +116,6 @@
         "operation" : "copy_fill"
     },
     {
-        "source_category" : "_database_2",
-        "source_items" : ["pdbx_DOI"],
-        "target_category" : "_pdbx_investigation_archived_data",
-        "target_items" : ["archived_data_doi"],
-        "operation" : "noop",
-        "operation_parameters" : {
-            "conditional_variable" : "_database_2.database_id",
-            "value" : ["PDB","EMDB","BMRB"]
-        }
-    },
-    {
         "target_category" : "_pdbx_investigation_archived_data",
         "target_items" : ["archived_data_doi"],
         "operation" : "sql_query",
@@ -177,8 +166,8 @@
     },
     {
         "target_category" : "_pdbx_fraghub_investigation_campaign",
-        "target_items" : ["proc_pipeline ","verison"],
-        "target_values": ["Other", "?"],
+        "target_items" : ["proc_pipeline ","pipeline_verison"],
+        "target_values": ["OTHER", "?"],
         "operation" : "static_value"
     },
     {
@@ -225,7 +214,7 @@
         "target_items" :["poly_entity_id ","type","pdbx_seq_one_letter_code", "src_method","ref_db_name", "ref_db_code","ref_db_acc"],
         "operation" : "sql_query",
         "operation_parameters" :{
-            "query" : "SELECT investigation_entity_id, poly_type, seq_one_letter_code, src_method, db_name, db_code, db_accession from denormalized_data where type=\"polymer\" GROUP BY investigation_entity_id"
+            "query" : "SELECT investigation_entity_id, type, seq_one_letter_code, src_method, db_name, db_code, db_accession from denormalized_data where type=\"polymer\" GROUP BY investigation_entity_id"
         }
     },
 
@@ -344,10 +333,22 @@
     },
     {
         "target_category" : "_pdbx_fraghub_investigation_screening_exp",
-        "target_items" : ["archived_data_id", "series_id", "campaign_id","sample_id", "fragment_component_mix_id", "exp_method"],
+        "target_items" : ["archive_db_acc","series_id", "campaign_id","sample_id", "fragment_component_mix_id", "exp_method"],
         "operation" : "sql_query",
         "operation_parameters" :{
-            "query" : "SELECT distinct(pdb_id), series_id, campaign_id, sample_id, nonpoly_descript,exptl_method from denormalized_data"
+            "query" : "SELECT distinct('pdb_0000' || lower(pdb_id)), series_id, campaign_id, sample_id, nonpoly_descript,exptl_method from denormalized_data"
+        }
+    },
+    {
+        "source_category" : "_pdbx_investigation_archived_data",
+        "source_items" : ["id"],
+        "target_category" : "_pdbx_fraghub_investigation_screening_exp",
+        "target_items" : ["archived_data_id"],
+        "operation" : "copy_for_each_row",
+        "operation_parameters" : {
+            "source_is_investigation" : true,
+            "conditional_variable" : "_pdbx_investigation_archived_data.archive_db_acc",
+            "value" : "{_pdbx_fraghub_investigation_screening_exp.archive_db_acc}"
         }
     },
     {

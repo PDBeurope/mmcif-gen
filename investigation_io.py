@@ -12,7 +12,7 @@ class CIFReader:
     def __init__(self):
         self.data = {}  # Dictionary to store the parsed CIF data
         self.denormalised_data = []
-        self.conn = sqlite3.connect("file::memory:?cache=shared", uri=True)
+        self.conn = sqlite3.connect("file::memory:", uri=True)
 
     def read_files(self, file_paths):
         logging.info("Reading CIF files")
@@ -161,7 +161,7 @@ class CIFReader:
                             "ordinal": ordinal,
                             "pdb_id": pdb_id,
                             "file_name": file_name,
-                            "model_file_no": "",  # You need to set this value
+                            "model_file_no": "",  
                             "entity_id": entity_id,
                             "type": entity_type,
                             "seq_one_letter_code": seq_one_letter_code,  # Placeholder for polymer data

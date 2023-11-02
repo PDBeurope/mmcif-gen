@@ -418,7 +418,11 @@ class CopyForEachRowOperation(operationBase):
             source_data = self.reader.collate_items(source_category, collation_items)
 
         repeats = operation_parameters.get("repeats", False)
-        if repeats:
+        if copy_from_investigation:
+            conditional_data = list(self.investigation_storage.get_items_data(
+                conditional_cat, [conditional_item]
+            ).values())[0]
+        elif repeats:
             conditional_data = self.reader.collate_item_per_file(
                 conditional_cat, conditional_item
             )
