@@ -105,7 +105,7 @@ class CIFReader:
                     entity_id = row[entity_columns["_entity.id"]]
                     entity_type = row[entity_columns["_entity.type"]]
                     src_method = row[entity_columns["_entity.src_method"]]
-                    description = row[entity_columns["_entity.pdbx_description"]]
+                    description = row[entity_columns["_entity.pdbx_description"]].strip("'").strip(";").strip("\n")
                     chem_comp_id = ""
                     seq_one_letter_code = ""
                     ordinal = ""
@@ -164,7 +164,7 @@ class CIFReader:
                             "model_file_no": "",  
                             "entity_id": entity_id,
                             "type": entity_type,
-                            "seq_one_letter_code": seq_one_letter_code,  # Placeholder for polymer data
+                            "seq_one_letter_code": seq_one_letter_code.strip(";").rstrip('\n'),  # Placeholder for polymer data
                             "chem_comp_id": chem_comp_id,
                             "src_method": src_method,
                             "poly_type": "",
@@ -321,7 +321,7 @@ class CIFReader:
                     exptl_data.append(
                         {
                             "pdb_id": pdb_id,
-                            "exptl_method": row[exptl_columns["_exptl.method"]],
+                            "exptl_method": row[exptl_columns["_exptl.method"]].strip("'"),
                         }
                     )
         for row in exptl_data:

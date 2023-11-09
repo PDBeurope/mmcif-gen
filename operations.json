@@ -166,7 +166,7 @@
     },
     {
         "target_category" : "_pdbx_fraghub_investigation_campaign",
-        "target_items" : ["proc_pipeline ","pipeline_verison"],
+        "target_items" : ["proc_pipeline ","pipeline-verison"],
         "target_values": ["OTHER", "?"],
         "operation" : "static_value"
     },
