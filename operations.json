@@ -166,7 +166,7 @@
     },
     {
         "target_category" : "_pdbx_fraghub_investigation_campaign",
-        "target_items" : ["proc_pipeline ","pipeline-verison"],
+        "target_items" : ["proc_pipeline ","pipeline-version"],
         "target_values": ["OTHER", "?"],
         "operation" : "static_value"
     },
@@ -214,7 +214,7 @@
         "target_items" :["poly_entity_id ","type","seq_one_letter_code", "src_method","ref_db_name", "ref_db_code","ref_db_acc"],
         "operation" : "sql_query",
         "operation_parameters" :{
-            "query" : "SELECT investigation_entity_id, type, seq_one_letter_code, src_method, db_name, db_code, db_accession from denormalized_data where type=\"polymer\" GROUP BY investigation_entity_id"
+            "query" : "SELECT investigation_entity_id, poly_type, seq_one_letter_code, src_method, db_name, db_code, db_accession from denormalized_data where type=\"polymer\" GROUP BY investigation_entity_id"
         }
     },
 
@@ -439,6 +439,11 @@
         "target_category" : "_pdbx_investigation_focus",
         "target_items" : ["investigation_id"],
         "operation" : "copy_fill"
+    },
+    {
+        "target_category" : "_pdbx_fraghub_investigation_screening_exp",
+        "target_item" : ["archive_db_acc"],
+        "operation" : "deletion"
     }
 
 ],

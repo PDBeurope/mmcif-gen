@@ -167,7 +167,7 @@ class CIFReader:
                             "seq_one_letter_code": seq_one_letter_code.strip(";").rstrip('\n'),  # Placeholder for polymer data
                             "chem_comp_id": chem_comp_id,
                             "src_method": src_method,
-                            "poly_type": "",
+                            "poly_type": poly_type.strip("'"),
                             "description": description,
                         }
                     )
