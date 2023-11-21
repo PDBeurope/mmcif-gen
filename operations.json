@@ -22,8 +22,7 @@
         "target_items" : "_same",
         "operation" : "distinct_union",
         "operation_parameters" :{
-            "primary_parameters" : ["identifier_ORCID"],
-            "secondary_parameters" : ["name"]
+            "primary_parameters" : ["name"]
         }
     },
     {
@@ -442,7 +441,7 @@
     },
     {
         "target_category" : "_pdbx_fraghub_investigation_screening_exp",
-        "target_item" : ["archive_db_acc"],
+        "target_items" : ["archive_db_acc"],
         "operation" : "deletion"
     }
 
