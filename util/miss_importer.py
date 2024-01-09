@@ -27,6 +27,7 @@ def process_mmcif_files(investigation_cif, sf_file_cif):
         existing_inchis_in_investigation = block_a.get_mmcif_category("_pdbx_fraghub_investigation_fraglib_component")["inchi_descriptor"]
         existing_inchis = set(existing_inchis_in_investigation)
     
+    # TODO: log overlapped inchi keys
     inchi_keys_to_add = inchi_keys - existing_inchis
 
     # Writing new inchis in investigation file (4 categories)
@@ -60,8 +61,8 @@ def process_mmcif_files(investigation_cif, sf_file_cif):
         screening_exp_category.append_row(screening_exp_template)
 
         screening_result_index= str(index+screening_result_category_len+1)
-        # screening_result_template[0] = screening_exp_index        
-        screening_result_template[0] = "?"
+        screening_result_template[0] = screening_exp_index        
+        # screening_result_template[0] = "?"
         screening_result_template[1] = screening_result_index
         screening_result_template[2] = "miss"
         screening_result_template[3] = "?"
