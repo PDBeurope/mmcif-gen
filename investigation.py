@@ -9,6 +9,7 @@ import gzip
 import tempfile
 import shutil
 import csv
+from typing import Dict, List
 
 FTP_URL_UPDATED = (
     "https://ftp.ebi.ac.uk/pub/databases/msd/updated_mmcif/divided/{}/{}_updated.cif.gz"
@@ -21,7 +22,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 model_file_path = []
 
 
-def download_and_create_investigation(pdb_ids, investigation_id):
+def download_and_create_investigation(pdb_ids: List[str], investigation_id: str) -> None:
     logging.info(f"Creating investigation files for pdb ids: {pdb_ids}")
     temp_dir = tempfile.mkdtemp()
     try:
@@ -60,7 +61,7 @@ def download_and_create_investigation(pdb_ids, investigation_id):
         shutil.rmtree(temp_dir)
 
 
-def get_cif_file_paths(folder_path):
+def get_cif_file_paths(folder_path : str) -> List[str]:
     cif_file_paths = []
     for root, dirs, files in os.walk(folder_path):
         for file in files:
@@ -72,7 +73,7 @@ def get_cif_file_paths(folder_path):
     return cif_file_paths
 
 
-def run_investigations(folder_path, investigation_id):
+def run_investigations(folder_path : str, investigation_id: str) -> None:
     model_file_path = get_cif_file_paths(folder_path)
     print("List of CIF file paths:")
     for file_path in model_file_path:
@@ -82,7 +83,7 @@ def run_investigations(folder_path, investigation_id):
     im.run()
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         prog="Investigation",
         description="This creates an investigation file from a collection of model files\

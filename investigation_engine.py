@@ -31,8 +31,9 @@ class InvestigationEngine:
         self.investigation_storage = InvestigationStorage()
         self.model_file_path = model_file_path
         self.operation_file_json = "./operations.json"
-        self.operations = []
+        self.output_path = "./out"
         self.investigation_id = investigation_id
+        self.operations = []
 
     def pre_run(self) -> None:
         logging.info("Pre-running")
@@ -91,7 +92,7 @@ class InvestigationEngine:
         else:
             raise ValueError(f"Invalid operation type: {operation_type}")
 
-    def run(self):
+    def run(self) -> None :
         for operation_data in self.operations:
             try:
                 operation_type = operation_data.get("operation", "")
@@ -103,5 +104,5 @@ class InvestigationEngine:
                 logging.error(json.dumps(operation_data))
 
         self.investigation_storage.write_data_to_cif(
-            f"./out/{self.investigation_id}.cif"
+            f"{self.output_path}/{self.investigation_id}.cif"
         )

@@ -9,10 +9,10 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 
 class CIFReader:
-    def __init__(self):
+    def __init__(self) -> None:
         self.data = {}  # Dictionary to store the parsed CIF data
         self.denormalised_data = []
-        self.conn = sqlite3.connect("file::memory:", uri=True)
+        self.conn = sqlite3.connect("file::memory:?cache=shared", uri=True)
 
     def read_files(self, file_paths):
         logging.info("Reading CIF files")
@@ -21,15 +21,24 @@ class CIFReader:
             file_name = file_path.split("/")[-1]
             self.data[file_name] = cif_block.sole_block()
 
+    # @contextmanager
+    # def sqlite_db_new_connection(self):
+    #     logging.debug("Creating In-memory DB connection")
+    #     conn = sqlite3.connect(":memory:?cache=shared", uri=True)
+    #     try:
+    #         yield conn
+    #     finally:
+    #         conn.commit()
+    #         conn.close()
+
     @contextmanager
     def sqlite_db_connection(self):
-        logging.debug("Creating In-memory DB connection")
-        conn = sqlite3.connect(":memory:?cache=shared", uri=True)
+        logging.debug("Re-using In-memory DB connection")
+        conn = self.conn
         try:
             yield conn
         finally:
             conn.commit()
-            conn.close()
 
     def sql_execute(self, query):
         logging.debug(f"Executing query: {query}")
@@ -171,7 +180,7 @@ class CIFReader:
                             "description": description,
                         }
                     )
-        logging.info("Successfully built the data table")
+        logging.info("Successfully built the data for the table")
         logging.info("Loading table into In-memory Sqlite")
 
         with self.sqlite_db_connection() as cursor:
