@@ -538,6 +538,7 @@ class CIFReader:
 class InvestigationStorage:
     def __init__(self):
         self.data = {}
+        self.mmcif_order = {}
 
     def add_category(self, category_name):
         if category_name not in self.data:
@@ -571,14 +572,26 @@ class InvestigationStorage:
 
     def get_data(self) -> dict:
         return self.data
+    
+    def get_item_order(self, category) -> list:
+        return self.mmcif_order.get(category, [])
 
     def write_data_to_cif(self, output_file) -> None:
         logging.info("Writing Investigation cif file")
+        write_options = gemmi.cif.WriteOptions()
+        write_options.align_loops = 50
+        write_options.align_pairs = 50
+
         doc = gemmi.cif.Document()
         block = doc.add_new_block("PDBX_Investigation")
         for category, items in self.data.items():
-            block.set_mmcif_category(category, self.data[category])
-        block.write_file(output_file)
+            ordered_category = {}
+            ordered_items = self.get_item_order(category)
+            for ordered_item in ordered_items:
+                ordered_category[ordered_item]  = items.pop(ordered_item)
+            ordered_category.update(items)
+            block.set_mmcif_category(category, ordered_category)
+        block.write_file(output_file, write_options)
 
     def integrity_check(self):
         inconsistent_keys = {}

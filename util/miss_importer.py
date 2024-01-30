@@ -1,33 +1,51 @@
 import gemmi
-import pybel
 import sys
+import logging
+from openbabel import pybel
+from output_grabber import OutputGrabber
+
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+    
 
 def smiles_to_inchikey_openbabel(smiles):
-    mol = pybel.readstring("smi", smiles)
-    inchikey = mol.write("inchikey").strip()
-    return inchikey
+    out_stderr = OutputGrabber(sys.stderr)
+    with out_stderr:
+        mol = pybel.readstring("smi", smiles)
+        inchikey = mol.write("inchikey").strip()
+        logging.debug(f"SMILE: {smiles}")
+        logging.debug(f"INCHI: {inchikey}")
+        logging.debug(f"=================================")
+        return inchikey
 
 def process_mmcif_files(investigation_cif, sf_file_cif):
     sf_file = gemmi.cif.read(sf_file_cif)
     investigation = gemmi.cif.read(investigation_cif)
 
     inchi_keys = set()
-    # Finding all inchikeys from sf files
+    logging.info("Finding Smile string from sf file and converting them to Inchi keys")
     for block in sf_file:
         details_item = block.find_value("_diffrn.details")
         
         if details_item:
             smiles_string = details_item.split()[-1][:-1]
-            print(smiles_string)
-
             inchi_keys.add(smiles_to_inchikey_openbabel(smiles_string))
+    logging.info(f"Found and converted {len(inchi_keys)} smiles strings to Inchi key")
 
-    # Finding existing inchis in investigation file
+    logging.info("Finding existing Inchi keys in Investigation file ")
     for block_a in investigation:
         existing_inchis_in_investigation = block_a.get_mmcif_category("_pdbx_fraghub_investigation_fraglib_component")["inchi_descriptor"]
         existing_inchis = set(existing_inchis_in_investigation)
+
+    logging.info(f"Found {len(existing_inchis)} Inchi keys in Investigation file")
     
-    # TODO: log overlapped inchi keys
+    repeats = existing_inchis.intersection(inchi_keys)
+    if repeats:
+        logging.info(f"{len(repeats)} Inchi keys in sf file already exist in investigation files:")
+        for inchi in repeats:
+            logging.debug(inchi)
+    else:
+        logging.info("No Overlapping Inchi keys between sf file and investigation file")
+
     inchi_keys_to_add = inchi_keys - existing_inchis
 
     # Writing new inchis in investigation file (4 categories)
@@ -44,6 +62,7 @@ def process_mmcif_files(investigation_cif, sf_file_cif):
     screening_exp_template =  list(screening_exp_category[0])
 
     screening_result_category = block_a.find_mmcif_category("_pdbx_fraghub_investigation_screening_result")
+    screening_result_columns = {name: i for i, name in enumerate(screening_result_category.tags)}
     screening_result_category_len = len(screening_result_category)
     screening_result_template =  list(screening_result_category[0])
 
@@ -66,7 +85,7 @@ def process_mmcif_files(investigation_cif, sf_file_cif):
         screening_result_template[1] = screening_result_index
         screening_result_template[2] = "miss"
         screening_result_template[3] = "?"
-        screening_result_template[5] = "Fragment Unobserved"
+        screening_result_template[5] = "'Fragment Unobserved'"
         screening_result_category.append_row(screening_result_template)
 
 

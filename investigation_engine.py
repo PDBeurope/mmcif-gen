@@ -53,6 +53,7 @@ class InvestigationEngine:
         with open(self.operation_file_json, "r") as file:
             json_data = json.load(file)
             self.operations = json_data.get("operations", [])
+            self.investigation_storage.mmcif_order = json_data.get("mmcif_order", [])
 
     def operation_factory(self, operation_type: str) -> operationBase:
         if operation_type == "distinct_union":
@@ -99,7 +100,6 @@ class InvestigationEngine:
                 operation = self.operation_factory(operation_type)
                 operation.perform_operation(operation_data)
             except Exception as e:
-                logging.exception(e)
                 logging.error(f"Operation Failed:")
                 logging.error(json.dumps(operation_data))
 

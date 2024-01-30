@@ -52,7 +52,7 @@
     {
         "target_category" : "_pdbx_investigation",
         "target_items" : ["type","db","project","external_url"],
-        "target_values": ["Fragment Screening", "frag_hub", "fh12345", "?"],
+        "target_values": ["Fragment Screening", "frag_hub", "fh12345", null],
         "operation" : "static_value"
     },
     {
@@ -171,7 +171,7 @@
     {
         "target_category" : "_pdbx_fraghub_investigation_campaign",
         "target_items" : ["proc_pipeline ","pipeline-version"],
-        "target_values": ["OTHER", "?"],
+        "target_values": ["OTHER", null],
         "operation" : "static_value"
     },
     {
@@ -197,7 +197,7 @@
     {
         "target_category" : "_pdbx_fraghub_investigation_series",
         "target_items" : ["fragment_lib ","frag_lib_details"],
-        "target_values": ["Other", "?"],
+        "target_values": ["Other", null],
         "operation" : "static_value"
     },
     {
@@ -215,7 +215,7 @@
 
     {
         "target_category" : "_pdbx_investigation_entity_poly",
-        "target_items" :["poly_entity_id ","type","seq_one_letter_code", "src_method","ref_db_name", "ref_db_code","ref_db_acc"],
+        "target_items" :["poly_entity_id","type","seq_one_letter_code", "src_method","ref_db_name", "ref_db_code","ref_db_acc"],
         "operation" : "sql_query",
         "operation_parameters" :{
             "query" : "SELECT investigation_entity_id, poly_type, seq_one_letter_code, src_method, db_name, db_code, db_accession from denormalized_data where type=\"polymer\" GROUP BY investigation_entity_id"
@@ -276,7 +276,7 @@
     {
         "target_category" : "_pdbx_investigation_entity_nonpoly",
         "target_items" : ["cas_identifier"],
-        "target_values": ["?"],
+        "target_values": [null],
         "operation" : "static_value"
     },
 
@@ -371,7 +371,7 @@
     {
         "target_category" : "_pdbx_fraghub_investigation_screening_exp",
         "target_items" : ["exp_details","exp_external_url","data_deposited","instance_id"],
-        "target_values": ["?","?","Y","1"],
+        "target_values": [null,null,"Y","1"],
         "operation" : "static_value"
     },
 
@@ -413,7 +413,7 @@
     {
         "target_category" : "_pdbx_fraghub_investigation_fraglib_component",
         "target_items" : ["cas_identifier","details","parent_id"],
-        "target_values": ["?","?","?"],
+        "target_values": [null,null,null],
         "operation" : "static_value"
     },
     {
@@ -425,7 +425,7 @@
     {
         "target_category" : "_pdbx_fraghub_investigation_screening_result",
         "target_items" : ["screening_exp_id","result_id","outcome","fraglib_component_id","outcome_assessment","outcome_description","outcome_details"],
-        "target_values": ["?","1","hit","?","refined","On-site binding","?"],
+        "target_values": [null,"1","hit",null,"refined","On-site binding",null],
         "operation" : "static_value"
     },
 
@@ -451,6 +451,15 @@
     }
 
 ],
+    "mmcif_order": {
+        "_audit_author" : ["pdbx_ordinal", "name"],
+        "_pdbx_investigation_archived_data" : ["id"],
+        "_pdbx_fraghub_investigation_campaign" : ["campaign_id"],
+        "_pdbx_investigation_entity_poly" : ["poly_entity_id"],
+        "_pdbx_investigation_entity_nonpoly" : ["nonpoly_entity_id"],
+        "_pdbx_fraghub_investigation_fraglib_component" : ["id"]
+
+    },
     "help" :{
         "source_category" : "Category in the deposition files to look into",
         "source_items" : "Which items to compute from in the source_category in the deposition files",
