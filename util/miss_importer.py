@@ -50,14 +50,17 @@ def process_mmcif_files(investigation_cif, sf_file_cif):
 
     # Writing new inchis in investigation file (4 categories)
     fraglib_category = block_a.find_mmcif_category("_pdbx_fraghub_investigation_fraglib_component")
+    fraglib_columns = {name: i for i, name in enumerate(fraglib_category.tags)}
     existing_fraglib_len = len(fraglib_category)
 
     component_mix_category = block_a.find_mmcif_category("_pdbx_fraghub_investigation_frag_component_mix")
+    component_mix_columns = {name: i for i, name in enumerate(component_mix_category.tags)}
     existing_highest_id = int(max(block_a.get_mmcif_category("_pdbx_fraghub_investigation_frag_component_mix")["id"], key=int))
 
     existing_mix_category_len = len(component_mix_category)
 
     screening_exp_category = block_a.find_mmcif_category("_pdbx_fraghub_investigation_screening_exp")
+    screening_exp_columns = {name: i for i, name in enumerate(screening_exp_category.tags)}
     screening_exp_category_len = len(screening_exp_category)
     screening_exp_template =  list(screening_exp_category[0])
 
@@ -68,25 +71,38 @@ def process_mmcif_files(investigation_cif, sf_file_cif):
 
     for index, inchi in enumerate(inchi_keys_to_add):
         inchi_index = str(index+existing_fraglib_len+1)
-        fraglib_category.append_row(['?', inchi, '?', '?', '?', '?', '?', '?' ,inchi_index])
+        row = [None] * fraglib_category.width()
+        row[fraglib_columns["_pdbx_fraghub_investigation_fraglib_component.inchi_descriptor"]] = inchi
+        row[fraglib_columns["_pdbx_fraghub_investigation_fraglib_component.id"]] = inchi_index
+        row = gemmi.cif.quote_list(row)
+        fraglib_category.append_row(row)
 
+
+        row = [None]*component_mix_category.width()
         component_mix_index = str(existing_highest_id+index+1)
+        row[component_mix_columns["_pdbx_fraghub_investigation_frag_component_mix.id"]]= component_mix_index
+        row[component_mix_columns["_pdbx_fraghub_investigation_frag_component_mix.fraglib_component_id"]]= inchi_index
+        row = gemmi.cif.quote_list(row)
         component_mix_category.append_row([component_mix_index, inchi_index])
 
 
+        row = screening_exp_template
         screening_exp_index= str(index+screening_exp_category_len+1)
-        screening_exp_template[4] = component_mix_index
-        screening_exp_template[7] = screening_exp_index
-        screening_exp_category.append_row(screening_exp_template)
+        row[screening_exp_columns["_pdbx_fraghub_investigation_screening_exp.frag_component_mix_id"]]= component_mix_index
+        row[screening_exp_columns["_pdbx_fraghub_investigation_screening_exp.screening_exp_id"]]= screening_exp_index
+        row = gemmi.cif.quote_list(row)
+        screening_exp_category.append_row(row)
 
+        row = screening_result_template
         screening_result_index= str(index+screening_result_category_len+1)
-        screening_result_template[0] = screening_exp_index        
-        # screening_result_template[0] = "?"
-        screening_result_template[1] = screening_result_index
-        screening_result_template[2] = "miss"
-        screening_result_template[3] = "?"
-        screening_result_template[5] = "'Fragment Unobserved'"
-        screening_result_category.append_row(screening_result_template)
+
+        row[screening_result_columns["_pdbx_fraghub_investigation_screening_result.screening_exp_id"]]= screening_exp_index
+        row[screening_result_columns["_pdbx_fraghub_investigation_screening_result.result_id"]]= screening_result_index
+        row[screening_result_columns["_pdbx_fraghub_investigation_screening_result.outcome"]]= "miss"
+        row[screening_result_columns["_pdbx_fraghub_investigation_screening_result.fraglib_component_id"]] = component_mix_index #should this be ?
+        row[screening_result_columns["_pdbx_fraghub_investigation_screening_result.outcome_description"]] = "Fragment Unobserved"
+        row = gemmi.cif.quote_list(row)
+        screening_result_category.append_row(row)
 
 
     investigation.write_file("test_out_investigation.cif")
