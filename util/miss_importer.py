@@ -1,8 +1,21 @@
+import argparse
 import gemmi
 import sys
 import logging
 from openbabel import pybel
 from output_grabber import OutputGrabber
+import tempfile
+import os
+import requests
+from typing import Dict, List
+import gzip
+import shutil
+import csv
+
+FTP_URL_ARCHIVE_SF = (
+    "https://ftp.ebi.ac.uk/pub/databases/pdb/data/structures/divided/structure_factors/{}/r{}sf.ent.gz"
+)
+
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
     
@@ -16,6 +29,42 @@ def smiles_to_inchikey_openbabel(smiles):
         logging.debug(f"INCHI: {inchikey}")
         logging.debug(f"=================================")
         return inchikey
+
+def download_and_process_file(investigation_cif: str, pdb_code :str ) -> None:
+    logging.info(f"Creating investigation files for pdb ids: {pdb_code}")
+    temp_dir = tempfile.mkdtemp()
+    try:
+        url = FTP_URL_ARCHIVE_SF.format(pdb_code[1:3], pdb_code)
+
+        compressed_file_path = os.path.join(temp_dir, f"r{pdb_code}sf.ent.gz")
+        uncompressed_file_path = os.path.join(temp_dir, f"r{pdb_code}sf.ent")
+
+        response = requests.get(url)
+        if response.status_code == 200:
+            with open(compressed_file_path, "wb") as f:
+                f.write(response.content)
+
+            with gzip.open(compressed_file_path, "rb") as gz:
+                with open(uncompressed_file_path, "wb") as f:
+                    f.write(gz.read())
+            logging.info(f"Downloaded and unzipped r{pdb_code}sf.ent")
+        else:
+            logging.info(f"Failed to download r{pdb_code}sf.ent.gz")
+
+        process_mmcif_files(investigation_cif, uncompressed_file_path)
+
+    except Exception as e:
+        logging.exception(f"An error occurred: {str(e)}")
+
+    finally:
+        compressed_file_path = os.path.join(temp_dir, f"{pdb_code}.cif.gz")
+        uncompressed_file_path = os.path.join(temp_dir, f"{pdb_code}.cif")
+        if os.path.exists(compressed_file_path):
+            os.remove(compressed_file_path)
+        if os.path.exists(uncompressed_file_path):
+            os.remove(uncompressed_file_path)
+
+        shutil.rmtree(temp_dir)
 
 def process_mmcif_files(investigation_cif, sf_file_cif):
     sf_file = gemmi.cif.read(sf_file_cif)
@@ -103,15 +152,49 @@ def process_mmcif_files(investigation_cif, sf_file_cif):
         row[screening_result_columns["_pdbx_fraghub_investigation_screening_result.outcome_description"]] = "Fragment Unobserved"
         row = gemmi.cif.quote_list(row)
         screening_result_category.append_row(row)
-
-
     investigation.write_file("test_out_investigation.cif")
 
-if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: python script.py <investigation-cif> <sf-file>")
-        sys.exit(1)
-    investigation_cif = sys.argv[1]
-    sf_file = sys.argv[2]
 
-    process_mmcif_files(investigation_cif, sf_file)
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        prog="Ground state file importer ",
+        description="This utility takes as an input investigation file, and sf file. And imports the data for all the misses from the sf file and adds that to the investigation file ",
+    )
+    parser.add_argument(
+        "-inv", "--investigation-file", help="Path to investigation file"
+    )
+    parser.add_argument(
+        "-sf", "--sf-file", help="Path to structure factor file"
+    )
+    parser.add_argument(
+        "-p",
+        "--pdb-id",
+        help="PDB ID to lookup to download the sf file",
+    )
+    parser.add_argument(
+        "-f", "--csv-file", help="Requires CSV with 2 columns [investigation_file, Pdb Code (to fetch sf file)]"
+    )
+
+    args = parser.parse_args()
+
+    if args.sf_file:
+        process_mmcif_files(args.investigation_file, args.sf_file)
+    elif args.pdb_id:
+        download_and_process_file(args.investigation_file, args.pdb_id)
+    elif args.csv_file:
+        with open(args.csv_file) as file:
+            csv_reader = csv.DictReader(file, delimiter=",")
+            for row in csv_reader:
+                investigation_file = row["INVESTIGATION_FILE"]
+                sf_file = row["SF_FILE"]
+                try:
+                    if len(sf_file) == 4:
+                        download_and_process_file(investigation_file, sf_file)
+                    else:
+                        process_mmcif_files(investigation_file, sf_file)
+                except Exception as e:
+                    logging.exception(e)
+
+
+if __name__ == "__main__":
+    main()
