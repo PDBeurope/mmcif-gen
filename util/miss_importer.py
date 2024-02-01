@@ -17,7 +17,7 @@ FTP_URL_ARCHIVE_SF = (
 )
 
 
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
     
 
 def smiles_to_inchikey_openbabel(smiles):
@@ -118,6 +118,7 @@ def process_mmcif_files(investigation_cif, sf_file_cif):
     screening_result_category_len = len(screening_result_category)
     screening_result_template =  list(screening_result_category[0])
 
+    logging.info("Adding items to the Cif categories")
     for index, inchi in enumerate(inchi_keys_to_add):
         inchi_index = str(index+existing_fraglib_len+1)
         row = [None] * fraglib_category.width()
@@ -152,7 +153,10 @@ def process_mmcif_files(investigation_cif, sf_file_cif):
         row[screening_result_columns["_pdbx_fraghub_investigation_screening_result.outcome_description"]] = "Fragment Unobserved"
         row = gemmi.cif.quote_list(row)
         screening_result_category.append_row(row)
-    investigation.write_file("test_out_investigation.cif")
+
+    out_file_name = investigation_cif.split("/")[-1].split(".")[0]
+    logging.info(f"Writing out file: out/{out_file_name}_m.cif")
+    investigation.write_file(f"out/{out_file_name}_m.cif")
 
 
 def main() -> None:
@@ -176,7 +180,6 @@ def main() -> None:
     )
 
     args = parser.parse_args()
-
     if args.sf_file:
         process_mmcif_files(args.investigation_file, args.sf_file)
     elif args.pdb_id:
