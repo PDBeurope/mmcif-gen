@@ -457,7 +457,8 @@
         "_pdbx_fraghub_investigation_campaign" : ["campaign_id"],
         "_pdbx_investigation_entity_poly" : ["poly_entity_id"],
         "_pdbx_investigation_entity_nonpoly" : ["nonpoly_entity_id"],
-        "_pdbx_fraghub_investigation_fraglib_component" : ["id"]
+        "_pdbx_fraghub_investigation_fraglib_component" : ["id"],
+        "_pdbx_fraghub_investigation_series" : ["series_id"]
 
     },
     "help" :{

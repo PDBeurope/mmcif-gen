@@ -32,7 +32,31 @@ optional arguments:
 
 ```
 
-`--investigation-id`` parameter is an optional parameter where the user wants to control the investigation ID that is assigned to the investigation file. It is not used where input is csv file. 
+`--investigation-id` parameter is an optional parameter where the user wants to control the investigation ID that is assigned to the investigation file. It is not used where input is csv file. 
+
+#### Importing data from Ground state file
+For files where the data of misses are present in structure factor file, the `miss_importer.py` utility can be used to enrich the investigation data with new information.
+
+```
+$ python miss_importer.py --help
+usage: Ground state file importer  [-h] [-inv INVESTIGATION_FILE] [-sf SF_FILE] [-p PDB_ID] [-f CSV_FILE]
+
+This utility takes as an input investigation file, and sf file. And imports the data for all the misses from the sf file and adds that to the investigation file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -inv INVESTIGATION_FILE, --investigation-file INVESTIGATION_FILE
+                        Path to investigation file
+  -sf SF_FILE, --sf-file SF_FILE
+                        Path to structure factor file
+  -p PDB_ID, --pdb-id PDB_ID
+                        PDB ID to lookup to download the sf file
+  -f CSV_FILE, --csv-file CSV_FILE
+                        Requires CSV with 2 columns [investigation_file, Pdb Code (to fetch sf file)]
+```
+
+The utility requires the created investigation file, along with a sf file (or pdb code to automatically fetch the sf file) as input. 
+And outputs a modified investigation cif file.
 
 ### Example
 PDB Ids can be passed in the arguments. The model file is fetched from EBI Archive FTP area temporarily stored. After the investigation file is created the files are deleted.
