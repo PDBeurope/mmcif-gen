@@ -10,6 +10,7 @@ from typing import Dict, List
 import gzip
 import shutil
 import csv
+import pathlib
 
 try:
     from openbabel import pybel
@@ -73,6 +74,8 @@ def temp_download_and_process_file(investigation_cif: str, pdb_code :str ) -> No
 def download_and_process_file(investigation_cif: str, pdb_code :str ) -> None:
     logging.info(f"Creating investigation files for pdb ids: {pdb_code}")
     dir = "./sf-files"
+    pathlib.Path(dir).mkdir(parents=True, exist_ok=True) 
+
     try:
         url = FTP_URL_ARCHIVE_SF.format(pdb_code[1:3], pdb_code)
 
