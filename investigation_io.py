@@ -536,9 +536,10 @@ class CIFReader:
 
 
 class InvestigationStorage:
-    def __init__(self):
+    def __init__(self, investigation_id):
         self.data = {}
         self.mmcif_order = {}
+        self.investigation_id = investigation_id
 
     def add_category(self, category_name):
         if category_name not in self.data:
@@ -583,7 +584,7 @@ class InvestigationStorage:
         write_options.align_pairs = 50
 
         doc = gemmi.cif.Document()
-        block = doc.add_new_block("PDBX_Investigation")
+        block = doc.add_new_block(f"{self.investigation_id}")
         for category, items in self.data.items():
             ordered_category = {}
             ordered_items = self.get_item_order(category)
