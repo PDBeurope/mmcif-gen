@@ -2,7 +2,6 @@ import argparse
 import gemmi
 import sys
 import logging
-from openbabel import pybel
 from output_grabber import OutputGrabber
 import tempfile
 import os
@@ -11,6 +10,11 @@ from typing import Dict, List
 import gzip
 import shutil
 import csv
+
+try:
+    from openbabel import pybel
+except ImportError:
+    import pybel  
 
 FTP_URL_ARCHIVE_SF = (
     "https://ftp.ebi.ac.uk/pub/databases/pdb/data/structures/divided/structure_factors/{}/r{}sf.ent.gz"
