@@ -28,12 +28,17 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 def smiles_to_inchikey_openbabel(smiles):
     out_stderr = OutputGrabber(sys.stderr)
     with out_stderr:
-        mol = pybel.readstring("smi", smiles)
-        inchikey = mol.write("inchikey").strip()
-        logging.debug(f"SMILE: {smiles}")
-        logging.debug(f"INCHI: {inchikey}")
-        logging.debug(f"=================================")
-        return inchikey
+        try:
+            mol = pybel.readstring("smi", smiles)
+            inchikey = mol.write("inchikey").strip()
+            logging.debug(f"SMILE: {smiles}")
+            logging.debug(f"INCHI: {inchikey}")
+            logging.debug(f"=================================")
+            return inchikey
+        except Exception as e:
+            logging.error("Conversion failure")
+            raise Exception
+
 
 def temp_download_and_process_file(investigation_cif: str, pdb_code :str ) -> None:
     logging.info(f"Creating investigation files for pdb ids: {pdb_code}")
@@ -106,11 +111,15 @@ def process_mmcif_files(investigation_cif, sf_file_cif):
     inchi_keys = set()
     logging.info("Finding Smile string from sf file and converting them to Inchi keys")
     for block in sf_file:
-        details_item = block.find_value("_diffrn.details")
-        
-        if details_item:
-            smiles_string = details_item.split()[-1][:-1]
-            inchi_keys.add(smiles_to_inchikey_openbabel(smiles_string))
+        try:
+            details_item = block.find_value("_diffrn.details")
+            
+            if details_item:
+                smiles_string = details_item.split()[-1][:-1]
+                inchi_keys.add(smiles_to_inchikey_openbabel(smiles_string))
+        except:
+            logging.exception(e)
+            continue
     logging.info(f"Found and converted {len(inchi_keys)} smiles strings to Inchi key")
 
     logging.info("Finding existing Inchi keys in Investigation file ")
