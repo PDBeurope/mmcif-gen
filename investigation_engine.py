@@ -26,12 +26,12 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 
 class InvestigationEngine:
-    def __init__(self, model_file_path: List[str], investigation_id: str) -> None:
+    def __init__(self, model_file_path: List[str], investigation_id: str, output_path: str) -> None:
         self.reader = CIFReader()
         self.investigation_storage = InvestigationStorage()
         self.model_file_path = model_file_path
         self.operation_file_json = "./operations.json"
-        self.output_path = "./out"
+        self.output_path = output_path
         self.investigation_id = investigation_id
         self.operations = []
 

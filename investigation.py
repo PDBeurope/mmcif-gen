@@ -10,6 +10,8 @@ import tempfile
 import shutil
 import csv
 from typing import Dict, List
+import pathlib
+
 
 FTP_URL_UPDATED = (
     "https://ftp.ebi.ac.uk/pub/databases/msd/updated_mmcif/divided/{}/{}_updated.cif.gz"
@@ -22,7 +24,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 model_file_path = []
 
 
-def download_and_create_investigation(pdb_ids: List[str], investigation_id: str) -> None:
+def download_and_create_investigation(pdb_ids: List[str], investigation_id: str, output_path:str) -> None:
     logging.info(f"Creating investigation files for pdb ids: {pdb_ids}")
     temp_dir = tempfile.mkdtemp()
     try:
@@ -44,7 +46,7 @@ def download_and_create_investigation(pdb_ids: List[str], investigation_id: str)
             else:
                 logging.info(f"Failed to download {pdb_code}.cif.gz")
 
-        run_investigations(temp_dir, investigation_id)
+        run_investigations(temp_dir, investigation_id, output_path)
 
     except Exception as e:
         logging.exception(f"An error occurred: {str(e)}")
@@ -73,12 +75,12 @@ def get_cif_file_paths(folder_path : str) -> List[str]:
     return cif_file_paths
 
 
-def run_investigations(folder_path : str, investigation_id: str) -> None:
+def run_investigations(folder_path : str, investigation_id: str, output_path: str) -> None:
     model_file_path = get_cif_file_paths(folder_path)
     print("List of CIF file paths:")
     for file_path in model_file_path:
         print(file_path)
-    im = InvestigationEngine(model_file_path, investigation_id)
+    im = InvestigationEngine(model_file_path, investigation_id, output_path)
     im.pre_run()
     im.run()
 
@@ -92,6 +94,13 @@ def main() -> None:
     parser.add_argument(
         "-m", "--model-folder", help="Directory which contains model files"
     )
+    parser.add_argument(
+        "-o",
+        "--output-folder",
+        help="Folder to output the created investigation files to",
+        default="./out",
+    )
+
     parser.add_argument(
         "-f", "--csv-file", help="Requires CSV with 2 columns [GROUP_ID, ENTRY_ID]"
     )
@@ -109,11 +118,13 @@ def main() -> None:
     )
 
     args = parser.parse_args()
+    if args.output_folder:
+        pathlib.Path(args.output_folder).mkdir(parents=True, exist_ok=True) 
 
     if args.model_folder:
-        run_investigations(args.model_folder, args.investigation_id)
+        run_investigations(args.model_folder, args.investigation_id,args.output_folder)
     elif args.pdb_ids:
-        download_and_create_investigation(args.pdb_ids, args.investigation_id)
+        download_and_create_investigation(args.pdb_ids, args.investigation_id, args.output_folder)
     elif args.csv_file:
         group_data = {}
         with open(args.csv_file) as file:
@@ -129,7 +140,7 @@ def main() -> None:
         print(group_data)
         for group, entry in group_data.items():
             try:
-                download_and_create_investigation(entry, group)
+                download_and_create_investigation(entry, group, args.output_folder)
             except Exception as e:
                 logging.exception(e)
 
