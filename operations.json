@@ -421,11 +421,18 @@
         "target_item" : "id",
         "operation" : "auto_increment"
     },
+    {
+        "source_category" : "_pdbx_fraghub_investigation_screening_exp",
+        "source_items" : ["screening_exp_id"],
+        "target_category" : "_pdbx_fraghub_investigation_screening_result",
+        "target_items" : ["screening_exp_id"],
+        "operation" : "copy"
+    },
 
     {
         "target_category" : "_pdbx_fraghub_investigation_screening_result",
-        "target_items" : ["screening_exp_id","result_id","outcome","fraglib_component_id","outcome_assessment","outcome_description","outcome_details"],
-        "target_values": [null,"1","hit",null,"refined","On-site binding",null],
+        "target_items" : ["result_id","outcome","fraglib_component_id","outcome_assessment","outcome_description","outcome_details"],
+        "target_values": ["1","hit",null,"refined","On-site binding",null],
         "operation" : "static_value"
     },
 
