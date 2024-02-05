@@ -30,7 +30,7 @@ def smiles_to_inchikey_openbabel(smiles):
         logging.debug(f"=================================")
         return inchikey
 
-def download_and_process_file(investigation_cif: str, pdb_code :str ) -> None:
+def temp_download_and_process_file(investigation_cif: str, pdb_code :str ) -> None:
     logging.info(f"Creating investigation files for pdb ids: {pdb_code}")
     temp_dir = tempfile.mkdtemp()
     try:
@@ -65,6 +65,32 @@ def download_and_process_file(investigation_cif: str, pdb_code :str ) -> None:
             os.remove(uncompressed_file_path)
 
         shutil.rmtree(temp_dir)
+
+def download_and_process_file(investigation_cif: str, pdb_code :str ) -> None:
+    logging.info(f"Creating investigation files for pdb ids: {pdb_code}")
+    dir = "./sf-files"
+    try:
+        url = FTP_URL_ARCHIVE_SF.format(pdb_code[1:3], pdb_code)
+
+        compressed_file_path = os.path.join(dir, f"r{pdb_code}sf.ent.gz")
+        uncompressed_file_path = os.path.join(dir, f"r{pdb_code}sf.ent")
+
+        response = requests.get(url)
+        if response.status_code == 200:
+            with open(compressed_file_path, "wb") as f:
+                f.write(response.content)
+
+            with gzip.open(compressed_file_path, "rb") as gz:
+                with open(uncompressed_file_path, "wb") as f:
+                    f.write(gz.read())
+            logging.info(f"Downloaded and unzipped r{pdb_code}sf.ent")
+        else:
+            logging.info(f"Failed to download r{pdb_code}sf.ent.gz")
+
+        process_mmcif_files(investigation_cif, uncompressed_file_path)
+
+    except Exception as e:
+        logging.exception(f"An error occurred: {str(e)}")
 
 def process_mmcif_files(investigation_cif, sf_file_cif):
     sf_file = gemmi.cif.read(sf_file_cif)
@@ -178,6 +204,9 @@ def main() -> None:
     parser.add_argument(
         "-f", "--csv-file", help="Requires CSV with 2 columns [investigation_file, Pdb Code (to fetch sf file)]"
     )
+    parser.add_argument(
+        "-st", "--store-sf", action='store_true', help="When used, the downloaded sf files are not deleted but stored in sf-files folder"
+    )
 
     args = parser.parse_args()
     if args.sf_file:
@@ -190,6 +219,9 @@ def main() -> None:
             for row in csv_reader:
                 investigation_file = row["INVESTIGATION_FILE"]
                 sf_file = row["SF_FILE"]
+                if not os.path.exists(investigation_file):
+                    logging.error(f"{investigation_file} does not exist. Skipping the row in the csv")
+                    continue
                 try:
                     if len(sf_file) == 4:
                         download_and_process_file(investigation_file, sf_file)
