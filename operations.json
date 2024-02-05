@@ -431,11 +431,15 @@
 
     {
         "target_category" : "_pdbx_fraghub_investigation_screening_result",
-        "target_items" : ["result_id","outcome","fraglib_component_id","outcome_assessment","outcome_description","outcome_details"],
-        "target_values": ["1","hit",null,"refined","On-site binding",null],
+        "target_items" : ["outcome","fraglib_component_id","outcome_assessment","outcome_description","outcome_details"],
+        "target_values": ["hit",null,"refined","On-site binding",null],
         "operation" : "static_value"
     },
-
+    {
+        "target_category" : "_pdbx_fraghub_investigation_screening_result",
+        "target_item" : "result_id",
+        "operation" : "auto_increment"
+    },
     {
         "target_category" : "_pdbx_investigation_focus",
         "target_items" : ["component_id","comp_ref_db_name","comp_ref_db_acc","comp_ref_db_code","key_component_name"],
@@ -465,7 +469,10 @@
         "_pdbx_investigation_entity_poly" : ["poly_entity_id"],
         "_pdbx_investigation_entity_nonpoly" : ["nonpoly_entity_id"],
         "_pdbx_fraghub_investigation_fraglib_component" : ["id"],
-        "_pdbx_fraghub_investigation_series" : ["series_id"]
+        "_pdbx_fraghub_investigation_series" : ["series_id"],
+        "_pdbx_fraghub_investigation_screening_exp":["screening_exp_id","instance_id"],
+        "_pdbx_fraghub_investigation_screening_result" : ["result_id"]
+
 
     },
     "help" :{
