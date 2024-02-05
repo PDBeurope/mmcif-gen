@@ -207,11 +207,17 @@ def main() -> None:
     parser.add_argument(
         "-st", "--store-sf", action='store_true', help="When used, the downloaded sf files are not deleted but stored in sf-files folder"
     )
+    parser.add_argument(
+        "-ir", "--csv-inv-root",  help="Specifies the root path to the investigation files, that are listed in the csv"
+    )
 
     args = parser.parse_args()
     if args.sf_file:
         process_mmcif_files(args.investigation_file, args.sf_file)
     elif args.pdb_id:
+        if not os.path.exists(args.investigation):
+            logging.error(f"{args.investigation} does not exist. Enter a valid path to investigation file")
+            return
         download_and_process_file(args.investigation_file, args.pdb_id)
     elif args.csv_file:
         with open(args.csv_file) as file:
@@ -219,14 +225,15 @@ def main() -> None:
             for row in csv_reader:
                 investigation_file = row["INVESTIGATION_FILE"]
                 sf_file = row["SF_FILE"]
-                if not os.path.exists(investigation_file):
-                    logging.error(f"{investigation_file} does not exist. Skipping the row in the csv")
+                investigation_path = f"{args.csv_inv_root}/{investigation_file}"
+                if not os.path.exists(investigation_path):
+                    logging.error(f"{investigation_path} does not exist. Skipping the row in the csv")
                     continue
                 try:
                     if len(sf_file) == 4:
-                        download_and_process_file(investigation_file, sf_file)
+                        download_and_process_file(investigation_path, sf_file)
                     else:
-                        process_mmcif_files(investigation_file, sf_file)
+                        process_mmcif_files(investigation_path, sf_file)
                 except Exception as e:
                     logging.exception(e)
 
