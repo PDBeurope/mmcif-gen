@@ -80,26 +80,29 @@ def download_and_process_file(investigation_cif: str, pdb_code :str ) -> None:
     logging.info(f"Creating investigation files for pdb ids: {pdb_code}")
     dir = "./sf-files"
     pathlib.Path(dir).mkdir(parents=True, exist_ok=True) 
+    uncompressed_file_path = pathlib.Path(f"{dir}/r{pdb_code}sf.ent")
+    already_downloaded = pathlib.Path(uncompressed_file_path).is_file()
 
     try:
-        url = FTP_URL_ARCHIVE_SF.format(pdb_code[1:3], pdb_code)
+        if not already_downloaded:
+            url = FTP_URL_ARCHIVE_SF.format(pdb_code[1:3], pdb_code)
 
-        compressed_file_path = os.path.join(dir, f"r{pdb_code}sf.ent.gz")
-        uncompressed_file_path = os.path.join(dir, f"r{pdb_code}sf.ent")
+            compressed_file_path = os.path.join(dir, f"r{pdb_code}sf.ent.gz")
+            uncompressed_file_path = os.path.join(dir, f"r{pdb_code}sf.ent")
 
-        response = requests.get(url)
-        if response.status_code == 200:
-            with open(compressed_file_path, "wb") as f:
-                f.write(response.content)
+            response = requests.get(url)
+            if response.status_code == 200:
+                with open(compressed_file_path, "wb") as f:
+                    f.write(response.content)
 
-            with gzip.open(compressed_file_path, "rb") as gz:
-                with open(uncompressed_file_path, "wb") as f:
-                    f.write(gz.read())
-            logging.info(f"Downloaded and unzipped r{pdb_code}sf.ent")
-        else:
-            logging.info(f"Failed to download r{pdb_code}sf.ent.gz")
+                with gzip.open(compressed_file_path, "rb") as gz:
+                    with open(uncompressed_file_path, "wb") as f:
+                        f.write(gz.read())
+                logging.info(f"Downloaded and unzipped r{pdb_code}sf.ent")
+            else:
+                logging.info(f"Failed to download r{pdb_code}sf.ent.gz")
 
-        process_mmcif_files(investigation_cif, uncompressed_file_path)
+        process_mmcif_files(investigation_cif, str(uncompressed_file_path))
 
     except Exception as e:
         logging.exception(f"An error occurred: {str(e)}")
