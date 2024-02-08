@@ -445,7 +445,7 @@
         "target_items" : ["component_id","comp_ref_db_name","comp_ref_db_acc","comp_ref_db_code","key_component_name"],
         "operation" : "sql_query",
         "operation_parameters" :{
-            "query" : "SELECT DISTINCT(investigation_entity_id) ,db_name, db_accession, db_code, description from denormalized_data where type=\"polymer\""
+            "query" : "SELECT DISTINCT(investigation_entity_id) ,db_name, db_accession, db_code, GROUP_CONCAT(DISTINCT description) from denormalized_data where type=\"polymer\""
         }
     },
     {
