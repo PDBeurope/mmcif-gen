@@ -25,6 +25,14 @@ FTP_URL_ARCHIVE_SF = (
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
     
 
+def sanitize_gemmi_output(row):
+    for index, item in enumerate(row):
+        if isinstance(item,str):
+            row[index] = gemmi.cif.as_string(item)
+            if item == '?':
+                row[index] = None
+    return row
+
 def smiles_to_inchikey_openbabel(smiles):
     out_stderr = OutputGrabber(sys.stderr)
     with out_stderr:
@@ -181,6 +189,8 @@ def process_mmcif_files(investigation_cif, sf_file_cif):
 
 
         row = screening_exp_template
+        row = sanitize_gemmi_output(row)
+
         screening_exp_index= str(index+screening_exp_category_len+1)
         row[screening_exp_columns["_pdbx_fraghub_investigation_screening_exp.frag_component_mix_id"]]= component_mix_index
         row[screening_exp_columns["_pdbx_fraghub_investigation_screening_exp.screening_exp_id"]]= screening_exp_index
@@ -188,6 +198,7 @@ def process_mmcif_files(investigation_cif, sf_file_cif):
         screening_exp_category.append_row(row)
 
         row = screening_result_template
+        row = sanitize_gemmi_output(row)
         screening_result_index= str(index+screening_result_category_len+1)
 
         row[screening_result_columns["_pdbx_fraghub_investigation_screening_result.screening_exp_id"]]= screening_exp_index
@@ -200,7 +211,7 @@ def process_mmcif_files(investigation_cif, sf_file_cif):
 
     out_file_name = investigation_cif.split("/")[-1].split(".")[0]
     file_path = investigation_cif.split(f"/{out_file_name}")[0]
-    logging.info(f"Writing out file: {file_path}{out_file_name}_m.cif")
+    logging.info(f"Writing out file: {file_path}/{out_file_name}_m.cif")
     investigation.write_file(f"{file_path}{out_file_name}_m.cif")
 
 
@@ -234,8 +245,8 @@ def main() -> None:
     if args.sf_file:
         process_mmcif_files(args.investigation_file, args.sf_file)
     elif args.pdb_id:
-        if not os.path.exists(args.investigation):
-            logging.error(f"{args.investigation} does not exist. Enter a valid path to investigation file")
+        if not os.path.exists(args.investigation_file):
+            logging.error(f"{args.investigation_file} does not exist. Enter a valid path to investigation file")
             return
         download_and_process_file(args.investigation_file, args.pdb_id)
     elif args.csv_file:
