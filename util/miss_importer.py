@@ -205,7 +205,7 @@ def process_mmcif_files(investigation_cif, sf_file_cif):
         row[screening_result_columns["_pdbx_fraghub_investigation_screening_result.result_id"]]= screening_result_index
         row[screening_result_columns["_pdbx_fraghub_investigation_screening_result.outcome"]]= "miss"
         row[screening_result_columns["_pdbx_fraghub_investigation_screening_result.fraglib_component_id"]] = component_mix_index #should this be ?
-        row[screening_result_columns["_pdbx_fraghub_investigation_screening_result.outcome_description"]] = "Fragment Unobserved"
+        row[screening_result_columns["_pdbx_fraghub_investigation_screening_result.outcome_description"]] = "Fragment unobserved"
         row = gemmi.cif.quote_list(row)
         screening_result_category.append_row(row)
 
