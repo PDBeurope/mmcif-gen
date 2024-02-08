@@ -37,8 +37,6 @@ def smiles_to_inchikey_openbabel(smiles):
             return inchikey
         except Exception as e:
             logging.error("Conversion failure")
-            raise Exception
-
 
 def temp_download_and_process_file(investigation_cif: str, pdb_code :str ) -> None:
     logging.info(f"Creating investigation files for pdb ids: {pdb_code}")
@@ -82,9 +80,9 @@ def download_and_process_file(investigation_cif: str, pdb_code :str ) -> None:
     pathlib.Path(dir).mkdir(parents=True, exist_ok=True) 
     uncompressed_file_path = pathlib.Path(f"{dir}/r{pdb_code}sf.ent")
     already_downloaded = pathlib.Path(uncompressed_file_path).is_file()
-
     try:
         if not already_downloaded:
+            logging.info("File does not exist. Downloading...")
             url = FTP_URL_ARCHIVE_SF.format(pdb_code[1:3], pdb_code)
 
             compressed_file_path = os.path.join(dir, f"r{pdb_code}sf.ent.gz")
@@ -108,6 +106,7 @@ def download_and_process_file(investigation_cif: str, pdb_code :str ) -> None:
         logging.exception(f"An error occurred: {str(e)}")
 
 def process_mmcif_files(investigation_cif, sf_file_cif):
+    logging.info("Processing Structure factor file")
     sf_file = gemmi.cif.read(sf_file_cif)
     investigation = gemmi.cif.read(investigation_cif)
 
@@ -200,8 +199,9 @@ def process_mmcif_files(investigation_cif, sf_file_cif):
         screening_result_category.append_row(row)
 
     out_file_name = investigation_cif.split("/")[-1].split(".")[0]
-    logging.info(f"Writing out file: out/{out_file_name}_m.cif")
-    investigation.write_file(f"out/{out_file_name}_m.cif")
+    file_path = investigation_cif.split(f"/{out_file_name}")[0]
+    logging.info(f"Writing out file: {file_path}{out_file_name}_m.cif")
+    investigation.write_file(f"{file_path}{out_file_name}_m.cif")
 
 
 def main() -> None:
