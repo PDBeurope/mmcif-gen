@@ -1,4 +1,4 @@
-from investigation_io import CIFReader, InvestigationStorage
+from investigation_io import InvestigationStorage
 from operations import (
     operationBase,
     IntersectionOperation,
@@ -17,7 +17,6 @@ from operations import (
     UnionDistinctOperation,
     SQLOperation,
 )
-from typing import List
 import json
 import logging
 import sys
@@ -26,27 +25,16 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 
 class InvestigationEngine:
-    def __init__(self, model_file_path: List[str], investigation_id: str, output_path: str) -> None:
-        self.reader = CIFReader()
+    def __init__(self, investigation_id: str, output_path: str) -> None:
         self.investigation_storage = InvestigationStorage(investigation_id)
-        self.model_file_path = model_file_path
         self.operation_file_json = "./operations.json"
         self.output_path = output_path
         self.investigation_id = investigation_id
         self.operations = []
 
     def pre_run(self) -> None:
-        logging.info("Pre-running")
-        self.reader.read_files(self.model_file_path)
-        self.reader.create_denormalised_tables()
-        self.reader.build_denormalised_data()
-        self.reader.add_struct_ref_data()
-        self.reader.add_descript_categories()
-        self.reader.add_sample_category()
-        self.reader.add_synchrotron_data()
-        self.reader.add_exptl_data()
-        self.reader.add_investigation_id(self.investigation_id)
         self.read_json_operations()
+
 
     def read_json_operations(self) -> None:
         logging.info("Reading JSON operation files")

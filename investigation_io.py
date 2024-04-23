@@ -11,8 +11,8 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 class CIFReader:
     def __init__(self) -> None:
         self.data = {}  # Dictionary to store the parsed CIF data
-        self.denormalised_data = []
-        self.conn = sqlite3.connect("file::memory:?cache=shared", uri=True)
+        # self.conn = sqlite3.connect("file::memory:?cache=shared", uri=True)
+        self.conn = sqlite3.connect("sqlite.db", uri=True)
 
     def read_files(self, file_paths):
         logging.info("Reading CIF files")
@@ -533,6 +533,30 @@ class CIFReader:
                 items = sole_block.get_mmcif_category(category)
                 first_item = items.keys()[0]
                 return len(first_item)
+
+class SqliteReader:
+    def __init__(self, sqlite_path) -> None:
+        self.data = {} 
+        self.denormalised_data = []
+        self.conn = sqlite3.connect(sqlite_path, uri=True)
+
+    @contextmanager
+    def sqlite_db_connection(self):
+        logging.debug("Re-using In-memory DB connection")
+        conn = self.conn
+        try:
+            yield conn
+        finally:
+            conn.commit()
+
+    def sql_execute(self, query):
+        logging.debug(f"Executing query: {query}")
+        result = []
+        with self.sqlite_db_connection() as conn:
+            response = conn.execute(query)
+            for row in response:
+                result.append(row)
+        return result
 
 
 class InvestigationStorage:
