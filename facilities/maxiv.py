@@ -257,7 +257,7 @@ def maxiv_subparser(subparsers, parent_parser):
     parser_maxiv.add_argument(
         "-s",
         "--sqlite",
-        help="Create investigation from set of pdb ids, space seperated",
+        help="Path to the Sqlite DB for the given investigation",
     )
 
 def run_investigation_maxiv(args):
