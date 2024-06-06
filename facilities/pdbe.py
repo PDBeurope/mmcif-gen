@@ -26,6 +26,7 @@ class InvestigationPdbe(InvestigationEngine):
         logging.info("Instantiating PDBe Investigation subclass")
         self.reader = CIFReader()
         self.model_file_path = model_file_path
+        self.operation_file_json = "./operations.json"
         super().__init__(investigation_id, output_path)
 
     def pre_run(self) -> None:

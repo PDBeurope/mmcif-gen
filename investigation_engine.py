@@ -27,7 +27,6 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 class InvestigationEngine:
     def __init__(self, investigation_id: str, output_path: str) -> None:
         self.investigation_storage = InvestigationStorage(investigation_id)
-        self.operation_file_json = "./operations.json"
         self.output_path = output_path
         self.investigation_id = investigation_id
         self.operations = []

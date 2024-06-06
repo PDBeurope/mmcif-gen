@@ -40,7 +40,7 @@ def main() -> None:
         pathlib.Path(args.output_folder).mkdir(parents=True, exist_ok=True) 
     if args.facility == 'pdbe':
         run_investigation_pdbe(args)
-    elif args.facility == 'Max IV':
+    elif args.facility == 'max_iv':
         run_investigation_maxiv(args)
 
 if __name__ == "__main__":

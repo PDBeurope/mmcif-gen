@@ -463,6 +463,7 @@
 
 ],
     "mmcif_order": {
+        "_pdbx_contact_author": ["id"],
         "_audit_author" : ["pdbx_ordinal", "name"],
         "_pdbx_investigation_archived_data" : ["id"],
         "_pdbx_fraghub_investigation_campaign" : ["campaign_id"],

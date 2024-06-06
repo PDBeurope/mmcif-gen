@@ -1,0 +1,192 @@
+{
+    "operations": [
+        {
+        "target_category" : "_pdbx_contact_author",
+        "target_items" : ["address_1","address_2","address_3","email","identifier_ORCID","name_first","name_last","name_mi","role"],
+        "operation" : "sql_query",
+        "operation_parameters" :{
+            "query" : "SELECT  address_1, address_2, address_3, email, identifier_ORCID, name_first, name_last, name_first_initials, role from author_table"
+        }
+    },
+    {
+        "target_category" : "_pdbx_contact_author",
+        "target_item" : "id",
+        "operation" : "auto_increment"
+    },
+    {
+        "target_category" : "_audit_author",
+        "target_items" : ["name","identifier_ORCID"],
+        "operation" : "sql_query",
+        "operation_parameters" :{
+            "query" : "SELECT  name_last || ' ' || COALESCE(name_first_initials,''), identifier_ORCID from author_table"
+        }
+    },
+    {
+        "target_category" : "_audit_author",
+        "target_item" : "pdbx_ordinal",
+        "operation" : "auto_increment"
+    },
+    {
+        "target_category" : "_pdbx_investigation",
+        "target_items" : ["type","id","db","project","title","details"],
+        "operation" : "sql_query",
+        "operation_parameters" :{
+            "query" : "SELECT  'Fragment Screening' as type, 'Frag_' || proposal_number ,'frag_hub' as db, proposal_number, project_name, project_description from project_table"
+        }
+    },
+    {
+        "target_category" : "_pdbx_investigation_archived_data",
+        "target_items" : ["investigation_id","id","archive_db_name"],
+        "operation" : "noop",
+        "operation_parameters" :{
+            "query" : ""
+        }
+    },
+   {
+        "target_category" : "_pdbx_fraghub_investigation_campaign",
+        "target_items" : ["year", "proc_pipeline", "facility"],
+        "operation" : "sql_query",
+        "operation_parameters" :{
+            "query" : "SELECT DISTINCT(SUBSTR(proposal_number,1,4)),'fragmax' as proc_pipeline ,'MAX_IV' as facility from denormalized_data"
+        }
+    },
+    {
+        "target_category" : "_pdbx_fraghub_investigation_campaign",
+        "target_item" : "campaign_id",
+        "operation" : "auto_increment"
+    },
+    {
+        "source_category" : "_pdbx_investigation",
+        "source_items" : ["id"],
+        "target_category" : "_pdbx_fraghub_investigation_campaign",
+        "target_items" : ["investigation_id"],
+        "operation" : "copy_fill"
+    },
+    {
+        "target_category" : "_pdbx_fraghub_investigation_series",
+        "target_items" : ["campaign_id","fragment_lib"],
+        "operation" : "sql_query",
+        "operation_parameters" :{
+            "query" : "SELECT '1' as project_table_row,library_name from denormalized_data"
+        }
+    },
+    {
+        "target_category" : "_pdbx_fraghub_investigation_series",
+        "target_item" : "series_id",
+        "operation" : "auto_increment"
+    },
+    {
+        "source_category" : "_pdbx_fraghub_investigation_series",
+        "source_items" : ["id"],
+        "target_category" : "_pdbx_fraghub_investigation_campaign",
+        "target_items" : ["investigation_id"],
+        "operation" : "copy_fill"
+    },
+    {
+        "target_category" : "_pdbx_investigation_entity_poly",
+        "target_items" : [ "poly_entity_id","seq_one_letter_code ","ref_db_acc ","type", "src_method", "ref_db_name"],
+        "operation" : "sql_query",
+        "operation_parameters" :{
+            "query" : "SELECT entity_id, sequence, uniprot_id,'polypeptide(L)' as type, 'man' as method, 'UNP' as db FROM entities where type='polymer'"
+        }
+    },
+    {
+        "target_category" : "_pdbx_investigation_poly_descript",
+        "target_items" : ["poly_entity_id","id"],
+        "operation" : "sql_query",
+        "operation_parameters" :{
+            "query" : "SELECT DISTINCT poly_descript, entity_id FROM descript where poly_descript IS NOT NULL ORDER BY poly_descript, entity_id"
+        }
+    },
+    {
+        "target_category" : "_pdbx_investigation_entity_nonpoly",
+        "target_items" : ["nonpoly_entity_id","chem_comp_id", "name", "formula","formula_weight", "inchi"],
+        "operation" : "sql_query",
+        "operation_parameters" :{
+            "query" : "SELECT entity_id, chem_comp_id, name, formula, formula_weight, inchi from entities WHERE type='non-polymer' "
+        }
+    },
+    {
+        "target_category" : "_pdbx_investigation_nonpoly_descript",
+        "target_items" : ["nonpoly_entity_id","id"],
+        "operation" : "sql_query",
+        "operation_parameters" :{
+            "query" : "SELECT DISTINCT nonpoly_descript, entity_id FROM descript where nonpoly_descript IS NOT NULL ORDER BY nonpoly_descript, entity_id"
+        }
+    },
+    {
+        "target_category" : "_pdbx_fraghub_investigation_fraglib_component",
+        "target_items" : ["inchi_descriptor ","id","name ","formula", "formula_weight", "cas_identifier", "detail"],
+        "operation" : "sql_query",
+        "operation_parameters" :{
+            "query" : "SELECT distinct(fragment_inchi), entity_id, c.chemical_name, c.formula, c.formula_weight,  c.cas, c.compound_code from descript JOIN compound_table c on fragment_inchi=c.inchi "
+        }
+    },
+    {
+        "target_category" : "_pdbx_fraghub_investigation_frag_component_mix",
+        "target_items" : ["id","fraglib_component_id"],
+        "operation" : "sql_query",
+        "operation_parameters" :{
+            "query" : "SELECT DENSE_RANK() OVER (ORDER BY dataset_id) id,  entity_id from descript where fragment_inchi is not null ORDER BY id, entity_id"
+        }
+    },
+   
+    {
+        "target_category" : "_pdbx_investigation_sample",
+        "target_items" : [ "poly_descript_id ","nonpoly_descript_id"],
+        "operation" : "sql_query",
+        "operation_parameters" :{
+            "query" : "SELECT DISTINCT  A.poly_descript, B.nonpoly_descript FROM descript A JOIN (SELECT DISTINCT  sample_id, nonpoly_descript FROM descript WHERE sample_id is not NULL and nonpoly_descript is not NULL) B on B.sample_id = A.sample_id WHERE A.sample_id is not NULL and A.poly_descript is not NULL"
+        }
+    },
+    {
+        "target_category" : "_pdbx_investigation_sample",
+        "target_item" : "sample_id",
+        "operation" : "auto_increment"
+    },
+
+    {
+        "target_category" : "_pdbx_investigation_entity_poly",
+        "target_items" : ["component_id","comp_ref_db_name","comp_ref_db_acc"],
+        "operation" : "sql_query",
+        "operation_parameters" :{
+            "query" : "SELECT entity_id, 'UNP' as db, uniprot_id FROM entities where type='polymer'"
+        }
+    },
+    {
+        "source_category" : "_pdbx_investigation",
+        "source_items" : ["id"],
+        "target_category" : "_pdbx_investigation_entity_poly",
+        "target_items" : ["investigation_id"],
+        "operation" : "copy_fill"
+    }
+],
+    "mmcif_order": {
+        "_pdbx_contact_author": ["id"],
+        "_audit_author" : ["pdbx_ordinal", "name"],
+        "_pdbx_investigation_archived_data" : ["id"],
+        "_pdbx_fraghub_investigation_campaign" : ["campaign_id"],
+        "_pdbx_investigation_entity_poly" : ["poly_entity_id"],
+        "_pdbx_investigation_entity_nonpoly" : ["nonpoly_entity_id"],
+        "_pdbx_fraghub_investigation_fraglib_component" : ["id"],
+        "_pdbx_fraghub_investigation_series" : ["series_id"],
+        "_pdbx_fraghub_investigation_screening_exp":["screening_exp_id","instance_id"],
+        "_pdbx_fraghub_investigation_screening_result" : ["result_id"]
+
+
+    },
+    "help" :{
+        "source_category" : "Category in the deposition files to look into",
+        "source_items" : "Which items to compute from in the source_category in the deposition files",
+        "target_category" : "Which category to write out in the investigation file",
+        "target_items" : "Which items to write out in the investigation file for the category",
+        "operation" : "What operation to perform on the source items to get values for target_items",
+        "operation_parameters" : {
+            "primary_parameters" : { "distinct_union" : "Check the items specified in the source files, and use them for criteria of distinctness between files"
+            },
+            "secondary_parameters" : { "union" : "If primary parameter has items that are empty in one or many file, use these items to evaluate for distinctess"
+            }
+        },
+        "auto_increment_field" : "Specifies field in this category which would be auto-incremented like IDs",
+        "_same" : "target_category or target_items are same as source_category or source_items"}
+}
