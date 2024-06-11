@@ -1,23 +1,45 @@
 # Investigations
 
-### Description
-This application is designed to create investigation files from data of various facilities.
-There are utilities which are present that can further enrich data in the investigation files.
+## Project Description
 
-For PDBe
-The model files can be provided as a folder path, or as PDB Ids.
-Where PDB ids are specified, the data is fetched from FTP Area of EBI PDB archive
+The Investigations project is designed to facilitate the processing and analysis of data from various facilities, including PDBe, MAX IV, and ESRF. The project provides a set of tools for managing and executing operations, importing data, and generating output in a standardized format.
 
-For MaxIV:
-SqliteDB file is required
+## Features
 
-### Setup and Installation
-```
-git clone https://github.com/PDBeurope/Investigations.git
-cd Investgations
-pip install -r requirements.txt
-```
-### Usage
+- Integration with multiple facilities (PDBe, MAX IV, ESRF)
+- Comprehensive data import and export functionalities
+- Modular design for easy extension and maintenance
+- Robust error handling and logging
+- Comprehensive test suite for ensuring code quality
+
+## Installation
+
+To get started with the Investigations project, follow these steps:
+
+1. Clone the repository:
+
+    ```bash
+    git clone https://github.com/yourusername/investigations.git
+    cd investigations
+    ```
+
+2. Create a virtual environment and activate it:
+
+    ```bash
+    python3 -m venv venv
+    source venv/bin/activate
+    ```
+
+3. Install the required dependencies:
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+## Usage
+
+Below are some common usage examples to help you get started with the Investigations project.
+
 The script requires to specify a facility as the first argument:
 
 ```
@@ -35,7 +57,8 @@ positional arguments:
 ```
 
 Each facility have its own set of arguments. 
-For MAX IV
+### For MAX IV
+SqliteDB file is required
 
 ```
 python investigation.py max_iv --help
@@ -51,7 +74,11 @@ optional arguments:
                         Path to the Sqlite DB for the given investigation
 ```
 
-For PDBE
+### For PDBE
+
+The model files can be provided as a folder path, or as PDB Ids.
+Where PDB ids are specified, the data is fetched from FTP Area of EBI PDB archive
+
 ```
 python investigation.py pdbe --help  
 usage: Investigation pdbe [-h] [-o OUTPUT_FOLDER] [-i INVESTIGATION_ID] [-f MODEL_FOLDER] [-csv CSV_FILE] [-p PDB_IDS [PDB_IDS ...]]
@@ -104,7 +131,6 @@ And outputs a modified investigation cif file.
 investigation.py max_iv --sqlite fragmax.sqlite -i inv_01
 ```
 
-
 #### PDBE
 PDB Ids can be passed in the arguments. The model file is fetched from EBI Archive FTP area temporarily stored. After the investigation file is created the files are deleted.
 ```
@@ -121,6 +147,36 @@ Entries in the same groups are processed together, and an investigation file is 
 ```
 python investigations.py pdbe -f path/to/csv/file
 ```
+
+## Running Tests
+
+To run the test suite, use the following command:
+
+```bash
+python -m unittest discover -s test
+```
+
+## Project Structure
+
+- `investigation.py`: Core logic for handling investigations.
+- `investigation_engine.py`: Manages the processing logic for investigations.
+- `investigation_io.py`: Handles input/output operations for investigations.
+- `operations.py`: Contains operational logic for various tasks.
+- `util/`: Contains utility scripts.
+- `facilities/`: Handles different facilities' operations.
+- `test/`: Contains test cases and data for unit testing.
+- `requirements.txt`: Lists the dependencies required for the project.
+- `README.md`: Project documentation.
+
+## Configuration
+
+Configuration files for the operations can be found in the root directory:
+
+  - `pdbe_operations.json`
+  - `maxiv_operations.json`
+
+These files contain necessary configurations for interacting with the respective facilities.
+
 
 ### Working
 The investigation file is created from the constituent model file. The data from the model file is parsed via Gemmi and stored in a in-memory SQLite database, which denormalises the data in the various categories amongst all the files.
