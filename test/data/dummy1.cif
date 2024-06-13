@@ -1,0 +1,13 @@
+data_test_pdbx
+loop_
+_audit_author.name
+_audit_author.pdbx_ordinal
+'Snee, M.'       1
+'Talon, R.'      2
+'Fowley, D.'     3
+'Name something' 4
+
+_struct.entry_id 1CBS
+_struct.title
+;CRYSTAL STRUCTURE OF CELLULAR RETINOIC-ACID-BINDING PROTEINS I AND II IN COMPLEX WITH ALL-TRANS-RETINOIC ACID AND A SYNTHETIC RETINOID
+;
