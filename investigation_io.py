@@ -4,6 +4,8 @@ import gemmi
 import csv
 import sqlite3
 from contextlib import contextmanager
+import requests
+import jq
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
@@ -558,7 +560,6 @@ class SqliteReader:
                 result.append(row)
         return result
 
-
 class InvestigationStorage:
     def __init__(self, investigation_id):
         self.data = {}
@@ -613,7 +614,8 @@ class InvestigationStorage:
             ordered_category = {}
             ordered_items = self.get_item_order(category)
             for ordered_item in ordered_items:
-                ordered_category[ordered_item]  = items.pop(ordered_item)
+                if ordered_item in items:
+                    ordered_category[ordered_item]  = items.pop(ordered_item)
             ordered_category.update(items)
             block.set_mmcif_category(category, ordered_category)
         block.write_file(output_file, write_options)
@@ -634,7 +636,6 @@ class InvestigationStorage:
             print(f"Dictionary '{dictionary_key}' has inconsistent list lengths:")
             for key, length in keys_lengths:
                 print(f"   Key '{key}' has length {length}")
-
 
 class ExternalInformation:
     def __init__(self, filename) -> None:
@@ -658,3 +659,34 @@ class ExternalInformation:
     def get_inchi_key(self, chem_comp_id):
         self._load_inchi_keys()
         return self._get_inchi_key(chem_comp_id)
+
+class RestReader:
+    def __init__(self, base_url, username, password):
+        self.base_url = base_url
+        self.session = requests.Session()
+        self.access_token = self.get_auth_token(username, password)
+        self.session.headers.update({'Authorization': f'Bearer {self.access_token}'})
+
+    def get_auth_token(self, username, password):
+        url = f"{self.base_url}/auth"
+        payload = {"grant_type": "password", 'username': username, 'password': password}
+        response = self.session.post(url, json=payload)
+        response.raise_for_status()
+        return response.json()['access_token']
+
+    def get(self, endpoint, params=None, filter_query=None):
+        url = f"{self.base_url}{endpoint}"
+        response = self.session.get(url, params=params)
+        response.raise_for_status()
+        return self.filter_response(response.json(), filter_query)
+
+    def post(self, endpoint, data=None, filter_query=None):
+        url = f"{self.base_url}{endpoint}"
+        response = self.session.post(url, json=data)
+        response.raise_for_status()
+        return self.filter_response(response.json(), filter_query)
+
+    def filter_response(self, response_json, filter_query):
+        if filter_query:
+            return jq.compile(filter_query).input(response_json).first()
+        return response_json

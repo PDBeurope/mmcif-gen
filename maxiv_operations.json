@@ -64,10 +64,10 @@
     },
     {
         "target_category" : "_pdbx_fraghub_investigation_series",
-        "target_items" : ["campaign_id","fragment_lib"],
+        "target_items" : ["fragment_lib","campaign_id"],
         "operation" : "sql_query",
         "operation_parameters" :{
-            "query" : "SELECT '1' as project_table_row,library_name from denormalized_data"
+            "query" : "SELECT distinct library_name, '1' as project_table_row from denormalized_data"
         }
     },
     {
@@ -119,15 +119,15 @@
         "target_items" : ["inchi_descriptor ","id","name ","formula", "formula_weight", "cas_identifier", "detail"],
         "operation" : "sql_query",
         "operation_parameters" :{
-            "query" : "SELECT distinct(fragment_inchi), entity_id, c.chemical_name, c.formula, c.formula_weight,  c.cas, c.compound_code from descript JOIN compound_table c on fragment_inchi=c.inchi "
+            "query" : "SELECT distinct(fragment_inchi), fragment_component_id, c.chemical_name, c.formula, c.formula_weight,  c.cas, c.compound_code from descript JOIN compound_table c on fragment_inchi=c.inchi "
         }
     },
     {
         "target_category" : "_pdbx_fraghub_investigation_frag_component_mix",
-        "target_items" : ["id","fraglib_component_id"],
+        "target_items" : ["id", "fraglib_component_id"],
         "operation" : "sql_query",
         "operation_parameters" :{
-            "query" : "SELECT DENSE_RANK() OVER (ORDER BY dataset_id) id,  entity_id from descript where fragment_inchi is not null ORDER BY id, entity_id"
+            "query" : "SELECT fragment_component_mix, fragment_component_id from descript WHERE fragment_component_mix is not NULL ORDER BY fragment_component_mix"
         }
     },
    

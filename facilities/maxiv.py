@@ -166,6 +166,8 @@ class InvestigationMaxIV(InvestigationEngine):
         query_creating_descript = '''
                                     CREATE TABLE descript (
                                     entity_id int,
+                                    fragment_component_id int,
+                                    fragment_component_mix int,
                                     dataset_id int,
                                     chem_comp text,
                                     sequence text,
@@ -200,7 +202,7 @@ class InvestigationMaxIV(InvestigationEngine):
         sample_result = self.reader.sql_execute(query_sample)
 
         query_fragment = '''
-                SELECT distinct inchi, dataset_id from denormalized_data where inchi is not null and dataset_id is not NULL ORDER BY dataset_id
+                SELECT inchi, dataset_id from denormalized_data where inchi is not null and dataset_id is not NULL ORDER BY dataset_id
             '''
         fragment_result = self.reader.sql_execute(query_fragment)
 
@@ -237,12 +239,52 @@ class InvestigationMaxIV(InvestigationEngine):
                                     VALUES (?, ?, ?, ?)'''
                             cursor.execute(insert_query, (seq[0],seq[1], descript+1, sample_id))
 
+            previous_dataset_id = ""
+            frag_component_mix = 0
+            fragment_component_id_mapping = {}
+            next_component_id = 1
+            fragmix_data = []
+            frag_data = []
+            mix_for_index = []
             for index, fragment_data in enumerate(fragment_result):
-                insert_query = '''
-                            INSERT INTO descript
-                            (entity_id, fragment_inchi, dataset_id)
-                            VALUES (?, ?, ?)'''
-                cursor.execute(insert_query, (index+1, fragment_data[0],fragment_data[1]))
+                if fragment_data[1] != previous_dataset_id:
+                    frag_component_mix += 1
+
+                if fragment_data[0]  not in fragment_component_id_mapping:
+                    fragment_component_id_mapping[fragment_data[0]] = next_component_id
+                    next_component_id += 1
+
+                fragment_component_id = fragment_component_id_mapping[fragment_data[0]]
+                
+                fragmix_data.append((frag_component_mix, fragment_component_id))
+                mix_for_index.append(frag_component_mix)
+                frag_data.append((fragment_data[0],fragment_data[1]))
+                
+                previous_dataset_id = fragment_data[1]
+
+            # Finding all mixes:
+
+            mix_to_fragments = {}
+            for mix, fragment in fragmix_data:
+                if mix not in mix_to_fragments:
+                    mix_to_fragments[mix] = set()
+                mix_to_fragments[mix].add(fragment)
+
+            # Finding Unique mixes
+            unique_fragments = {}
+            mix_id = 0 
+            for mix, fragments in mix_to_fragments.items():
+                fragment_tuple = tuple(sorted(fragments))  # Sort and convert to tuple for hashability
+                if fragment_tuple not in unique_fragments:
+                    index_in_frag_data = mix_for_index.index(mix)
+                    unique_fragments[fragment_tuple] = mix
+                    mix_id += 1
+                    for frag in fragment_tuple:
+                        insert_query = '''
+                                INSERT INTO descript
+                                (fragment_component_id, fragment_component_mix, fragment_inchi, dataset_id)
+                                VALUES (?, ?, ?, ?)'''
+                        cursor.execute(insert_query, (frag, mix_id, frag_data[index_in_frag_data][0],frag_data[index_in_frag_data][1]))
 
 
 
