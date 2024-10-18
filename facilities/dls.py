@@ -15,7 +15,7 @@ class InvestigationDLS(InvestigationEngine):
         self.pickle_reader = PickleReader(deposit_path).data
         self.reader = CIFReader()
         self.reader.read_files(cif_files)
-        self.operation_file_json = "./dls_operations.json"
+        self.operation_file_json = "./operations/dls_operations_soakdb.json"
         self.excluded_libraries = ["'Diffraction Test'","'Solvent'"]
         super().__init__(investigation_id, output_path)
 
@@ -202,10 +202,12 @@ def dls_subparser(subparsers, parent_parser):
     )
 
 def run(sqlite_path : str, deposit_path: str, txt_path: str, investigation_id: str, output_path: str) -> None:
-    cif_files = get_cif_file_paths(txt_path)
-    print("List of CIF file paths:")
-    for file_path in cif_files:
-        print(file_path)
+    cif_files = []
+    if txt_path:
+        cif_files = get_cif_file_paths(txt_path)
+        print("List of CIF file paths:")
+        for file_path in cif_files:
+            print(file_path)
     im = InvestigationDLS(sqlite_path, deposit_path, cif_files, investigation_id, output_path)
     im.pre_run()
     im.run()

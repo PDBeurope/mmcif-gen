@@ -12,7 +12,7 @@ class InvestigationMaxIV(InvestigationEngine):
     def __init__(self, sqlite_path: str, investigation_id: str, output_path: str) -> None:
         logging.info("Instantiating MaxIV Investigation subclass")
         self.reader = SqliteReader(sqlite_path)
-        self.operation_file_json = "maxiv_operations.json"
+        self.operation_file_json = "./operations/maxiv_operations.json"
         super().__init__(investigation_id, output_path)
 
     def pre_run(self) -> None:

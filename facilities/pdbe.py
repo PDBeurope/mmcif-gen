@@ -27,7 +27,7 @@ class InvestigationPdbe(InvestigationEngine):
         logging.info("Instantiating PDBe Investigation subclass")
         self.reader = CIFReader()
         self.model_file_path = model_file_path
-        self.operation_file_json = "./pdbe_operations.json"
+        self.operation_file_json = "./operations/pdbe_operations.json"
         self.sqlite_reader = SqliteReader("pdbe_sqlite.db")
         super().__init__(investigation_id, output_path)
 

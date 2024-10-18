@@ -1,4 +1,5 @@
 from investigation_engine import InvestigationEngine
+from investigation_io import RestReader
 from typing import List
 import sys
 import logging
@@ -7,9 +8,10 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 class InvestigationESRF(InvestigationEngine):
         
-    def __init__(self, sqlite_path: str, investigation_id: str, output_path: str) -> None:
+    def __init__(self, user: str, pw:str, investigation_id: str, output_path: str) -> None:
         logging.info("Instantiating ESRF Investigation subclass")
-        self.sqlite_path = sqlite_path
+        self.rest_reader = RestReader("https://htxlab.embl.org/", user, pw)
+        self.rest_reader.get_auth_token()
         super().__init__(investigation_id, output_path)
 
     def pre_run(self) -> None:

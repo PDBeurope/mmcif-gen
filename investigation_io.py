@@ -291,8 +291,9 @@ class PickleReader:
         self.load_pickle()
 
     def load_pickle(self):
-        with open(self.pickle_path, 'rb') as file:
-            self.data = pickle.load(file)
+        if self.pickle_path:
+            with open(self.pickle_path, 'rb') as file:
+                self.data = pickle.load(file)
 
 class ExternalInformation:
     def __init__(self, filename) -> None:

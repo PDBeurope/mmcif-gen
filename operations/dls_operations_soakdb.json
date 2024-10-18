@@ -25,7 +25,7 @@
         },
         {
             "target_category" : "_audit_author",
-            "target_items" : ["id, name"],
+            "target_items" : ["ordinal", "name"],
             "operation" : "static_value",
             "target_values" : ["1","Required from XCA!"]
         },
@@ -86,15 +86,10 @@
             }
         },
         {
-            "reader" : "cif",
-            "source_category" : "_entity",
-            "source_items" : ["type","src_method"],
             "target_category" : "_pdbx_investigation_entity_poly",
             "target_items" : ["type","src_method"],
-            "operation" : "distinct_union",
-            "operation_parameters" :{
-                "primary_parameters" : ["type"]
-            }
+            "operation" : "static_value",
+            "target_values" : ["need from XCA","X-RAY DIFFRACTION"]
         },
         {
             "reader" : "sqlite",
@@ -114,7 +109,7 @@
         {
             "target_category" : "_pdbx_investigation_entity_nonpoly",
             "target_items" : ["name","chem_comp_id","formula_weight","formula","inchi_descriptor","cas_identifier"],
-            "target_values": ["water","HOH","18.015","H2 O","Sample data - needs to come from XCA",null],
+            "target_values": ["water","HOH","18.015","H2 O","Sample data - needs to come from XCA","required from XCA"],
             "operation" : "static_value"
         },
         {
@@ -170,10 +165,10 @@
         {
             "reader" : "sqlite",
             "target_category" : "_pdbx_fraghub_investigation_screening_exp",
-            "target_items" : ["screening_exp_id","series_id","campaign_id","investigation_id","sample_id","fragment_component_mix_id","exp_method", "exp_details", "data_deposited"],
+            "target_items" : ["screening_exp_id","series_id","campaign_id","investigation_id","sample_id","fragment_component_mix_id","exp_method", "exp_details", "data_deposited", "exp_external_url"],
             "operation" : "sql_query",
             "operation_parameters" :{
-                "query" : "SELECT screening_exp_id, series_id, campaign_id, investigation_id, sample_id, fraglib_component_id, 'X-RAY DIFFRACTION' as method, library_name, data_deposited as details FROM experiments"
+                "query" : "SELECT screening_exp_id, series_id, campaign_id, investigation_id, sample_id, fraglib_component_id, 'X-RAY DIFFRACTION' as method, library_name, data_deposited as details, 'URL required from Fragalysis' as external_url FROM experiments"
             }
         },
         {
