@@ -155,7 +155,8 @@ investigation.py max_iv --sqlite fragmax.sqlite -i inv_01
 #### DLS
 
 ```
-python investigation.py dls --sqlite DLS_data_example/soakDBDataFile_CHIKV_Mac.sqlite --txt DLS_data_example/ --deposit DLS_data_example/deposition.deposit -i inv_01 -o out/```
+python investigation.py dls --sqlite DLS_data_example/soakDBDataFile_CHIKV_Mac.sqlite --txt DLS_data_example/ --deposit DLS_data_example/deposition.deposit -i inv_01 -o out/
+```
 
 #### PDBE
 PDB Ids can be passed in the arguments. The model file is fetched from EBI Archive FTP area temporarily stored. After the investigation file is created the files are deleted.
