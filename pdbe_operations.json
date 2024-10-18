@@ -44,6 +44,7 @@
     {
         "target_category" : "_pdbx_investigation",
         "target_items" : ["id"],
+        "reader" : "sqlite",
         "operation" : "sql_query",
         "operation_parameters" :{
             "query" : "SELECT  distinct(investigation_id) from denormalized_data"
@@ -96,6 +97,7 @@
     {
         "target_category" : "_pdbx_investigation_archived_data",
         "target_items" : ["archive_db_acc"],
+        "reader" : "sqlite",
         "operation" : "sql_query",
         "operation_parameters" :{
             "query" : "select distinct('pdb_0000' || lower(pdb_id)) from denormalized_data"
@@ -122,6 +124,7 @@
     {
         "target_category" : "_pdbx_investigation_archived_data",
         "target_items" : ["archived_data_doi"],
+        "reader" : "sqlite",
         "operation" : "sql_query",
         "operation_parameters" :{
             "query" : "SELECT distinct('10.2210/pdb' || lower(pdb_id) || '/pdb') from denormalized_data"
@@ -216,6 +219,7 @@
     {
         "target_category" : "_pdbx_investigation_entity_poly",
         "target_items" :["poly_entity_id","type","seq_one_letter_code", "src_method","ref_db_name", "ref_db_code","ref_db_acc"],
+        "reader" : "sqlite",
         "operation" : "sql_query",
         "operation_parameters" :{
             "query" : "SELECT investigation_entity_id, poly_type, seq_one_letter_code, src_method, db_name, db_code, db_accession from denormalized_data where type=\"polymer\" GROUP BY investigation_entity_id"
@@ -295,6 +299,7 @@
     {
         "target_category" : "_pdbx_investigation_poly_descript",
         "target_items" : ["id", "poly_entity_id"],
+        "reader" : "sqlite",
         "operation" : "sql_query",
         "operation_parameters" :{
             "query" : "SELECT poly_descript, investigation_entity_id from denormalized_data WHERE type = \"polymer\" GROUP BY investigation_entity_id, poly_descript ORDER BY poly_descript, investigation_entity_id"
@@ -304,6 +309,7 @@
     {
         "target_category" : "_pdbx_investigation_nonpoly_descript",
         "target_items" : ["id", "nonpoly_entity_id"],
+        "reader" : "sqlite",
         "operation" : "sql_query",
         "operation_parameters" :{
             "query" : "SELECT  nonpoly_descript, investigation_entity_id from denormalized_data WHERE type = \"non-polymer\" or type=\"water\" GROUP BY investigation_entity_id, nonpoly_descript ORDER BY nonpoly_descript, investigation_entity_id"
@@ -313,6 +319,7 @@
     {
         "target_category" : "_pdbx_fraghub_investigation_frag_component_mix",
         "target_items" : ["id", "fraglib_component_id"],
+        "reader" : "sqlite",
         "operation" : "sql_query",
         "operation_parameters" :{
             "query" : "SELECT  nonpoly_descript, investigation_entity_id from denormalized_data WHERE type = \"non-polymer\" or type=\"water\" GROUP BY investigation_entity_id, nonpoly_descript ORDER BY nonpoly_descript, investigation_entity_id"
@@ -322,6 +329,7 @@
     {
         "target_category" : "_pdbx_investigation_sample",
         "target_items" : ["sample_id", "poly_descript_id","nonpoly_descript_id"],
+        "reader" : "sqlite",
         "operation" : "sql_query",
         "operation_parameters" :{
             "query" : "SELECT sample_id, poly_descript, nonpoly_descript from denormalized_data GROUP BY sample_id"
@@ -338,6 +346,7 @@
     {
         "target_category" : "_pdbx_fraghub_investigation_screening_exp",
         "target_items" : ["archive_db_acc","series_id", "campaign_id","sample_id", "frag_component_mix_id", "exp_method"],
+        "reader" : "sqlite",
         "operation" : "sql_query",
         "operation_parameters" :{
             "query" : "SELECT distinct('pdb_0000' || lower(pdb_id)), series_id, campaign_id, sample_id, nonpoly_descript,exptl_method from denormalized_data"
@@ -443,6 +452,7 @@
     {
         "target_category" : "_pdbx_investigation_focus",
         "target_items" : ["component_id","comp_ref_db_name","comp_ref_db_acc","comp_ref_db_code","key_component_name"],
+        "reader" : "sqlite",
         "operation" : "sql_query",
         "operation_parameters" :{
             "query" : "SELECT DISTINCT(investigation_entity_id) ,db_name, db_accession, db_code, GROUP_CONCAT(DISTINCT description) from denormalized_data where type=\"polymer\""

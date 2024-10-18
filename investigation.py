@@ -1,5 +1,6 @@
 from facilities.pdbe import pdbe_subparser, run_investigation_pdbe
 from facilities.maxiv import maxiv_subparser, run_investigation_maxiv
+from facilities.dls import dls_subparser, run_investigation_dls
 from facilities.esrf import  esrf_subparser
 import argparse
 import logging
@@ -34,6 +35,7 @@ def main() -> None:
     pdbe_subparser(subparsers, parent_parser)
     maxiv_subparser(subparsers, parent_parser)
     esrf_subparser(subparsers, parent_parser)
+    dls_subparser(subparsers, parent_parser)
     args = parser.parse_args()
 
     if args.output_folder:
@@ -42,6 +44,8 @@ def main() -> None:
         run_investigation_pdbe(args)
     elif args.facility == 'max_iv':
         run_investigation_maxiv(args)
+    elif args.facility == 'dls':
+        run_investigation_dls(args)
 
 if __name__ == "__main__":
     main()

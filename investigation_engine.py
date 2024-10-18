@@ -16,6 +16,8 @@ from operations import (
     ConditionalDistinctUnionOperation,
     UnionDistinctOperation,
     SQLOperation,
+    EndpointOperation,
+    CopyFromPickleOperation
 )
 import json
 import logging
@@ -42,53 +44,68 @@ class InvestigationEngine:
             self.operations = json_data.get("operations", [])
             self.investigation_storage.mmcif_order = json_data.get("mmcif_order", [])
 
-    def operation_factory(self, operation_type: str) -> operationBase:
+    def operation_factory(self, operation_type: str, operation_reader: str) -> operationBase:
+        if not operation_reader:
+            operation_reader = self.reader
+        elif operation_reader == "sqlite":
+            operation_reader = self.sqlite_reader
+        elif operation_reader == "pickle":
+            operation_reader = self.pickle_reader
+        elif operation_reader == "cif":
+            operation_reader = self.reader
+
+
         if operation_type == "distinct_union":
-            return UnionDistinctOperation(self.investigation_storage, self.reader)
+            return UnionDistinctOperation(self.investigation_storage, operation_reader)
         elif operation_type == "intersection":
-            return IntersectionOperation(self.investigation_storage, self.reader)
+            return IntersectionOperation(self.investigation_storage, operation_reader)
         elif operation_type == "auto_increment":
-            return AutoIncrementOperation(self.investigation_storage, self.reader)
+            return AutoIncrementOperation(self.investigation_storage, operation_reader)
         elif operation_type == "static_value":
-            return StaticValueOperation(self.investigation_storage, self.reader)
+            return StaticValueOperation(self.investigation_storage, operation_reader)
         elif operation_type == "modify_intersection":
-            return ModifyOperation(self.investigation_storage, self.reader)
+            return ModifyOperation(self.investigation_storage, operation_reader)
         elif operation_type == "conditional_union":
-            return ConditionalUnionOperation(self.investigation_storage, self.reader)
+            return ConditionalUnionOperation(self.investigation_storage, operation_reader)
         elif operation_type == "copy":
-            return CopyOperation(self.investigation_storage, self.reader)
+            return CopyOperation(self.investigation_storage, operation_reader)
         elif operation_type == "copy_fill":
-            return CopyFillOperation(self.investigation_storage, self.reader)
+            return CopyFillOperation(self.investigation_storage, operation_reader)
         elif operation_type == "copy_conditional_modify":
             return CopyConditionalModificationOperation(
-                self.investigation_storage, self.reader
+                self.investigation_storage, operation_reader
             )
         elif operation_type == "copy_for_each_row":
-            return CopyForEachRowOperation(self.investigation_storage, self.reader)
+            return CopyForEachRowOperation(self.investigation_storage, operation_reader)
         elif operation_type == "external_information":
-            return ExternalInformationOperation(self.investigation_storage, self.reader)
+            return ExternalInformationOperation(self.investigation_storage, operation_reader)
         elif operation_type == "deletion":
-            return DeletionOperation(self.investigation_storage, self.reader)
+            return DeletionOperation(self.investigation_storage, operation_reader)
         elif operation_type == "conditional_distinct_union":
             return ConditionalDistinctUnionOperation(
-                self.investigation_storage, self.reader
+                self.investigation_storage, operation_reader
             )
         elif operation_type == "sql_query":
-            return SQLOperation(self.investigation_storage, self.reader)
+            return SQLOperation(self.investigation_storage, operation_reader)
+        elif operation_type == "rest_endpoint":
+            return EndpointOperation(self.investigation_storage, None, operation_reader)
         elif operation_type == "noop":
-            return NoopOperation(self.investigation_storage, self.reader)
+            return NoopOperation(self.investigation_storage, operation_reader)
+        elif operation_type == "copy_from_pickle":
+            return CopyFromPickleOperation(self.investigation_storage, operation_reader)
         else:
             raise ValueError(f"Invalid operation type: {operation_type}")
 
     def run(self) -> None :
         for operation_data in self.operations:
             try:
-                operation_type = operation_data.get("operation", "")
-                operation = self.operation_factory(operation_type)
+                operation_type = operation_data["operation"]
+                operation_reader = operation_data.get("reader", None)
+                operation = self.operation_factory(operation_type, operation_reader)
                 operation.perform_operation(operation_data)
             except Exception as e:
                 logging.error(f"Operation Failed:")
-                logging.error(json.dumps(operation_data))
+                logging.exception(e)
 
         self.investigation_storage.write_data_to_cif(
             f"{self.output_path}/{self.investigation_id}.cif"

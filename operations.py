@@ -4,7 +4,7 @@ from investigation_io import ExternalInformation
 import logging
 import sys
 from typing import Dict, List, TYPE_CHECKING
-from investigation_io import CIFReader, InvestigationStorage
+from investigation_io import CIFReader, InvestigationStorage,RestReader
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
@@ -12,11 +12,9 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 class ItemDoNotExist(Exception):
     pass
 
-
 class operationBase(ABC):
     def __init__(
-        self, investigation_storage: InvestigationStorage, reader: CIFReader
-    ) -> None:
+        self, investigation_storage: InvestigationStorage, reader) -> None:
         self.investigation_storage = investigation_storage
         self.reader = reader
 
@@ -122,6 +120,22 @@ class UnionOperation(operationBase):
             for index, item in enumerate(target_items):
                 self.rename_item(collated_data, source_items[index], item)
         self.investigation_storage.set_items(target_category, collated_data)
+
+class EndpointOperation(operationBase):
+    def perform_operation(self, operation_data: Dict) -> None:
+        logging.info("Performing Endpoint Call")
+        target_category = operation_data.get("target_category", "")
+        target_items = operation_data.get("target_items", [])
+
+        operation_parameters = operation_data.get("operation_parameters", {})
+
+        endpoint = operation_parameters["endpoint"]
+        type = operation_parameters["type"]
+        params = operation_parameters["params"]
+        jq_filter = operation_parameters["jq"]
+        if type == 'GET':
+            resp = self.rest_reader.get(endpoint, params=params, filter_query=jq_filter)
+        self.investigation_storage.data[target_category][target_items] = resp
 
 
 class UnionDistinctOperation(operationBase):
@@ -523,6 +537,23 @@ class SQLOperation(operationBase):
                 data.setdefault(item, [])
                 data[item].append(result[index])
 
+class CopyFromPickleOperation(operationBase):
+    def perform_operation(self, operation_data):
+        logging.info("Performing CopyFromPickle Operation")
+        target_category = operation_data.get("target_category", "")
+        target_items = operation_data.get("target_items", [])
+        source_items = operation_data.get("source_items", [])
+
+        self.investigation_storage.add_category(target_category)
+        for index, item in enumerate(source_items):
+            self.investigation_storage.data[target_category].setdefault(target_items[index], [])
+            # Issues: semi-colons seperated multiple values. e.g.
+            # 'primary_citation_author_name' ='Aschenbrenner, J.C.;Fairhead, M.;Godoy, A.S.;Balcomb, B.H.;Capkin, E.;Chandran, A.V.;Dolci, I.;Golding, M.;Koekemoer, L.;Lithgo, R.M.;
+            
+            if isinstance(self.reader[item], list):
+                self.investigation_storage.data[target_category][target_items[index]].extend(self.reader[item])
+            else:
+                self.investigation_storage.data[target_category][target_items[index]].append(self.reader[item])
 
 class NoopOperation(operationBase):
     def perform_operation(*args, **kwargs):

@@ -1,0 +1,43 @@
+{
+    "operations": [
+        {
+        "target_category" : "_pdbx_contact_author",
+        "target_items" : ["address_1","address_2","address_3","email","identifier_ORCID","name_first","name_last","name_mi","role"],
+        "operation" : "rest_endpoint",
+        "operation_parameters" :{
+            "type" : "GET",
+
+            "endpoint" : "/passport"
+        }
+    }
+   
+],
+    "mmcif_order": {
+        "_pdbx_contact_author": ["id"],
+        "_audit_author" : ["pdbx_ordinal", "name"],
+        "_pdbx_investigation_archived_data" : ["id"],
+        "_pdbx_fraghub_investigation_campaign" : ["campaign_id"],
+        "_pdbx_investigation_entity_poly" : ["poly_entity_id"],
+        "_pdbx_investigation_entity_nonpoly" : ["nonpoly_entity_id"],
+        "_pdbx_fraghub_investigation_fraglib_component" : ["id"],
+        "_pdbx_fraghub_investigation_series" : ["series_id"],
+        "_pdbx_fraghub_investigation_screening_exp":["screening_exp_id","instance_id"],
+        "_pdbx_fraghub_investigation_screening_result" : ["result_id"]
+
+
+    },
+    "help" :{
+        "source_category" : "Category in the deposition files to look into",
+        "source_items" : "Which items to compute from in the source_category in the deposition files",
+        "target_category" : "Which category to write out in the investigation file",
+        "target_items" : "Which items to write out in the investigation file for the category",
+        "operation" : "What operation to perform on the source items to get values for target_items",
+        "operation_parameters" : {
+            "primary_parameters" : { "distinct_union" : "Check the items specified in the source files, and use them for criteria of distinctness between files"
+            },
+            "secondary_parameters" : { "union" : "If primary parameter has items that are empty in one or many file, use these items to evaluate for distinctess"
+            }
+        },
+        "auto_increment_field" : "Specifies field in this category which would be auto-incremented like IDs",
+        "_same" : "target_category or target_items are same as source_category or source_items"}
+}
