@@ -26,8 +26,8 @@ def main() -> None:
 
     parser = argparse.ArgumentParser(
         prog="Investigation",
-        description="This creates an investigation file from a collection of model files\
-             which can be provided as folder path, pdb_ids, or a csv file. The model files can be provided"    )
+        description="This application creates an mmCIF file from provided data sources.\
+             The application is facility oriented, and requires data based on the definition in the facility specific subparser"    )
    
     subparsers = parser.add_subparsers(help="Specifies facility for which investigation files will be used for", 
                                        dest="facility",

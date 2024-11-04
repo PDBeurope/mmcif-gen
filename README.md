@@ -2,7 +2,8 @@
 
 ## Project Description
 
-The Investigations project is designed to facilitate the processing and analysis of data from various facilities, including PDBe, MAX IV, DLS and ESRF. The project provides a set of tools for managing and executing operations, importing data, and generating output in a standardized format.
+The Investigations project is designed to facilitate the processing and analysis of data from various facilities, including PDBe, MAX IV, DLS and ESRF.
+ The project provides a set of tools for managing and executing operations, importing data, and generating output in a mmCIF standardized format.
 
 ## Features
 
@@ -153,7 +154,6 @@ investigation.py max_iv --sqlite fragmax.sqlite -i inv_01
 ```
 
 #### DLS
-
 ```
 python investigation.py dls --sqlite DLS_data_example/soakDBDataFile_CHIKV_Mac.sqlite --txt DLS_data_example/ --deposit DLS_data_example/deposition.deposit -i inv_01 -o out/
 ```
