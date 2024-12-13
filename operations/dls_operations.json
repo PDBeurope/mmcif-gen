@@ -1,203 +1,222 @@
 {
-    "operations": [
-        {
-            "reader" : "sqlite",
-            "target_category" : "_pdbx_contact_author",
-            "target_items" : ["name_salutation","name_first","name_last","name_mi","role","organization_type","organization_name","email","address_1","city","state_province","postal_code","country","phone","identifier_ORCID"],
-            "operation" : "sql_query",
-            "operation_parameters" :{
-                "query" : "SELECT DISTINCT contact_author_salutation, contact_author_first_name, contact_author_last_name, contact_author_middle_name, contact_author_role, contact_author_organization_type, contact_author_organization_name, contact_author_email, contact_author_address, contact_author_city, contact_author_State_or_Province, contact_author_Zip_Code, contact_author_Country, contact_author_phone_number, contact_author_ORCID FROM depositTable WHERE contact_author_ORCID IS NOT NULL AND contact_author_ORCID != '' GROUP BY contact_author_ORCID"
-            }
-        },
-        {
-            "reader" : "sqlite",
-            "target_category" : "_pdbx_contact_author",
-            "target_items" : ["name_salutation","name_first","name_last","name_mi","role","organization_type","organization_name","email","address_1","city","state_province","postal_code","country","phone","identifier_ORCID"],
-            "operation" : "sql_query",
-            "operation_parameters" :{
-                "query" : "SELECT DISTINCT contact_author_PI_salutation, contact_author_PI_first_name, contact_author_PI_last_name, contact_author_PI_middle_name, contact_author_PI_role, contact_author_PI_organization_type, contact_author_PI_organization_name, contact_author_PI_email, contact_author_PI_address, contact_author_PI_city, contact_author_PI_State_or_Province, contact_author_PI_Zip_Code, contact_author_PI_Country, contact_author_PI_phone_number, contact_author_PI_ORCID FROM depositTable WHERE contact_author_PI_ORCID IS NOT NULL AND contact_author_PI_ORCID != '' GROUP BY contact_author_PI_ORCID"
-            }
-        },
-        {
-            "target_category" : "_pdbx_contact_author",
-            "target_item" : "id",
-            "operation" : "auto_increment"
-        },
-        {
-            "reader" : "pickle",
-            "source_items" : ["structure_author_name"],
-            "target_category" : "_audit_author",
-            "target_items" : ["name"],
-            "operation" : "copy_from_pickle"
-        },
-        {
-            "target_category" : "_audit_author",
-            "target_item" : "ordinal",
-            "operation" : "auto_increment"
-        },
-
-        {
-            "target_category" : "_pdbx_investigation",
-            "target_items" : ["type","db","project","external_url"],
-            "target_values": ["Fragment Screening", "frag_hub", "fh12345", null],
-            "operation" : "static_value"
-        },
-        {
-            "reader" : "sqlite",
-            "target_category" : "_pdbx_investigation",
-            "target_items" : ["title"],
-            "operation" : "sql_query",
-            "operation_parameters" :{
-                "query" : "SELECT DISTINCT group_description FROM depositTable WHERE group_description IS NOT NULL AND group_description != '' GROUP BY group_description"
-            }
-        },
-        {
-            "reader" : "sqlite",
-            "target_category" : "_pdbx_investigation",
-            "target_items" : ["id"],
-            "operation" : "sql_query",
-            "operation_parameters" :{
-                "query" : "SELECT DISTINCT investigation_id FROM experiments"
-            }
-        },
-        {
-            "reader" : "sqlite",
-            "target_category" : "_pdbx_fraghub_investigation_campaign",
-            "target_items" : ["year"],
-            "operation" : "sql_query",
-            "operation_parameters" :{
-                "query" : "SELECT SUBSTR(MIN(DataCollectionDate), 1, 4) AS Year FROM mainTable"
-            }
-        },
-        {
-            "target_category" : "_pdbx_fraghub_investigation_campaign",
-            "target_items" : ["campaign_id ", "proc_pipeline", "facility"],
-            "target_values": ["1", "XCE", "Diamond"],
-            "operation" : "static_value"
-        },
-        {
-            "source_category" : "_pdbx_investigation",
-            "source_items" : ["id"],
-            "target_category" : "_pdbx_fraghub_investigation_campaign",
-            "target_items" : ["investigation_id"],
-            "operation" : "copy_fill"
-        },
-        {
-            "reader" : "sqlite",
-            "target_category" : "_pdbx_fraghub_investigation_series",
-            "target_items" : ["series_id","campaign_id","investigation_id","fragment_lib"],
-            "operation" : "sql_query",
-            "operation_parameters" :{
-                "query" : "SELECT DISTINCT series_id, campaign_id, investigation_id, library_name FROM experiments"
-            }
-        },
-        {
-            "reader" : "cif",
-            "source_category" : "_entity",
-            "source_items" : ["type","src_method"],
-            "target_category" : "_pdbx_investigation_entity_poly",
-            "target_items" : ["type","src_method"],
-            "operation" : "distinct_union",
-            "operation_parameters" :{
-                "primary_parameters" : ["type"]
-            }
-        },
-        {
-            "reader" : "sqlite",
-            "target_category" : "_pdbx_investigation_entity_poly",
-            "target_items" : ["seq_one_letter_code "],
-            "operation" : "sql_query",
-            "operation_parameters" :{
-                "query" : "SELECT DISTINCT molecule_one_letter_sequence FROM depositTable WHERE molecule_one_letter_sequence IS NOT NULL AND molecule_one_letter_sequence != '' GROUP BY molecule_one_letter_sequence"
-            }
-        },
-        
-        {
-            "target_category" : "_pdbx_investigation_entity_poly",
-            "target_item" : "poly_entity_id",
-            "operation" : "auto_increment"
-        },
-    
-        {
-            "target_category" : "_pdbx_investigation_entity_nonpoly",
-            "target_items" : ["name","chem_comp_id","formula_weight","formula","inchi_descriptor","cas_identifier"],
-            "target_values": ["water","HOH","18.015","H2 O","XLYOFNOQVPJJNP-UHFFFAOYSA-N",null],
-            "operation" : "static_value"
-        },
-        {
-            "target_category" : "_pdbx_investigation_entity_nonpoly",
-            "target_item" : "nonpoly_entity_id",
-            "operation" : "auto_increment"
-        },
-        {
-            "reader" : "sqlite",
-            "target_category" : "_pdbx_fraghub_investigation_fraglib_component",
-            "target_items" : ["id", "name","formula_weight","formula","inchikey"],
-            "operation" : "sql_query",
-            "operation_parameters" :{
-                "query" : "SELECT DISTINCT b.fraglib_component_id, a.Name, parent_MW, a.parent_formula, a.`Parent InChi Code` FROM `XChem_Libraries_2024-02-01` a, experiments b WHERE a.vendor_catalog_id = b.compound_code ORDER BY b.fraglib_component_id"
-            }
-        },
-        {
-            "source_category" : "_pdbx_fraghub_investigation_fraglib_component",
-            "source_items" : ["id", "id"],
-            "target_category" : "_pdbx_fraghub_investigation_frag_component_mix",
-            "target_items" : ["id", "frag_component_id"],
-            "operation" : "copy"
-        },
-        {
-            "source_category" : "_pdbx_investigation_entity_poly",
-            "source_items" : ["poly_entity_id", "poly_entity_id"],
-            "target_category" : "_pdbx_investigation_poly_descript",
-            "target_items" : ["id", "poly_entity_id"],
-            "operation" : "copy"
-        },
-        {
-            "source_category" : "_pdbx_investigation_entity_nonpoly",
-            "source_items" : ["nonpoly_entity_id", "nonpoly_entity_id"],
-            "target_category" : "_pdbx_investigation_nonpoly_descript",
-            "target_items" : ["id", "nonpoly_entity_id"],
-            "operation" : "copy"
-        },
-        {
-            "target_category" : "_pdbx_investigation_sample",
-            "target_items" : ["poly_descript_id","nonpoly_descript_id","sample_id"],
-            "target_values": ["1","1","1"],
-            "operation" : "static_value"
-        },
-        {
-            "reader" : "sqlite",
-            "target_category" : "_pdbx_investigation_sample",
-            "target_item" : "investigation_id",
-            "operation" : "sql_query",
-            "operation_parameters" :{
-                "query" : "SELECT DISTINCT investigation_id FROM experiments"
-            }
-        },
-        {
-            "reader" : "sqlite",
-            "target_category" : "_pdbx_fraghub_investigation_screening_exp",
-            "target_items" : ["screening_exp_id","series_id","campaign_id","investigation_id","sample_id","fragment_component_mix_id","exp_method", "exp_details", "data_deposited"],
-            "operation" : "sql_query",
-            "operation_parameters" :{
-                "query" : "SELECT screening_exp_id, series_id, campaign_id, investigation_id, sample_id, fraglib_component_id, 'X-RAY DIFFRACTION' as method, library_name, data_deposited as details FROM experiments"
-            }
-        },
-        {
-            "reader" : "sqlite",
-            "target_category" : "_pdbx_fraghub_investigation_screening_result",
-            "target_items" : ["screening_exp_id","result_id","outcome","fraglib_component_id","outcome_assessment","outcome_description","outcome_details"],
-            "operation" : "sql_query",
-            "operation_parameters" :{
-                "query" : "SELECT screening_exp_id, result_id, outcome, fraglib_component_id, outcome_assessment, outcome_description, outcome_details FROM experiments"
-            }
-        },
-        {
-            "target_category" : "_pdbx_fraghub_investigation_screening_result",
-            "target_item" : "result_id",
-            "operation" : "auto_increment"
-        }
-],
+  "operations": [
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_source",
+      "target_items": "pdbx_wavelength_list",
+      "operation_parameters": {
+        "jq": "[.datacollections[].WAVELENGTH]"
+      }
+    },
+    {
+      "reader": "json", 
+      "operation": "jq_filter",
+      "target_category": "_diffrn_source",
+      "target_items": "size",
+      "operation_parameters": {
+        "jq": "[.datacollections[] | (.BEAMSIZEATSAMPLEX | tostring) + \" um x \" + (.BEAMSIZEATSAMPLEY | tostring) + \" um\"]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_source",
+      "target_items": "source",
+      "operation_parameters": {
+        "jq": "[.datacollections[].PDBX_SOURCE]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_source",
+      "target_items": "type",
+      "operation_parameters": {
+        "jq": "[.datacollections[].PDBX_TYPE]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_source",
+      "target_items": "pdbx_synchrotron_site",
+      "operation_parameters": {
+        "jq": "[.datacollections[].PDBX_SYNCHROTRON]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_source",
+      "target_items": "pdbx_synchrotron_beamline",
+      "operation_parameters": {
+        "jq": "[.datacollections[] | .BEAMLINENAME | ascii_upcase]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_source",
+      "target_items": "diffrn_id",
+      "operation_parameters": {
+        "jq": "[range(1; (.datacollections | length) + 1)]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_radiation_wavelength",
+      "target_items": "wavelength",
+      "operation_parameters": {
+        "jq": "[.datacollections[].WAVELENGTH]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_radiation_wavelength",
+      "target_items": "id",
+      "operation_parameters": {
+        "jq": "[range(1; (.datacollections | length) + 1)]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_radiation_wavelength",
+      "target_items": "wt",
+      "operation_parameters": {
+        "jq": "[.datacollections[] | 1.0]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn",
+      "target_items": "id",
+      "operation_parameters": {
+        "jq": "[range(1; (.datacollections | length) + 1)]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn",
+      "target_items": "crystal_id",
+      "operation_parameters": {
+        "jq": "[range(1; (.datacollections | length) + 1)]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn",
+      "target_items": "ambient_temp",
+      "operation_parameters": {
+        "jq": "[.datacollections[] | .PDBX_AMBIENT_TEMP | tonumber]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn",
+      "target_items": "pdbx_serial_crystal_experiment",
+      "operation_parameters": {
+        "jq": "[.datacollections[].PDBX_SERIAL_CRYSTAL_EXPERIMENT]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_detector",
+      "target_items": "type",
+      "operation_parameters": {
+        "jq": "[.datacollections[] | .DETECTORMANUFACTURER + \" \" + .DETECTORMODEL]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_detector",
+      "target_items": "detector",
+      "operation_parameters": {
+        "jq": "[.datacollections[].PDBX_DETECTOR]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_detector",
+      "target_items": "diffrn_id",
+      "operation_parameters": {
+        "jq": "[range(1; (.datacollections | length) + 1)]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_detector",
+      "target_items": "pdbx_collection_date",
+      "operation_parameters": {
+        "jq": "[.datacollections[] | .STARTTIME | split(\" \")[0]]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_radiation",
+      "target_items": "diffrn_id",
+      "operation_parameters": {
+        "jq": "[range(1; (.datacollections | length) + 1)]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_radiation",
+      "target_items": "wavelength_id",
+      "operation_parameters": {
+        "jq": "[range(1; (.datacollections | length) + 1)]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_radiation",
+      "target_items": "monochromator",
+      "operation_parameters": {
+        "jq": "[.datacollections[].PDBX_MONOCHROMATOR]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_radiation",
+      "target_items": "pdbx_monochromatic_or_laue_m_l",
+      "operation_parameters": {
+        "jq": "[.datacollections[].PDBX_MONOCHROMATOR_OR_LAUE_M_L]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_radiation",
+      "target_items": "pdbx_diffrn_protocol",
+      "operation_parameters": {
+        "jq": "[.datacollections[].PDBX_DIFFRN_PROTOCOL]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_radiation",
+      "target_items": "pdbx_scattering_type",
+      "operation_parameters": {
+        "jq": "[.datacollections[].PDBX_SCATTERING_TYPE]"
+      }
+    }
+  ],
     "mmcif_order": {
         "_pdbx_contact_author": ["id"],
         "_audit_author" : ["pdbx_ordinal", "name"],
@@ -211,5 +230,19 @@
         "_pdbx_fraghub_investigation_screening_result" : ["result_id"]
 
 
-    }
+    },
+    "help" :{
+        "source_category" : "Category in the deposition files to look into",
+        "source_items" : "Which items to compute from in the source_category in the deposition files",
+        "target_category" : "Which category to write out in the investigation file",
+        "target_items" : "Which items to write out in the investigation file for the category",
+        "operation" : "What operation to perform on the source items to get values for target_items",
+        "operation_parameters" : {
+            "primary_parameters" : { "distinct_union" : "Check the items specified in the source files, and use them for criteria of distinctness between files"
+            },
+            "secondary_parameters" : { "union" : "If primary parameter has items that are empty in one or many file, use these items to evaluate for distinctess"
+            }
+        },
+        "auto_increment_field" : "Specifies field in this category which would be auto-incremented like IDs",
+        "_same" : "target_category or target_items are same as source_category or source_items"}
 }

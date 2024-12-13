@@ -558,3 +558,35 @@ class CopyFromPickleOperation(operationBase):
 class NoopOperation(operationBase):
     def perform_operation(*args, **kwargs):
         pass
+
+class JQFilterOperation(operationBase):
+    def perform_operation(self, operation_data):
+        logging.info("Performing JQ Filter Operation")
+        target_category = operation_data.get("target_category", "")
+        target_items = operation_data.get("target_items", [])
+        operation_parameters = operation_data.get("operation_parameters", {})
+        jq_filter = operation_parameters.get("jq", "")
+
+        # Get filtered data from JSON reader
+        filtered_data = self.reader.jq_filter(jq_filter)
+        
+        self.investigation_storage.add_category(target_category)
+        data = self.investigation_storage.data[target_category]
+
+        # Handle single target item case
+        if isinstance(target_items, str):
+            target_items = [target_items]
+            if not isinstance(filtered_data, list):
+                filtered_data = [filtered_data]
+            data[target_items[0]] = filtered_data
+            return
+
+        # Handle multiple target items case
+        if len(target_items) != len(filtered_data):
+            raise ValueError(f"Number of target items ({len(target_items)}) does not match filtered data length ({len(filtered_data)})")
+            
+        for item, value in zip(target_items, filtered_data):
+            if isinstance(value, list):
+                data[item] = value
+            else:
+                data[item] = [value]

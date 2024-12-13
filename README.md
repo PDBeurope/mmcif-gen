@@ -2,16 +2,16 @@
 
 ## Project Description
 
-The Investigations project is designed to facilitate the processing and analysis of data from various facilities, including PDBe, MAX IV, DLS and ESRF.
+The Investigations project is designed to facilitate the processing and analysis of data from various facilities, including PDBe, MAX IV, XChem and ESRF.
  The project provides a set of tools for managing and executing operations, importing data, and generating output in a mmCIF standardized format.
 
 ## Features
 
-- Integration with multiple facilities (PDBe, MAX IV, ESRF, DLS)
+- Integration with multiple facilities (PDBe, MAX IV, ESRF, XChem)
 - Comprehensive data import and export functionalities
-- Modular design for easy extension and maintenance
-- Robust error handling and logging
-- Comprehensive test suite for ensuring code quality
+- Modular design for easily adding data sources
+- Data enrichment from structure factor files
+- Configurable operations (in json) for data processing
 
 ## Installation
 
@@ -50,11 +50,11 @@ usage: Investigation [-h] {pdbe,max_iv,esrf} ...
 This creates an investigation file from a collection of model files which can be provided as folder path, pdb_ids, or a csv file. The model files can be provided
 
 positional arguments:
-  {pdbe,max_iv,esrf}  Specifies facility for which investigation files will be used for
+  {pdbe,max_iv,esrf,xchem}  Specifies facility for which investigation files will be used for
     pdbe              Parameter requirements for investigation files from PDBe data
     max_iv            Parameter requirements for investigation files from MAX IV data
     esrf              Parameter requirements for investigation files from ESRF data
-    dls               Parameter requirements for investigation files from DLS data
+    xchem             Parameter requirements for investigation files from XChem data
 ```
 
 Each facility have its own set of arguments. 
@@ -100,11 +100,11 @@ optional arguments:
 `--investigation-id` parameter is an optional parameter where the user wants to control the investigation ID that is assigned to the investigation file. It is not used where input is csv file. 
 
 
-### For DLS
+### For XChem
 
 ```
-python investigation.py dls --help
-usage: Investigation dls [-h] [-o OUTPUT_FOLDER] [-i INVESTIGATION_ID] [--sqlite SQLITE] [--deposit DEPOSIT] [--txt TXT]
+python investigation.py xchem --help
+usage: Investigation xchem [-h] [-o OUTPUT_FOLDER] [-i INVESTIGATION_ID] [--sqlite SQLITE] [--deposit DEPOSIT] [--txt TXT]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -116,9 +116,9 @@ optional arguments:
   --deposit DEPOSIT     Path for the deposition process via XCE
   --txt TXT             Path to add additional information or overwrite in mmcifs
 ```
-There are two operations defined for DLS facility.
-dls_operations_soakdb.json: This operation file is used to create an investigation file from purely soakdb sqlite file. Data not found is highlighted in the output file
-dls_operations.json: This operation file is used to create an investigation file and relies on pickle + cif files.
+There are two operations defined for XChem facility.
+xchem_operations.json: This operation file is used to create an investigation file from purely soakdb sqlite file. Data not found is highlighted in the output file
+xchem_operations_soakdb.json: This operation file is used to create an investigation file and relies on pickle + cif files.
 
 
 #### Importing data from Ground state file
@@ -153,9 +153,9 @@ And outputs a modified investigation cif file.
 investigation.py max_iv --sqlite fragmax.sqlite -i inv_01
 ```
 
-#### DLS
+#### XChem
 ```
-python investigation.py dls --sqlite DLS_data_example/soakDBDataFile_CHIKV_Mac.sqlite --txt DLS_data_example/ --deposit DLS_data_example/deposition.deposit -i inv_01 -o out/
+python investigation.py xchem --sqlite DLS_data_example/soakDBDataFile_CHIKV_Mac.sqlite --txt DLS_data_example/ --deposit DLS_data_example/deposition.deposit -i inv_01 -o out/
 ```
 
 #### PDBE

@@ -1,6 +1,7 @@
 from facilities.pdbe import pdbe_subparser, run_investigation_pdbe
 from facilities.maxiv import maxiv_subparser, run_investigation_maxiv
 from facilities.dls import dls_subparser, run_investigation_dls
+from facilities.xchem import xchem_subparser, run_investigation_xchem
 from facilities.esrf import  esrf_subparser
 import argparse
 import logging
@@ -36,6 +37,7 @@ def main() -> None:
     maxiv_subparser(subparsers, parent_parser)
     esrf_subparser(subparsers, parent_parser)
     dls_subparser(subparsers, parent_parser)
+    xchem_subparser(subparsers, parent_parser)
     args = parser.parse_args()
 
     if args.output_folder:
@@ -46,6 +48,8 @@ def main() -> None:
         run_investigation_maxiv(args)
     elif args.facility == 'dls':
         run_investigation_dls(args)
+    elif args.facility == 'xchem':
+        run_investigation_xchem(args)
 
 if __name__ == "__main__":
     main()

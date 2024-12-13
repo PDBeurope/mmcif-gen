@@ -17,7 +17,8 @@ from operations import (
     UnionDistinctOperation,
     SQLOperation,
     EndpointOperation,
-    CopyFromPickleOperation
+    CopyFromPickleOperation,
+    JQFilterOperation
 )
 import json
 import logging
@@ -53,6 +54,8 @@ class InvestigationEngine:
             operation_reader = self.pickle_reader
         elif operation_reader == "cif":
             operation_reader = self.reader
+        elif operation_reader == "json":
+            operation_reader = self.json_reader
 
 
         if operation_type == "distinct_union":
@@ -93,6 +96,8 @@ class InvestigationEngine:
             return NoopOperation(self.investigation_storage, operation_reader)
         elif operation_type == "copy_from_pickle":
             return CopyFromPickleOperation(self.investigation_storage, operation_reader)
+        elif operation_type == "jq_filter":
+            return JQFilterOperation(self.investigation_storage, operation_reader)
         else:
             raise ValueError(f"Invalid operation type: {operation_type}")
 

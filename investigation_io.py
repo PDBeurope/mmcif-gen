@@ -8,6 +8,7 @@ import requests
 import jq
 import pickle
 import os
+import json
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 
@@ -317,6 +318,33 @@ class ExternalInformation:
     def get_inchi_key(self, chem_comp_id):
         self._load_inchi_keys()
         return self._get_inchi_key(chem_comp_id)
+    
+class JsonReader:
+    def __init__(self, json_path):
+        self.data = {}
+        self.json_path = json_path
+        self.load_json()
+
+    def load_json(self):
+        with open(self.json_path, 'r') as file:
+            self.data = json.load(file)
+    
+    def jq_filter(self, filter_string: str):
+        """
+        Apply a JQ filter to the JSON data
+        
+        Args:
+            filter_string (str): The JQ filter to apply
+            
+        Returns:
+            The filtered data - could be a single value, list, or dict depending on the filter
+        """
+        try:
+            return jq.compile(filter_string).input(self.data).first()
+        except Exception as e:
+            logging.error(f"Failed to apply JQ filter: {filter_string}")
+            logging.exception(e)
+            raise
 
 class RestReader:
     def __init__(self, base_url, username, password):
