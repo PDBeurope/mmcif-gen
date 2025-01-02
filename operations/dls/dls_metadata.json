@@ -103,15 +103,6 @@
       "reader": "json",
       "operation": "jq_filter",
       "target_category": "_diffrn",
-      "target_items": "crystal_id",
-      "operation_parameters": {
-        "jq": "[range(1; (.datacollections | length) + 1)]"
-      }
-    },
-    {
-      "reader": "json",
-      "operation": "jq_filter",
-      "target_category": "_diffrn",
       "target_items": "ambient_temp",
       "operation_parameters": {
         "jq": "[.datacollections[] | .PDBX_AMBIENT_TEMP | tonumber]"
@@ -175,7 +166,7 @@
       "reader": "json",
       "operation": "jq_filter",
       "target_category": "_diffrn_radiation",
-      "target_items": "wavelength_id",
+      "target_items": "wavelength",
       "operation_parameters": {
         "jq": "[range(1; (.datacollections | length) + 1)]"
       }
