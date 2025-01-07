@@ -306,7 +306,7 @@ def run_investigation_maxiv(args):
     if not args.sqlite:
         logging.error("Max IV facility requires path to --sqlite file")
         return 1
-    run(args.sqlite, args.investigation_id, args.output_folder,args.json)
+    run(args.sqlite, args.id, args.output_folder,args.json)
 
 
     

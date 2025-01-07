@@ -566,6 +566,7 @@ class JQFilterOperation(operationBase):
         target_items = operation_data.get("target_items", [])
         operation_parameters = operation_data.get("operation_parameters", {})
         jq_filter = operation_parameters.get("jq", "")
+        logging.info(f"Category: {target_category}, Item(s): {target_items}, JQ Filter: {jq_filter}")
 
         # Get filtered data from JSON reader
         filtered_data = self.reader.jq_filter(jq_filter)

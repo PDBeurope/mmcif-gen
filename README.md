@@ -1,16 +1,11 @@
 # mmcif-gen
 
-A versatile command-line tool for generating mmCIF files from various facility data sources. This tool supports both generic mmCIF file generation and specialized investigation file creation for facilities like PDBe, MAX IV, XChem, and ESRF.
+A versatile command-line tool for generating any mmCIF files from various data sources. This tool can be to create:
 
-## Features
+1. Metadata mmcif files (To capture experimental metadata from different facilities)
+2. Investigation mmcif files (like: https://ftp.ebi.ac.uk/pub/databases/msd/fragment_screening/investigations/)
 
-- Generate mmCIF files from various data sources (SQLite, JSON, CSV, etc.)
-- Create standardized investigation files for facility data
-- Support for multiple facilities (PDBe, MAX IV, ESRF, XChem)
-- Configurable transformations via JSON definitions
-- Auto-fetching of facility-specific configurations
-- Modular design for easy extension to new data sources
-- Data enrichment capabilities
+The tool has transformational mapping to convert data as it is stored at various facilities to corresponding catgories and items in mmcif format.
 
 ## Installation
 
@@ -27,17 +22,23 @@ The tool provides two main commands:
 1. `fetch-facility-json`: Fetch facility-specific JSON configuration files
 2. `make-mmcif`: Generate mmCIF files using the configurations
 
-### Fetching Facility Configurations
+### Fetching Facility JSON Files
+
+The JSON operations files determine how the data would be mapped from the original source and translated into mmCIF format.
+
+These files can be written, but can also be fetched from the github repository using simple commands.
 
 ```bash
 # Fetch configuration for a specific facility
 mmcif-gen fetch-facility-json dls-metadata
 
 # Specify custom output directory
-mmcif-gen fetch-facility-json dls-metadata -o ./configs
+mmcif-gen fetch-facility-json dls-metadata -o ./mapping_operations
 ```
 
-### Generating mmCIF Files
+### Generating metadata mmCIF Files
+
+Currently the valid facilities to generate mmcif files for are `pdbe`, `maxiv`, `dls`, and `xchem`.
 
 The general syntax for generating mmCIF files is:
 
@@ -45,81 +46,53 @@ The general syntax for generating mmCIF files is:
 mmcif-gen make-mmcif <facility> [options]
 ```
 
-Each facility has its own set of required parameters:
+Each facility has its own set of required parameters, which can be checked by running the command with the `--help` flag.
+
+
+```
+mmcif-gen make-mmcif pdbe --help
+```
+#### Example Usage
+
+#### DLS (Diamond Light Source)
+
+```bash
+# Using metadata configuration
+mmcif-gen make-mmcif dls --json dls_metadata.json --output-folder ./out --id id_1234 --dls-json metadata-from-isypb.json
+```
+### Working with Investigation Files
+
+Investigation files are a specialized type of mmCIF file that capture metadata across multiple experiments.
+
+Investigation files are created in a very similar way:
 
 #### PDBe
 
 ```bash
 # Using model folder
-mmcif-gen make-mmcif pdbe --model-folder ./models --output-folder ./out --identifier I_1234
+mmcif-gen make-mmcif pdbe --json pdbe_investigation.json --model-folder ./models --output-folder ./out --id I_1234
 
 # Using PDB IDs
-mmcif-gen make-mmcif pdbe --pdb-ids 6dmn 6dpp 6do8 --output-folder ./out
+mmcif-gen make-mmcif pdbe --json pdbe_investigation.json --pdb-ids 6dmn 6dpp 6do8 --output-folder ./out
 
 # Using CSV input
-mmcif-gen make-mmcif pdbe --csv-file groups.csv --output-folder ./out
+mmcif-gen make-mmcif pdbe --json pdbe_investigation.json --csv-file groups.csv --output-folder ./out
 ```
 
 #### MAX IV
 
 ```bash
 # Using SQLite database
-mmcif-gen make-mmcif maxiv --sqlite fragmax.sqlite --output-folder ./out --identifier I_5678
+mmcif-gen make-mmcif maxiv --json maxiv_investigation.json --sqlite fragmax.sqlite --output-folder ./out --id I_5678
 ```
 
 #### XChem
 
 ```bash
 # Using SQLite database with additional information
-mmcif-gen make-mmcif xchem --sqlite soakdb.sqlite --txt ./metadata --deposit ./deposit --output-folder ./out
+mmcif-gen make-mmcif xchem --json xchem_investigation.json --sqlite soakdb.sqlite --txt ./metadata --deposit ./deposit --output-folder ./out
 ```
 
-#### DLS (Diamond Light Source)
-
-```bash
-# Using metadata configuration
-mmcif-gen make-mmcif dls --json dls_metadata.json --output-folder ./out --identifier DLS_2024
-```
-
-## Configuration Files
-
-The tool uses JSON configuration files to define how data should be transformed into mmCIF format. These files can be:
-
-1. Fetched from the official repository using the `fetch-facility-json` command
-2. Created custom for specific needs
-3. Modified versions of official configurations
-
-### Configuration File Structure
-
-```json
-{
-  "source_category": "source_table_name",
-  "target_category": "_target_category",
-  "operations": [
-    {
-      "source_items": ["column1", "column2"],
-      "target_items": ["_target.item1", "_target.item2"],
-      "operation": "direct_transfer"
-    }
-  ]
-}
-```
-
-## Working with Investigation Files
-
-Investigation files are a specialized type of mmCIF file that capture metadata across multiple experiments. To create investigation files:
-
-1. Use the appropriate facility subcommand
-2. Specify the investigation ID
-3. Provide the required facility-specific data source
-
-```bash
-# Example for PDBe investigation
-mmcif-gen make-mmcif pdbe --model-folder ./models --identifier INV_001 --output-folder ./investigations
-
-# Example for MAX IV investigation
-mmcif-gen make-mmcif maxiv --sqlite experiment.sqlite --identifier INV_002 --output-folder ./investigations
-```
 
 ## Data Enrichment
 
@@ -129,6 +102,31 @@ For investigation files that need enrichment with additional data (e.g., ground 
 # Using the miss_importer utility
 python miss_importer.py --investigation-file inv.cif --sf-file structure.sf --pdb-id 1ABC
 ```
+
+## Operation JSON Files
+
+The tool uses JSON configuration files to define how data should be transformed into mmCIF format. These files can be:
+
+1. Fetched files using the `fetch-facility-json` command
+2. Modified versions of official configurations
+
+### Configuration File Structure
+
+```json
+    {
+        "source_category" : "_audit_author",
+        "source_items" : ["name"],
+        "target_category" : "_audit_author",
+        "target_items" : "_same",
+        "operation" : "distinct_union",
+        "operation_parameters" :{
+            "primary_parameters" : ["name"]
+        }
+    }
+```
+
+Refer to existing JSON files in the `operations/` directory for examples.
+
 
 ## Development
 
@@ -159,9 +157,6 @@ python -m unittest discover -s tests
 
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
 
-## License
-
-[MIT License](LICENSE)
 
 ## Support
 

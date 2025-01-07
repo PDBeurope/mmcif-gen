@@ -5,11 +5,19 @@ from facilities.xchem import xchem_subparser, run_investigation_xchem
 import argparse
 import json
 import logging
+from logging.handlers import RotatingFileHandler
+
 import os
 import pathlib
 import requests
 import sys
 from typing import Dict, List, Optional
+
+file_handler = RotatingFileHandler('mmcifgen.log', maxBytes=100000, backupCount=3)
+file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+file_handler.setLevel(logging.DEBUG)
+
+logging.getLogger().addHandler(file_handler)
 
 FACILITIES_URL = "https://raw.githubusercontent.com/PDBeurope/Investigations/main/operations/fetched_list.json"
 
@@ -67,7 +75,8 @@ class CLIManager:
         possible_files = [
             f"{facility}_metadata.json",
             f"{facility}_metadata_hardcoded.json",
-            f"{facility}_operations.json"
+            f"{facility}_operations.json",
+            f"{facility}_investigation.json"
         ]
         
         for file in possible_files:
@@ -168,20 +177,21 @@ def main():
                 print(f"Using local JSON file: {local_json}")
 
     if args.command == "fetch-facility-json":
-        json_name = args.json_name.replace('_', '-')
+        json_name = args.json_name.split('.')[0]
         available_jsons = []
         for facility, jsons in cli_manager.fetch_facilities_data().items():
             available_jsons.extend(jsons)
-        
-        matching_jsons = [j for j in available_jsons if json_name in j.replace('_', '-')]
-        if not matching_jsons:
+
+        available_jsons_pruned = [j.split('/')[-1].split('.')[0] for j in available_jsons] 
+        if json_name not in available_jsons_pruned:
             print(f"No JSON found matching '{json_name}'")
             print("\nAvailable JSONs:")
             for json_path in available_jsons:
                 print(f"  - {os.path.basename(json_path)}")
             sys.exit(1)
-            
-        cli_manager.fetch_facility_json(matching_jsons[0], args.output_dir)
+
+        index_of_match = available_jsons_pruned.index(json_name)
+        cli_manager.fetch_facility_json(available_jsons[index_of_match], args.output_dir)
 
     elif args.command == "make-mmcif":
         available_facilities = cli_manager.get_available_facilities()

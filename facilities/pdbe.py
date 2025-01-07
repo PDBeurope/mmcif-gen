@@ -490,7 +490,7 @@ def download_and_run_pdbe_investigation(pdb_ids: List[str], investigation_id: st
 
 def run_investigation_pdbe(args):
     if args.model_folder:
-        run(args.model_folder, args.investigation_id,args.output_folder, args.json)
+        run(args.model_folder, args.id,args.output_folder, args.json)
     elif args.pdb_ids:
         download_and_run_pdbe_investigation(args.pdb_ids, args.investigation_id, args.output_folder, args.json)
     elif args.csv_file:
