@@ -23,11 +23,11 @@ FTP_URL_ARCHIVE = (
 
 class InvestigationPdbe(InvestigationEngine):
         
-    def __init__(self, model_file_path: List[str], investigation_id: str, output_path: str) -> None:
+    def __init__(self, model_file_path: List[str], investigation_id: str, output_path: str, pdbe_investigation_json: str="./operations/pdbe/pdbe_investigation.json") -> None:
         logging.info("Instantiating PDBe Investigation subclass")
         self.reader = CIFReader()
         self.model_file_path = model_file_path
-        self.operation_file_json = "./operations/pdbe_operations.json"
+        self.operation_file_json = "./operations/pdbe/pdbe_investigation.json"
         self.sqlite_reader = SqliteReader("pdbe_sqlite.db")
         super().__init__(investigation_id, output_path)
 
@@ -450,7 +450,7 @@ class InvestigationPdbe(InvestigationEngine):
 
 
 
-def download_and_run_pdbe_investigation(pdb_ids: List[str], investigation_id: str, output_path:str) -> None:
+def download_and_run_pdbe_investigation(pdb_ids: List[str], investigation_id: str, output_path:str, json_path: str) -> None:
     logging.info(f"Creating investigation files for pdb ids: {pdb_ids}")
     temp_dir = tempfile.mkdtemp()
     try:
@@ -472,7 +472,7 @@ def download_and_run_pdbe_investigation(pdb_ids: List[str], investigation_id: st
             else:
                 logging.info(f"Failed to download {pdb_code}.cif.gz")
 
-        run(temp_dir, investigation_id, output_path)
+        run(temp_dir, investigation_id, output_path, json_path)
 
     except Exception as e:
         logging.exception(f"An error occurred: {str(e)}")
@@ -490,14 +490,14 @@ def download_and_run_pdbe_investigation(pdb_ids: List[str], investigation_id: st
 
 def run_investigation_pdbe(args):
     if args.model_folder:
-        run(args.model_folder, args.investigation_id,args.output_folder)
+        run(args.model_folder, args.investigation_id,args.output_folder, args.json)
     elif args.pdb_ids:
-        download_and_run_pdbe_investigation(args.pdb_ids, args.investigation_id, args.output_folder)
+        download_and_run_pdbe_investigation(args.pdb_ids, args.investigation_id, args.output_folder, args.json)
     elif args.csv_file:
         group_data = parse_csv(args.csv_file)
         for group, entry in group_data.items():
             try:
-                download_and_run_pdbe_investigation(entry, group, args.output_folder)
+                download_and_run_pdbe_investigation(entry, group, args.output_folder, args.json)
             except Exception as e:
                 logging.exception(e)
     else:
@@ -516,12 +516,12 @@ def get_cif_file_paths(folder_path : str) -> List[str]:
     return cif_file_paths
 
 
-def run(folder_path : str, investigation_id: str, output_path: str) -> None:
+def run(folder_path : str, investigation_id: str, output_path: str, json_path: str) -> None:
     model_file_path = get_cif_file_paths(folder_path)
     print("List of CIF file paths:")
     for file_path in model_file_path:
         print(file_path)
-    im = InvestigationPdbe(model_file_path, investigation_id, output_path)
+    im = InvestigationPdbe(model_file_path, investigation_id, output_path, json_path)
     im.pre_run()
     im.run()
 

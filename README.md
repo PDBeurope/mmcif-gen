@@ -1,218 +1,168 @@
-# Investigations
+# mmcif-gen
 
-## Project Description
-
-The Investigations project is designed to facilitate the processing and analysis of data from various facilities, including PDBe, MAX IV, XChem and ESRF.
- The project provides a set of tools for managing and executing operations, importing data, and generating output in a mmCIF standardized format.
+A versatile command-line tool for generating mmCIF files from various facility data sources. This tool supports both generic mmCIF file generation and specialized investigation file creation for facilities like PDBe, MAX IV, XChem, and ESRF.
 
 ## Features
 
-- Integration with multiple facilities (PDBe, MAX IV, ESRF, XChem)
-- Comprehensive data import and export functionalities
-- Modular design for easily adding data sources
-- Data enrichment from structure factor files
-- Configurable operations (in json) for data processing
+- Generate mmCIF files from various data sources (SQLite, JSON, CSV, etc.)
+- Create standardized investigation files for facility data
+- Support for multiple facilities (PDBe, MAX IV, ESRF, XChem)
+- Configurable transformations via JSON definitions
+- Auto-fetching of facility-specific configurations
+- Modular design for easy extension to new data sources
+- Data enrichment capabilities
 
 ## Installation
 
-To get started with the Investigations project, follow these steps:
+Install directly from PyPI:
 
-1. Clone the repository:
-
-    ```bash
-    git clone https://github.com/yourusername/investigations.git
-    cd investigations
-    ```
-
-2. Create a virtual environment and activate it:
-
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
-
-3. Install the required dependencies:
-
-    ```bash
-    pip install -r requirements.txt
-    ```
+```bash
+pip install mmcif-gen
+```
 
 ## Usage
 
-Below are some common usage examples to help you get started with the Investigations project.
+The tool provides two main commands:
 
-The script requires to specify a facility as the first argument:
+1. `fetch-facility-json`: Fetch facility-specific JSON configuration files
+2. `make-mmcif`: Generate mmCIF files using the configurations
 
-```
-python investigation.py --help
-usage: Investigation [-h] {pdbe,max_iv,esrf} ...
+### Fetching Facility Configurations
 
-This creates an investigation file from a collection of model files which can be provided as folder path, pdb_ids, or a csv file. The model files can be provided
+```bash
+# Fetch configuration for a specific facility
+mmcif-gen fetch-facility-json dls-metadata
 
-positional arguments:
-  {pdbe,max_iv,esrf,xchem}  Specifies facility for which investigation files will be used for
-    pdbe              Parameter requirements for investigation files from PDBe data
-    max_iv            Parameter requirements for investigation files from MAX IV data
-    esrf              Parameter requirements for investigation files from ESRF data
-    xchem             Parameter requirements for investigation files from XChem data
+# Specify custom output directory
+mmcif-gen fetch-facility-json dls-metadata -o ./configs
 ```
 
-Each facility have its own set of arguments. 
-### For MAX IV
-SqliteDB file is required
+### Generating mmCIF Files
 
-```
-python investigation.py max_iv --help
-usage: Investigation max_iv [-h] [-o OUTPUT_FOLDER] [-i INVESTIGATION_ID] [-s SQLITE]
+The general syntax for generating mmCIF files is:
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -o OUTPUT_FOLDER, --output-folder OUTPUT_FOLDER
-                        Folder to output the created investigation files to
-  -i INVESTIGATION_ID, --investigation-id INVESTIGATION_ID
-                        Investigation ID to assign to the resulting investigation file
-  -s SQLITE, --sqlite SQLITE
-                        Path to the Sqlite DB for the given investigation
+```bash
+mmcif-gen make-mmcif <facility> [options]
 ```
 
-### For PDBE
+Each facility has its own set of required parameters:
 
-The model files can be provided as a folder path, or as PDB Ids.
-Where PDB ids are specified, the data is fetched from FTP Area of EBI PDB archive
+#### PDBe
 
+```bash
+# Using model folder
+mmcif-gen make-mmcif pdbe --model-folder ./models --output-folder ./out --identifier I_1234
+
+# Using PDB IDs
+mmcif-gen make-mmcif pdbe --pdb-ids 6dmn 6dpp 6do8 --output-folder ./out
+
+# Using CSV input
+mmcif-gen make-mmcif pdbe --csv-file groups.csv --output-folder ./out
 ```
-python investigation.py pdbe --help  
-usage: Investigation pdbe [-h] [-o OUTPUT_FOLDER] [-i INVESTIGATION_ID] [-f MODEL_FOLDER] [-csv CSV_FILE] [-p PDB_IDS [PDB_IDS ...]]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -o OUTPUT_FOLDER, --output-folder OUTPUT_FOLDER
-                        Folder to output the created investigation files to
-  -i INVESTIGATION_ID, --investigation-id INVESTIGATION_ID
-                        Investigation ID to assign to the resulting investigation file
-  -f MODEL_FOLDER, --model-folder MODEL_FOLDER
-                        Directory which contains model files
-  -csv CSV_FILE, --csv-file CSV_FILE
-                        Requires CSV with 2 columns [GROUP_ID, ENTRY_ID]
-  -p PDB_IDS [PDB_IDS ...], --pdb-ids PDB_IDS [PDB_IDS ...]
-                        Create investigation from set of pdb ids, space seperated
-```
-`--investigation-id` parameter is an optional parameter where the user wants to control the investigation ID that is assigned to the investigation file. It is not used where input is csv file. 
-
-
-### For XChem
-
-```
-python investigation.py xchem --help
-usage: Investigation xchem [-h] [-o OUTPUT_FOLDER] [-i INVESTIGATION_ID] [--sqlite SQLITE] [--deposit DEPOSIT] [--txt TXT]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -o OUTPUT_FOLDER, --output-folder OUTPUT_FOLDER
-                        Folder to output the created investigation files to
-  -i INVESTIGATION_ID, --investigation-id INVESTIGATION_ID
-                        Investigation ID to assign to the resulting investigation file
-  --sqlite SQLITE       Path to the .sqlite file for each data set
-  --deposit DEPOSIT     Path for the deposition process via XCE
-  --txt TXT             Path to add additional information or overwrite in mmcifs
-```
-There are two operations defined for XChem facility.
-xchem_operations.json: This operation file is used to create an investigation file from purely soakdb sqlite file. Data not found is highlighted in the output file
-xchem_operations_soakdb.json: This operation file is used to create an investigation file and relies on pickle + cif files.
-
-
-#### Importing data from Ground state file
-For files where the data of misses are present in structure factor file, the `miss_importer.py` utility can be used to enrich the investigation data with new information.
-
-```
-$ python miss_importer.py --help
-usage: Ground state file importer  [-h] [-inv INVESTIGATION_FILE] [-sf SF_FILE] [-p PDB_ID] [-f CSV_FILE]
-
-This utility takes as an input investigation file, and sf file. And imports the data for all the misses from the sf file and adds that to the investigation file
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -inv INVESTIGATION_FILE, --investigation-file INVESTIGATION_FILE
-                        Path to investigation file
-  -sf SF_FILE, --sf-file SF_FILE
-                        Path to structure factor file
-  -p PDB_ID, --pdb-id PDB_ID
-                        PDB ID to lookup to download the sf file
-  -f CSV_FILE, --csv-file CSV_FILE
-                        Requires CSV with 2 columns [investigation_file, Pdb Code (to fetch sf file)]
-```
-
-The utility requires the created investigation file, along with a sf file (or pdb code to automatically fetch the sf file) as input. 
-And outputs a modified investigation cif file.
-
-### Example
 
 #### MAX IV
 
-```
-investigation.py max_iv --sqlite fragmax.sqlite -i inv_01
+```bash
+# Using SQLite database
+mmcif-gen make-mmcif maxiv --sqlite fragmax.sqlite --output-folder ./out --identifier I_5678
 ```
 
 #### XChem
-```
-python investigation.py xchem --sqlite DLS_data_example/soakDBDataFile_CHIKV_Mac.sqlite --txt DLS_data_example/ --deposit DLS_data_example/deposition.deposit -i inv_01 -o out/
-```
-
-#### PDBE
-PDB Ids can be passed in the arguments. The model file is fetched from EBI Archive FTP area temporarily stored. After the investigation file is created the files are deleted.
-```
-python investigations.py pdbe -p 6dmn 6dpp 6do8
-```
-
-A path can be given to the application. All cif model files in the folder are regarded as input.
-```
-python investigations.py pdbe -m path/to/folder/with/model_files
-```
-
-A CSV file can be provided as input. The csv file should have two columns `GROUP_ID` and `ENTRY_ID`.
-Entries in the same groups are processed together, and an investigation file is created for each unique `GROUP_ID`
-```
-python investigations.py pdbe -f path/to/csv/file
-```
-
-## Running Tests
-
-To run the test suite, use the following command:
 
 ```bash
-python -m unittest discover -s test
+# Using SQLite database with additional information
+mmcif-gen make-mmcif xchem --sqlite soakdb.sqlite --txt ./metadata --deposit ./deposit --output-folder ./out
 ```
 
-## Project Structure
+#### DLS (Diamond Light Source)
 
-- `investigation.py`: Core logic for handling investigations.
-- `investigation_engine.py`: Manages the processing logic for investigations.
-- `investigation_io.py`: Handles input/output operations for investigations.
-- `operations.py`: Contains operational logic for various tasks.
-- `util/`: Contains utility scripts.
-- `facilities/`: Handles different facilities' operations.
-- `test/`: Contains test cases and data for unit testing.
-- `requirements.txt`: Lists the dependencies required for the project.
-- `README.md`: Project documentation.
+```bash
+# Using metadata configuration
+mmcif-gen make-mmcif dls --json dls_metadata.json --output-folder ./out --identifier DLS_2024
+```
 
-## Configuration
+## Configuration Files
 
-Configuration files for the operations can be found in the operations folder:
+The tool uses JSON configuration files to define how data should be transformed into mmCIF format. These files can be:
 
-  - `pdbe_operations.json`
-  - `maxiv_operations.json`
-  - `dls_operations.json`
-  - `dls_operations_soakdb.json`
+1. Fetched from the official repository using the `fetch-facility-json` command
+2. Created custom for specific needs
+3. Modified versions of official configurations
 
-These files contain necessary configurations for interacting with the respective facilities.
+### Configuration File Structure
 
+```json
+{
+  "source_category": "source_table_name",
+  "target_category": "_target_category",
+  "operations": [
+    {
+      "source_items": ["column1", "column2"],
+      "target_items": ["_target.item1", "_target.item2"],
+      "operation": "direct_transfer"
+    }
+  ]
+}
+```
 
-### Working
-The investigation file is created from the constituent model file. The data from the model file is parsed via Gemmi and stored in a in-memory SQLite database, which denormalises the data in the various categories amongst all the files.
+## Working with Investigation Files
 
-The operations.json file is read by the program, and operations specified are ran sequentially. 
-The operations generally specify source and target category and items, operation to perform, and parameter that the operation may require.
-The operation may leverage the denormalised table created initially.
+Investigation files are a specialized type of mmCIF file that capture metadata across multiple experiments. To create investigation files:
 
-Once all operations are peformed the resultant file is written out where name of the file is the investigation_id.
-Incase an operation cannot be performed due to missing data in the file, the operation gets skipped and the error is logged.
+1. Use the appropriate facility subcommand
+2. Specify the investigation ID
+3. Provide the required facility-specific data source
+
+```bash
+# Example for PDBe investigation
+mmcif-gen make-mmcif pdbe --model-folder ./models --identifier INV_001 --output-folder ./investigations
+
+# Example for MAX IV investigation
+mmcif-gen make-mmcif maxiv --sqlite experiment.sqlite --identifier INV_002 --output-folder ./investigations
+```
+
+## Data Enrichment
+
+For investigation files that need enrichment with additional data (e.g., ground state information):
+
+```bash
+# Using the miss_importer utility
+python miss_importer.py --investigation-file inv.cif --sf-file structure.sf --pdb-id 1ABC
+```
+
+## Development
+
+### Project Structure
+
+```
+mmcif-gen/
+├── facilities/            # Facility-specific implementations
+│   ├── pdbe.py
+│   ├── maxiv.py
+│   └── ...
+├── operations/           # JSON configuration files
+│   ├── dls/
+│   ├── maxiv/
+│   └── ...
+├── tests/               # Test cases
+├── setup.py            # Package configuration
+└── README.md          # Documentation
+```
+
+### Running Tests
+
+```bash
+python -m unittest discover -s tests
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+## License
+
+[MIT License](LICENSE)
+
+## Support
+
+For issues and questions, please use the [GitHub issue tracker](https://github.com/PDBeurope/Investigations/issues).

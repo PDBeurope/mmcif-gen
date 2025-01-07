@@ -9,10 +9,10 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 class InvestigationMaxIV(InvestigationEngine):
         
-    def __init__(self, sqlite_path: str, investigation_id: str, output_path: str) -> None:
+    def __init__(self, sqlite_path: str, investigation_id: str, output_path: str, maxiv_investigation_json: str="./operations/maxiv/maxiv_investigation.json") -> None:
         logging.info("Instantiating MaxIV Investigation subclass")
         self.reader = SqliteReader(sqlite_path)
-        self.operation_file_json = "./operations/maxiv_operations.json"
+        self.operation_file_json = maxiv_investigation_json
         super().__init__(investigation_id, output_path)
 
     def pre_run(self) -> None:
@@ -295,7 +295,7 @@ def run(sqlite_path : str, investigation_id: str, output_path: str) -> None:
     im.run()
     
 def maxiv_subparser(subparsers, parent_parser):
-    parser_maxiv = subparsers.add_parser("max_iv",help="Parameter requirements for investigation files from MAX IV data",parents=[parent_parser])
+    parser_maxiv = subparsers.add_parser("maxiv",help="Parameter requirements for investigation files from MAX IV data",parents=[parent_parser])
     parser_maxiv.add_argument(
         "-s",
         "--sqlite",
@@ -306,7 +306,7 @@ def run_investigation_maxiv(args):
     if not args.sqlite:
         logging.error("Max IV facility requires path to --sqlite file")
         return 1
-    run(args.sqlite, args.investigation_id, args.output_folder)
+    run(args.sqlite, args.investigation_id, args.output_folder,args.json)
 
 
     

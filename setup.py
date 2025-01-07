@@ -7,8 +7,8 @@ with open(os.path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name="investigation",
-    version="0.1.0",
+    name="mmcif_gen",
+    version="0.2.0",
     packages=find_packages(),
     install_requires=[
         "argparse",
@@ -18,8 +18,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "mmcif_gen=investigation:mmcif_gen_cli",
-            "make_mmcif=investigation:main",
+            "mmcif-gen=mmcif_gen:main",
         ],
     },
     author="Syed Ahsan Tanweer",
