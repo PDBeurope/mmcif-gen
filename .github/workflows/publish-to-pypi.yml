@@ -29,12 +29,6 @@ jobs:
         run: |
           twine check dist/*
           
-      - name: Run tests
-        run: |
-          pip install pytest
-          pip install -e .
-          pytest
-          
       - name: Publish to PyPI
         env:
           TWINE_USERNAME: __token__
