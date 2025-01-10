@@ -1,10 +1,9 @@
 from abc import ABC, abstractmethod
 from copy import deepcopy
-from investigation_io import ExternalInformation
+from mmcif_gen.investigation_io import ExternalInformation, InvestigationStorage
 import logging
 import sys
 from typing import Dict, List, TYPE_CHECKING
-from investigation_io import CIFReader, InvestigationStorage,RestReader
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 

@@ -1,5 +1,5 @@
-from investigation_engine import InvestigationEngine
-from investigation_io import CIFReader, SqliteReader
+from mmcif_gen.investigation_engine import InvestigationEngine
+from mmcif_gen.investigation_io import CIFReader, SqliteReader
 import os
 import requests
 from typing import List, Dict

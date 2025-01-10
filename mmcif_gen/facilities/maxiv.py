@@ -1,5 +1,5 @@
-from investigation_engine import InvestigationEngine
-from investigation_io import SqliteReader
+from mmcif_gen.investigation_engine import InvestigationEngine
+from mmcif_gen.investigation_io import SqliteReader
 from typing import List
 import sys
 import logging

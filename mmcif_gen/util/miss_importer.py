@@ -2,7 +2,7 @@ import argparse
 import gemmi
 import sys
 import logging
-from output_grabber import OutputGrabber
+from mmcif_gen.util.output_grabber import OutputGrabber
 import tempfile
 import os
 import requests

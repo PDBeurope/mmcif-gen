@@ -1,7 +1,7 @@
-from facilities.pdbe import pdbe_subparser, run_investigation_pdbe
-from facilities.maxiv import maxiv_subparser, run_investigation_maxiv
-from facilities.dls import dls_subparser, run_investigation_dls
-from facilities.xchem import xchem_subparser, run_investigation_xchem
+from mmcif_gen.facilities.pdbe import pdbe_subparser, run_investigation_pdbe
+from mmcif_gen.facilities.maxiv import maxiv_subparser, run_investigation_maxiv
+from mmcif_gen.facilities.dls import dls_subparser, run_investigation_dls
+from mmcif_gen.facilities.xchem import xchem_subparser, run_investigation_xchem
 import argparse
 import json
 import logging
@@ -19,7 +19,7 @@ file_handler.setLevel(logging.DEBUG)
 
 logging.getLogger().addHandler(file_handler)
 
-FACILITIES_URL = "https://raw.githubusercontent.com/PDBeurope/Investigations/main/operations/fetched_list.json"
+FACILITIES_URL = "https://raw.githubusercontent.com/PDBeurope/Investigations/main/mmcif_gen/operations/fetched_list.json"
 
 class CLIManager:
     def __init__(self):
@@ -49,7 +49,7 @@ class CLIManager:
 
     def fetch_facility_json(self, json_path: str, output_dir: str = ".") -> str:
         """Fetch a specific facility JSON file."""
-        base_url = "https://raw.githubusercontent.com/PDBeurope/Investigations/main/"
+        base_url = "https://raw.githubusercontent.com/PDBeurope/Investigations/main/mmcif_gen/"
         full_url = base_url + json_path
         
         os.makedirs(output_dir, exist_ok=True)

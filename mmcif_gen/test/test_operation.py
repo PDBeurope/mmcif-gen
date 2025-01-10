@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock, patch
-from operations import (
+from mmcif_gen.operations import (
     UnionOperation,
     UnionDistinctOperation,
     AutoIncrementOperation,
