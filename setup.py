@@ -8,7 +8,7 @@ with open(os.path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name="mmcif_gen",
-    version="1.0.0",
+    version="1.0.1",
     packages=find_packages(),
     install_requires=[
         "argparse",
@@ -22,11 +22,11 @@ setup(
         ],
     },
     author="Syed Ahsan Tanweer",
-    author_email="ahsan@ebi.ac.uk",  # Replace with your email
+    author_email="ahsan@ebi.ac.uk",
     description="CLI tool for creating mmCIF files from various facility data sources",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/PDBeurope/Investigations/",  # Replace with your repo URL
+    url="https://github.com/PDBeurope/Investigations/",
     project_urls={
         "Bug Tracker": "https://github.com/PDBeurope/Investigations/issues",
         "Documentation": "https://github.com/PDBeurope/Investigations/",
