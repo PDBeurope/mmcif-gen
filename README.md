@@ -44,6 +44,34 @@ The general syntax for generating mmCIF files is:
 
 ```bash
 mmcif-gen make-mmcif <facility> [options]
+````
+
+Full list of options:
+```
+[w3_pdb05@pdb-001 Investigations]$ mmcif-gen make-mmcif --help
+usage: mmcif-gen make-mmcif [-h] [--json JSON] [--output-folder OUTPUT_FOLDER]
+                            [--id ID]
+                            {pdbe,maxiv,dls,xchem} ...
+
+positional arguments:
+  {pdbe,maxiv,dls,xchem}
+                        Specifies facility for which mmcif files will be used
+                        for
+    pdbe                Parameter requirements for investigation files from
+                        PDBe data
+    maxiv               Parameter requirements for investigation files from
+                        MAX IV data
+    dls                 Parameter requirements for creating investigation
+                        files from DLS data
+    xchem               Parameter requirements for creating investigation
+                        files from XChem data
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --json JSON           Path to transformation JSON file
+  --output-folder OUTPUT_FOLDER
+                        Output folder for mmCIF files
+  --id ID               File identifier
 ```
 
 Each facility has its own set of required parameters, which can be checked by running the command with the `--help` flag.
@@ -58,7 +86,7 @@ mmcif-gen make-mmcif pdbe --help
 
 ```bash
 # Using metadata configuration
-mmcif-gen make-mmcif dls --json dls_metadata.json --output-folder ./out --id id_1234 --dls-json metadata-from-isypb.json
+mmcif-gen make-mmcif --json dls_metadata.json --output-folder ./out --id I_1234 dls --dls-json metadata-from-isypb.json
 ```
 ### Working with Investigation Files
 
@@ -70,20 +98,20 @@ Investigation files are created in a very similar way:
 
 ```bash
 # Using model folder
-mmcif-gen make-mmcif pdbe --json pdbe_investigation.json --model-folder ./models --output-folder ./out --id I_1234
+mmcif-gen make-mmcif --json pdbe_investigation.json --output-folder ./out --id I_1234 pdbe --model-folder ./models 
 
 # Using PDB IDs
-mmcif-gen make-mmcif pdbe --json pdbe_investigation.json --pdb-ids 6dmn 6dpp 6do8 --output-folder ./out
+mmcif-gen make-mmcif  --json pdbe_investigation.json --output-folder ./out pdbe  --pdb-ids 6dmn 6dpp 6do8
 
 # Using CSV input
-mmcif-gen make-mmcif pdbe --json pdbe_investigation.json --csv-file groups.csv --output-folder ./out
+mmcif-gen make-mmcif  --json pdbe_investigation.json --output-folder ./out pdbe --csv-file groups.csv 
 ```
 
 #### MAX IV
 
 ```bash
 # Using SQLite database
-mmcif-gen make-mmcif maxiv --json maxiv_investigation.json --sqlite fragmax.sqlite --output-folder ./out --id I_5678
+mmcif-gen make-mmcif maxiv --json maxiv_investigation.json --sqlite fragmax.sqlite --output-folder ./out --id I_1234
 ```
 
 #### XChem
