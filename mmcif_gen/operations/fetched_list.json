@@ -4,5 +4,6 @@
     "maxiv" : [ "operations/maxiv/maxiv_operations.json"],
     "xchem" : ["operations/xchem/xchem_operations.json",
                 "operations/xchem/xchem_operations_soakdb.json"],
-    "pdbe" : ["operations/pdbe/pdbe_operations.json"]
+    "pdbe" : ["operations/pdbe/pdbe_operations.json",
+                "operations/pdbe/pdbe_operations.json"]
 }
