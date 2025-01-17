@@ -576,8 +576,12 @@ class JQFilterOperation(operationBase):
         # Handle single target item case
         if isinstance(target_items, str):
             target_items = [target_items]
+            if filtered_data is None:
+                logging.info("No data found for target item. Skipping this item...")
+                return
             if not isinstance(filtered_data, list):
                 filtered_data = [filtered_data]
+            
             data[target_items[0]] = filtered_data
             return
 
