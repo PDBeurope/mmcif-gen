@@ -30,10 +30,10 @@ These files can be written, but can also be fetched from the github repository u
 
 ```bash
 # Fetch configuration for a specific facility
-mmcif-gen fetch-facility-json dls-metadata
+mmcif-gen fetch-facility-json dls_metadata
 
 # Specify custom output directory
-mmcif-gen fetch-facility-json dls-metadata -o ./mapping_operations
+mmcif-gen fetch-facility-json dls_metadata -o ./mapping_operations
 ```
 
 ### Generating metadata mmCIF Files
