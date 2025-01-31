@@ -585,12 +585,12 @@ class JQFilterOperation(operationBase):
             data[target_items[0]] = filtered_data
             return
 
-        # Handle multiple target items case
-        if len(target_items) != len(filtered_data):
-            raise ValueError(f"Number of target items ({len(target_items)}) does not match filtered data length ({len(filtered_data)})")
-            
-        for item, value in zip(target_items, filtered_data):
-            if isinstance(value, list):
-                data[item] = value
-            else:
-                data[item] = [value]
+        # Handle multiple target items case    
+        for filtered_item in filtered_data:
+            if len(filtered_item) != len(target_items):
+                raise ValueError(f"Number of target items ({len(target_items)}) does not match keys in  filtered data length ({len(filtered_item)})") 
+            for item, value in zip(target_items, filtered_item):
+                if isinstance(value, list):
+                    data[item].extend(value)
+                else:
+                    data[item].append(value)

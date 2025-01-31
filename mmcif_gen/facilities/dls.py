@@ -22,7 +22,7 @@ class InvestigationDLS(InvestigationEngine):
 
 
 def dls_subparser(subparsers, parent_parser):
-    parser_dls = subparsers.add_parser("dls", help="Parameter requirements for creating investigation files from DLS data", parents=[parent_parser])
+    parser_dls = subparsers.add_parser("dls", help="Parameter requirements for creating mmcif files from DLS data", parents=[parent_parser])
 
     parser_dls.add_argument(
         "--dls-json",

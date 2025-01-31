@@ -1,15 +1,14 @@
 {
     "operations": [
         {
-        "target_category" : "_pdbx_contact_author",
-        "target_items" : ["address_1","address_2","address_3","email","identifier_ORCID","name_first","name_last","name_mi","role"],
-        "operation" : "rest_endpoint",
-        "operation_parameters" :{
-            "type" : "GET",
-
-            "endpoint" : "/passport"
+            "reader": "json",
+            "operation": "jq_filter",
+            "target_category": "audit_author",
+            "target_items": ["id", "firstname", "email"],
+            "operation_parameters": {
+              "jq": ".audit_author | [.id, .firstname, .email] "
+            }
         }
-    }
    
 ],
     "mmcif_order": {
