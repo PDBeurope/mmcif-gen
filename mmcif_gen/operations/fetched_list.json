@@ -1,7 +1,7 @@
 {
     "dls" : ["operations/dls/dls_metadata_hardcoded.json",
                 "operations/dls/dls_metadata.json"],
-    "maxiv" : [ "operations/maxiv/maxiv_operations.json"],
+    "maxiv" : [ "operations/maxiv/maxiv_investigation.json"],
     "xchem" : ["operations/xchem/xchem_operations.json",
                 "operations/xchem/xchem_operations_soakdb.json"],
     "pdbe" : ["operations/pdbe/pdbe_operations.json"]
