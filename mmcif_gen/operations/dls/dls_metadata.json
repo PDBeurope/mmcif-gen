@@ -166,7 +166,7 @@
       "reader": "json",
       "operation": "jq_filter",
       "target_category": "_diffrn_radiation",
-      "target_items": "wavelength",
+      "target_items": "wavelength_id",
       "operation_parameters": {
         "jq": "[range(1; (.datacollections | length) + 1)]"
       }
