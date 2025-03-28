@@ -101,7 +101,7 @@ class InvestigationEngine:
         else:
             raise ValueError(f"Invalid operation type: {operation_type}")
 
-    def run(self) -> None :
+    def run(self, prefer_pairs: bool = False) -> None :
         for operation_data in self.operations:
             try:
                 operation_type = operation_data["operation"]
@@ -113,5 +113,6 @@ class InvestigationEngine:
                 logging.exception(e)
 
         self.investigation_storage.write_data_to_cif(
-            f"{self.output_path}/{self.investigation_id}.cif"
+            f"{self.output_path}/{self.investigation_id}.cif",
+            prefer_pairs=False
         )

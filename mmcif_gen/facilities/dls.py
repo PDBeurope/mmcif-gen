@@ -32,7 +32,7 @@ def dls_subparser(subparsers, parent_parser):
 def run(dls_json_path : str, id: str, output_path: str, operation_json_path: str) -> None:
     im = InvestigationDLS(dls_json_path, id, output_path, operation_json_path)
     im.pre_run()
-    im.run()
+    im.run(prefer_pairs=True)
 
 def run_investigation_dls(args):
     if not args.dls_json:

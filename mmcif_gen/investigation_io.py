@@ -250,11 +250,12 @@ class InvestigationStorage:
     def get_item_order(self, category) -> list:
         return self.mmcif_order.get(category, [])
 
-    def write_data_to_cif(self, output_file) -> None:
+    def write_data_to_cif(self, output_file, prefer_pairs: bool = False) -> None:
         logging.info("Writing Investigation cif file")
         write_options = gemmi.cif.WriteOptions()
         write_options.align_loops = 50
         write_options.align_pairs = 50
+        write_options.prefer_pairs = prefer_pairs
 
         doc = gemmi.cif.Document()
         block = doc.add_new_block(f"{self.investigation_id}")
