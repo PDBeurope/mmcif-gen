@@ -216,4 +216,4 @@ def run_investigation_xchem(args):
     if not args.sqlite:
         logging.error("XChem facility requires path to --sqlite file")
         return 1
-    run(args.sqlite, args.deposit, args.txt, args.investigation_id, args.output_folder)
+    run(args.sqlite, args.deposit, args.txt, args.id, args.output_folder)
