@@ -104,7 +104,7 @@ options:
 
 Example command:
 ```
-mmcif-gen make-mmcif --id 001 --json mmcif_gen/operations/xchem/xchem_operations_metadata.json --output-folder pdbedeposit xchem --sqlite mmcif_gen/test/data/lb32633-1-soakDBDataFile.sqlite --cif-type model
+mmcif-gen make-mmcif --id 001 --json mmcif_gen/operations/xchem/xchem_metadata.json --output-folder pdbedeposit xchem --sqlite mmcif_gen/test/data/lb32633-1-soakDBDataFile.sqlite --cif-type model
 ```
 
 ### Working with Investigation Files
