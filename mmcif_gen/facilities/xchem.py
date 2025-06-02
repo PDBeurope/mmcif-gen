@@ -9,23 +9,22 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 class InvestigationXChem(InvestigationEngine):
         
-    def __init__(self, sqlite_path: str, deposit_path: str, cif_files: str, investigation_id: str, output_path: str) -> None:
+    def __init__(self, sqlite_path: str, investigation_id: str, output_path: str, json_path: str, cif_type: str) -> None:
         logging.info("Instantiating XChem Investigation subclass")
-        self.sqlite_reader= SqliteReader(sqlite_path)
-        self.pickle_reader = PickleReader(deposit_path).data
-        self.reader = CIFReader()
-        self.reader.read_files(cif_files)
-        self.operation_file_json = "./operations/xchem_operations.json"
+        self.reader = SqliteReader(sqlite_path)
+        self.operation_file_json = json_path
         self.excluded_libraries = ["'Diffraction Test'","'Solvent'"]
+        self.cif_type = cif_type
         super().__init__(investigation_id, output_path)
 
     def pre_run(self) -> None:
         logging.info("Pre-running")
-        libraries=["XChem_Libraries_2024-02-01.csv"]
-        for library in libraries:
-            self.load_library_csv(f"./external_data/{library}")
-        self.create_experiment_table()
-        self.find_missing_compound_information()
+        if self.cif_type == "investigation":
+            libraries=["XChem_Libraries_2024-02-01.csv"]
+            for library in libraries:
+                self.load_library_csv(f"./external_data/{library}")
+            self.create_experiment_table()
+            self.find_missing_compound_information()
         super().pre_run()
 
     def find_missing_compound_information(self) -> None:
@@ -193,22 +192,14 @@ def xchem_subparser(subparsers, parent_parser):
         help="Path to the .sqlite file for each data set"
     )
     parser_xchem.add_argument(
-        "--deposit",
-        help="Path for the deposition process via XCE"
-    )
-    parser_xchem.add_argument(
-        "--txt",
-        help="Path to add additional information or overwrite in mmcifs"
+        "--cif-type",
+        help="Type of the CIF file that will be generated",
+        default="model",
+        choices=["model", "investigation"]
     )
 
-def run(sqlite_path : str, deposit_path: str, txt_path: str, investigation_id: str, output_path: str) -> None:
-    cif_files = []
-    if txt_path:
-        cif_files = get_cif_file_paths(txt_path)
-        print("List of CIF file paths:")
-        for file_path in cif_files:
-            print(file_path)
-    im = InvestigationXChem(sqlite_path, deposit_path, cif_files, investigation_id, output_path)
+def run(sqlite_path : str, investigation_id: str, output_path: str, json_path: str, cif_type: str) -> None:
+    im = InvestigationXChem(sqlite_path, investigation_id, output_path, json_path, cif_type)
     im.pre_run()
     im.run()
 
@@ -216,4 +207,4 @@ def run_investigation_xchem(args):
     if not args.sqlite:
         logging.error("XChem facility requires path to --sqlite file")
         return 1
-    run(args.sqlite, args.deposit, args.txt, args.id, args.output_folder)
+    run(args.sqlite, args.id, args.output_folder, args.json, args.cif_type)

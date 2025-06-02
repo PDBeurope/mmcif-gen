@@ -191,7 +191,7 @@ class StaticValueOperation(operationBase):
 
         self.investigation_storage.add_category(target_category)
         data = self.investigation_storage.data[target_category]
-        rows_to_write = max(self.get_number_of_rows_in_data(data), 1)
+        rows_to_write = 1
 
         for index, item in enumerate(target_items):
             if item not in data:

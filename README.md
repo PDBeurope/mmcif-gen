@@ -88,6 +88,25 @@ mmcif-gen make-mmcif pdbe --help
 # Using metadata configuration
 mmcif-gen make-mmcif --json dls_metadata.json --output-folder ./out --id I_1234 dls --dls-json metadata-from-isypb.json
 ```
+
+#### XChem
+Parameters required
+```
+$ mmcif-gen make-mmcif xchem --help                                                                      
+usage: mmcif-gen make-mmcif xchem [-h] [--sqlite SQLITE] [--cif-type {model,investigation}]
+
+options:
+  -h, --help            show this help message and exit
+  --sqlite SQLITE       Path to the .sqlite file for each data set
+  --cif-type {model,investigation}
+                        Type of the CIF file that will be generated
+```
+
+Example command:
+```
+mmcif-gen make-mmcif --id 001 --json mmcif_gen/operations/xchem/xchem_operations_metadata.json --output-folder pdbedeposit xchem --sqlite mmcif_gen/test/data/lb32633-1-soakDBDataFile.sqlite --cif-type model
+```
+
 ### Working with Investigation Files
 
 Investigation files are a specialized type of mmCIF file that capture metadata across multiple experiments.

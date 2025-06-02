@@ -46,17 +46,20 @@ class InvestigationEngine:
             self.investigation_storage.mmcif_order = json_data.get("mmcif_order", [])
 
     def operation_factory(self, operation_type: str, operation_reader: str) -> operationBase:
-        if not operation_reader:
+        try:
+            if not operation_reader:
+                operation_reader = self.reader
+            elif operation_reader == "sqlite":
+                operation_reader = self.sqlite_reader
+            elif operation_reader == "pickle":
+                operation_reader = self.pickle_reader
+            elif operation_reader == "cif":
+                operation_reader = self.reader
+            elif operation_reader == "json":
+                operation_reader = self.json_reader
+        except KeyError:
+            logging.error(f"Resorting to default reader")
             operation_reader = self.reader
-        elif operation_reader == "sqlite":
-            operation_reader = self.sqlite_reader
-        elif operation_reader == "pickle":
-            operation_reader = self.pickle_reader
-        elif operation_reader == "cif":
-            operation_reader = self.reader
-        elif operation_reader == "json":
-            operation_reader = self.json_reader
-
 
         if operation_type == "distinct_union":
             return UnionDistinctOperation(self.investigation_storage, operation_reader)
