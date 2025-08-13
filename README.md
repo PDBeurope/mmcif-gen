@@ -2,8 +2,11 @@
 
 A versatile command-line tool for generating any mmCIF files from various data sources. This tool can be to create:
 
-1. Metadata mmcif files (To capture experimental metadata from different facilities)
-2. Investigation mmcif files (like: https://ftp.ebi.ac.uk/pub/databases/msd/fragment_screening/investigations/)
+1. Metadata mmCIF files (To capture experimental metadata from different facilities)
+2. Investigation mmCIF files (like: https://ftp.ebi.ac.uk/pub/databases/msd/fragment_screening/investigations/)
+
+As is standard practice at the Protein Data Bank (PDB) the files generated are given the extension '.CIF' even though the file format is called mmCIF.
+More on mmCIF file format can be found here: [mmcif.wwpdb.org/](https://mmcif.wwpdb.org/)
 
 The tool has transformational mapping to convert data as it is stored at various facilities to corresponding catgories and items in mmcif format.
 
