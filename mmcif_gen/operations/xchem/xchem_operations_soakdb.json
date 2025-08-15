@@ -19,11 +19,13 @@
             }
         },
         {
+            "reader" : "sqlite",
             "target_category" : "_pdbx_contact_author",
             "target_item" : "id",
             "operation" : "auto_increment"
         },
         {
+            "reader" : "sqlite",
             "target_category" : "_audit_author",
             "target_items" : ["ordinal", "name"],
             "operation" : "static_value",
@@ -31,6 +33,7 @@
         },
 
         {
+            "reader" : "sqlite",
             "target_category" : "_pdbx_investigation",
             "target_items" : ["type","db","project","external_url"],
             "target_values": ["Fragment Screening", "frag_hub", "fh12345", "URL required from Fragalysis"],
@@ -64,12 +67,14 @@
             }
         },
         {
+            "reader" : "sqlite",
             "target_category" : "_pdbx_fraghub_investigation_campaign",
             "target_items" : ["campaign_id ", "proc_pipeline", "facility"],
             "target_values": ["1", "XCE", "Diamond"],
             "operation" : "static_value"
         },
         {
+            "reader" : "sqlite",
             "source_category" : "_pdbx_investigation",
             "source_items" : ["id"],
             "target_category" : "_pdbx_fraghub_investigation_campaign",
@@ -86,6 +91,7 @@
             }
         },
         {
+            "reader" : "sqlite",
             "target_category" : "_pdbx_investigation_entity_poly",
             "target_items" : ["type","src_method"],
             "operation" : "static_value",
@@ -101,18 +107,21 @@
             }
         },
         {
+            "reader" : "sqlite",
             "target_category" : "_pdbx_investigation_entity_poly",
             "target_item" : "poly_entity_id",
             "operation" : "auto_increment"
         },
     
         {
+            "reader" : "sqlite",
             "target_category" : "_pdbx_investigation_entity_nonpoly",
             "target_items" : ["name","chem_comp_id","formula_weight","formula","inchi_descriptor","cas_identifier"],
             "target_values": ["water","HOH","18.015","H2 O","Sample data - needs to come from XCA","required from XCA"],
             "operation" : "static_value"
         },
         {
+            "reader" : "sqlite",
             "target_category" : "_pdbx_investigation_entity_nonpoly",
             "target_item" : "nonpoly_entity_id",
             "operation" : "auto_increment"
@@ -127,6 +136,7 @@
             }
         },
         {
+            "reader" : "sqlite",
             "source_category" : "_pdbx_fraghub_investigation_fraglib_component",
             "source_items" : ["id", "id"],
             "target_category" : "_pdbx_fraghub_investigation_frag_component_mix",
@@ -134,6 +144,7 @@
             "operation" : "copy"
         },
         {
+            "reader" : "sqlite",
             "source_category" : "_pdbx_investigation_entity_poly",
             "source_items" : ["poly_entity_id", "poly_entity_id"],
             "target_category" : "_pdbx_investigation_poly_descript",
@@ -141,6 +152,7 @@
             "operation" : "copy"
         },
         {
+            "reader" : "sqlite",
             "source_category" : "_pdbx_investigation_entity_nonpoly",
             "source_items" : ["nonpoly_entity_id", "nonpoly_entity_id"],
             "target_category" : "_pdbx_investigation_nonpoly_descript",
@@ -148,6 +160,7 @@
             "operation" : "copy"
         },
         {
+            "reader" : "sqlite",
             "target_category" : "_pdbx_investigation_sample",
             "target_items" : ["poly_descript_id","nonpoly_descript_id","sample_id"],
             "target_values": ["1","1","1"],
@@ -181,6 +194,7 @@
             }
         },
         {
+            "reader" : "sqlite",
             "target_category" : "_pdbx_fraghub_investigation_screening_result",
             "target_item" : "result_id",
             "operation" : "auto_increment"

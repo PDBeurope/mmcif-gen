@@ -2,6 +2,8 @@ from mmcif_gen.facilities.pdbe import pdbe_subparser, run_investigation_pdbe
 from mmcif_gen.facilities.maxiv import maxiv_subparser, run_investigation_maxiv
 from mmcif_gen.facilities.dls import dls_subparser, run_investigation_dls
 from mmcif_gen.facilities.xchem import xchem_subparser, run_investigation_xchem
+from mmcif_gen.facilities.crims import crims_subparser, run_investigation_crims
+from mmcif_gen.facilities.esrf import esrf_subparser, run_investigation_esrf
 import argparse
 import json
 import logging
@@ -19,7 +21,7 @@ file_handler.setLevel(logging.DEBUG)
 
 logging.getLogger().addHandler(file_handler)
 
-FACILITIES_URL = "https://raw.githubusercontent.com/PDBeurope/Investigations/main/mmcif_gen/operations/fetched_list.json"
+FACILITIES_URL = "https://raw.githubusercontent.com/PDBeurope/mmcif-gen/main/mmcif_gen/operations/fetched_list.json"
 
 class CLIManager:
     def __init__(self):
@@ -39,7 +41,7 @@ class CLIManager:
 
     def get_available_facilities(self) -> List[str]:
         """Get list of available facilities."""
-        return ['pdbe', 'maxiv', 'dls', 'xchem']
+        return ['pdbe', 'maxiv', 'dls', 'xchem', 'crims', 'esrf']
         # return list(self.fetch_facilities_data().keys())
 
     def get_facility_jsons(self, facility: str) -> List[str]:
@@ -144,6 +146,8 @@ def setup_parsers():
     maxiv_subparser(make_mmcif_subparser, facility_parent)
     dls_subparser(make_mmcif_subparser, facility_parent)
     xchem_subparser(make_mmcif_subparser, facility_parent)
+    crims_subparser(make_mmcif_subparser, facility_parent)
+    esrf_subparser(make_mmcif_subparser, facility_parent)
 
     return parser
 
@@ -228,6 +232,8 @@ def main():
             run_investigation_xchem(args)
         elif args.facility == 'esrf':
             run_investigation_esrf(args)
+        elif args.facility == 'crims':
+            run_investigation_crims(args)
 
 if __name__ == "__main__":
     main()

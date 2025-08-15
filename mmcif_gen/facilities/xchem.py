@@ -11,7 +11,7 @@ class InvestigationXChem(InvestigationEngine):
         
     def __init__(self, sqlite_path: str, investigation_id: str, output_path: str, json_path: str, cif_type: str) -> None:
         logging.info("Instantiating XChem Investigation subclass")
-        self.reader = SqliteReader(sqlite_path)
+        self.sqlite_reader = SqliteReader(sqlite_path)
         self.operation_file_json = json_path
         self.excluded_libraries = ["'Diffraction Test'","'Solvent'"]
         self.cif_type = cif_type
