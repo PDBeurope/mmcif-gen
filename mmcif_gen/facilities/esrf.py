@@ -1,5 +1,5 @@
 from mmcif_gen.investigation_engine import InvestigationEngine
-from mmcif_gen.investigation_io import RestReader
+from mmcif_gen.investigation_io import JsonReader
 from typing import List
 import sys
 import logging
@@ -8,11 +8,9 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 class InvestigationESRF(InvestigationEngine):
         
-    def __init__(self, esrf_json_path: str, investigation_id: str, output_path: str) -> None:
+    def __init__(self, esrf_json_path: str, investigation_id: str, output_path: str, transformation_json: str="./operations/esrf/esrf_investigation.json") -> None:
         logging.info("Instantiating ESRF Investigation subclass")
-        # self.rest_reader = RestReader("https://htxlab.embl.org/", user, pw)
-        # self.rest_reader.get_auth_token()
-        self.operation_file_json = "./operations/esrf/esrf_investigation.json"
+        self.operation_file_json = transformation_json
         self.json_reader = JsonReader(esrf_json_path)
         super().__init__(investigation_id, output_path)
 

@@ -5,5 +5,7 @@
     "xchem" : ["operations/xchem/xchem_operations.json",
                 "operations/xchem/xchem_operations_soakdb.json",
                 "operations/xchem/xchem_metadata.json"],
-    "pdbe" : ["operations/pdbe/pdbe_operations.json"]
+    "pdbe" : ["operations/pdbe/pdbe_operations.json"],
+    "crims" : ["operations/crimms/crims_metadata.json"],
+    "esrf" : ["operations/esrf/esrf_investigations.json"]
 }
