@@ -1,0 +1,152 @@
+{
+    "operations": [
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_exptl_crystal_grow",
+        "target_items": "id",
+        "operation_parameters": {
+          "jq": "if (.campaigns[0].crystals | length) == 1 then \"1\" else empty end"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_exptl_crystal_grow",
+        "target_items": "method",
+        "operation_parameters": {
+          "jq": ".campaigns[0].crystals[0].method"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_exptl_crystal_grow",
+        "target_items": "temp",
+        "operation_parameters": {
+          "jq": ".campaigns[0].crystals[0].temperature"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_exptl_crystal_grow",
+        "target_items": "pH",
+        "operation_parameters": {
+          "jq": ".campaigns[0].crystals[0].pH"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_diffrn_radiation",
+        "target_items": "pdbx_monochromatic_or_laue_m_l",
+        "operation_parameters": {
+          "jq": "if (.campaigns[0].crystals[0].datasets[0].datacollection_metadata.wavelength_list | type) != \"array\" then \"M\" else empty end"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_diffrn_radiation",
+        "target_items": "pdbx_diffrn_protocol",
+        "operation_parameters": {
+          "jq": "if (.campaigns[0].crystals[0].datasets[0].datacollection_metadata.wavelength_list | type) != \"array\" then \"SINGLE WAVELENGTH\" else empty end"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_diffrn_source",
+        "target_items": "diffrn_id",
+        "operation_parameters": {
+          "jq": "if (.campaigns[0].crystals[0].datasets | length) == 1 then \"1\" else empty end"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_diffrn_source",
+        "target_items": "pdbx_wavelength_list",
+        "operation_parameters": {
+          "jq": ".campaigns[0].crystals[0].datasets[0].datacollection_metadata.wavelength_list"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_diffrn_source",
+        "target_items": "pdbx_wavelength",
+        "operation_parameters": {
+          "jq": ".campaigns[0].crystals[0].datasets[0].datacollection_metadata.wavelength"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_diffrn_source",
+        "target_items": "source",
+        "operation_parameters": {
+          "jq": ".campaigns[0].crystals[0].datasets[0].datacollection_metadata.source | ascii_upcase"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_diffrn_source",
+        "target_items": "type",
+        "operation_parameters": {
+          "jq": ".campaigns[0].crystals[0].datasets[0].facility_name + \" BEAMLINE \" + .campaigns[0].crystals[0].datasets[0].beamline_name"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_diffrn_source",
+        "target_items": "pdbx_synchrotron_beamline",
+        "operation_parameters": {
+          "jq": ".campaigns[0].crystals[0].datasets[0].beamline_name"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_diffrn_source",
+        "target_items": "pdbx_synchrotron_site",
+        "operation_parameters": {
+          "jq": ".campaigns[0].crystals[0].datasets[0].facility_name"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_diffrn_source",
+        "target_items": "pdbx_synchrotron_y_n",
+        "operation_parameters": {
+          "jq": "if .campaigns[0].crystals[0].datasets[0].datacollection_metadata.source == \"synchrotron\" then \"Y\" else empty end"
+        }
+      }
+    ],
+    "mmcif_order": {
+    "_exptl_crystal_grow": [
+      "id",
+      "method",
+      "temp",
+      "pH"
+    ],
+    "_diffrn_radiation": [
+      "pdbx_monochromatic_or_laue_m_l",
+      "pdbx_diffrn_protocol"
+    ],
+    "_diffrn_source": [
+      "diffrn_id",
+      "pdbx_wavelength_list",
+      "pdbx_wavelength",
+      "source",
+      "type",
+      "pdbx_synchrotron_beamline",
+      "pdbx_synchrotron_site",
+      "pdbx_synchrotron_y_n"
+    ]
+  }
+}
