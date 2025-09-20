@@ -14,8 +14,16 @@ import pathlib
 
 try:
     from openbabel import pybel
+    OPENBABEL_AVAILABLE = True
 except ImportError:
-    import pybel  
+    try:
+        import pybel
+        OPENBABEL_AVAILABLE = True
+    except ImportError:
+        OPENBABEL_AVAILABLE = False
+        pybel = None
+        logging.warning("OpenBabel not available. SMILES to InChI conversion will be disabled.")
+        logging.info("To enable chemical structure utilities, install with: pip install openbabel")  
 
 FTP_URL_ARCHIVE_SF = (
     "https://ftp.ebi.ac.uk/pub/databases/pdb/data/structures/divided/structure_factors/{}/r{}sf.ent.gz"
@@ -34,6 +42,12 @@ def sanitize_gemmi_output(row):
     return row
 
 def smiles_to_inchikey_openbabel(smiles):
+    """Convert SMILES string to InChI key using OpenBabel."""
+    if not OPENBABEL_AVAILABLE:
+        logging.error("OpenBabel not available. Cannot convert SMILES to InChI.")
+        logging.info("Install OpenBabel with: pip install openbabel")
+        return None
+        
     out_stderr = OutputGrabber(sys.stderr)
     with out_stderr:
         try:
@@ -44,7 +58,8 @@ def smiles_to_inchikey_openbabel(smiles):
             logging.debug(f"=================================")
             return inchikey
         except Exception as e:
-            logging.error("Conversion failure")
+            logging.error(f"Conversion failure: {e}")
+            return None
 
 def temp_download_and_process_file(investigation_cif: str, pdb_code :str ) -> None:
     logging.info(f"Creating investigation files for pdb ids: {pdb_code}")

@@ -1,0 +1,18 @@
+# Optional dependencies for extended functionality
+# Install with: pip install -r requirements-optional.txt
+
+# Chemical structure processing utilities
+# Used by miss_importer.py for SMILES to InChI conversion
+openbabel>=3.1.0
+
+# Performance monitoring and memory profiling
+# Used by performance tests for detailed system monitoring
+psutil>=5.9.0
+
+# Development and testing tools (optional)
+# Uncomment if needed for development
+# pytest>=7.0.0
+# pytest-cov>=4.0.0
+# black>=22.0.0
+# flake8>=5.0.0
+# mypy>=1.0.0

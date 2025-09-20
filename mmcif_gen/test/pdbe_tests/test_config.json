@@ -1,0 +1,52 @@
+{
+  "test_configuration": {
+    "unit_tests": {
+      "enabled": true,
+      "timeout": 30,
+      "parallel": false
+    },
+    "integration_tests": {
+      "enabled": true,
+      "timeout": 120,
+      "parallel": false
+    },
+    "performance_tests": {
+      "enabled": true,
+      "timeout": 300,
+      "parallel": false,
+      "memory_limit_mb": 500,
+      "max_execution_time_seconds": 60
+    },
+    "stress_tests": {
+      "enabled": false,
+      "timeout": 600,
+      "parallel": false,
+      "large_dataset_size": 100000,
+      "concurrent_threads": 5
+    }
+  },
+  "test_data": {
+    "sample_pdb_ids": ["1ABC", "2DEF", "3GHI", "4JKL", "5MNO"],
+    "invalid_pdb_ids": ["invalid", "ABCD", "123", "", "1AB@"],
+    "test_batch_sizes": [1, 10, 100, 1000, 10000],
+    "test_entity_counts": [10, 100, 1000, 5000, 10000]
+  },
+  "mock_data": {
+    "generate_realistic_mmcif": true,
+    "include_malformed_data": true,
+    "create_large_files": false,
+    "simulate_network_delays": false
+  },
+  "reporting": {
+    "generate_html_report": true,
+    "include_performance_graphs": true,
+    "save_test_artifacts": true,
+    "cleanup_after_tests": true
+  },
+  "environment": {
+    "temp_directory": null,
+    "log_level": "INFO",
+    "capture_stdout": true,
+    "capture_stderr": true
+  }
+}

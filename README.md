@@ -12,10 +12,50 @@ The tool has transformational mapping to convert data as it is stored at various
 
 ## Installation
 
+### Basic Installation
+
 Install directly from PyPI:
 
 ```bash
 pip install mmcif-gen
+```
+
+### Dependencies
+
+The tool requires several dependencies for full functionality:
+
+#### Core Dependencies (automatically installed)
+- `gemmi>=0.6.4` - mmCIF file parsing and processing
+- `requests>=2.31.0` - HTTP requests for downloading PDB files
+- `pyjq>=2.3.1` - JSON query processing
+
+#### Optional Dependencies
+
+For **performance testing and monitoring**:
+```bash
+pip install psutil>=5.9.0
+```
+
+For **chemical structure utilities** (SMILES to InChI conversion):
+```bash
+pip install openbabel>=3.1.0
+```
+
+#### Install All Optional Dependencies
+```bash
+# Install all optional dependencies at once
+pip install -r requirements-optional.txt
+```
+
+#### Development Installation
+```bash
+# Clone the repository
+git clone https://github.com/PDBeurope/mmcif-gen.git
+cd mmcif-gen
+
+# Install in development mode with all dependencies
+pip install -e .
+pip install -r requirements-optional.txt
 ```
 
 ## Usage
@@ -199,8 +239,26 @@ mmcif-gen/
 
 ### Running Tests
 
+The project includes a comprehensive test suite with unit, integration, and performance tests:
+
 ```bash
-python -m unittest discover -s tests
+# Run all tests
+cd mmcif_gen/test/pdbe_tests
+python run_tests.py --all --verbose
+
+# Run specific test categories
+python run_tests.py --unit          # Unit tests only
+python run_tests.py --integration   # Integration tests only
+python run_tests.py --performance   # Performance tests only
+
+# Run individual test files
+python -m unittest test_pdbe -v
+python -m unittest test_pdbe_performance -v
+```
+
+**Note**: Performance tests require `psutil` for memory monitoring. Install with:
+```bash
+pip install psutil>=5.9.0
 ```
 
 ## Contributing
