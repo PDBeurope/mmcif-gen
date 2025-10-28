@@ -94,7 +94,7 @@ class operationBase(ABC):
 
 class UnionOperation(operationBase):
     def perform_operation(self, operation_data):
-        logging.info("Performing UnionOperation")
+        logging.debug("Performing UnionOperation")
 
         source_category = operation_data.get("source_category", "")
         source_items = operation_data.get("source_items", [])
@@ -122,7 +122,7 @@ class UnionOperation(operationBase):
 
 class EndpointOperation(operationBase):
     def perform_operation(self, operation_data: Dict) -> None:
-        logging.info("Performing Endpoint Call")
+        logging.debug("Performing Endpoint Call")
         target_category = operation_data.get("target_category", "")
         target_items = operation_data.get("target_items", [])
 
@@ -139,7 +139,7 @@ class EndpointOperation(operationBase):
 
 class UnionDistinctOperation(operationBase):
     def perform_operation(self, operation_data):
-        logging.info("Performing UnionOperation")
+        logging.debug("Performing UnionOperation")
 
         source_category = operation_data.get("source_category", "")
         source_items = operation_data.get("source_items", [])
@@ -171,7 +171,7 @@ class UnionDistinctOperation(operationBase):
 
 class AutoIncrementOperation(operationBase):
     def perform_operation(self, operation_data):
-        logging.info("Performing AutoIncrementOperation")
+        logging.debug("Performing AutoIncrementOperation")
         target_category = operation_data.get("target_category")
         target_item = operation_data.get("target_item")
 
@@ -184,7 +184,7 @@ class AutoIncrementOperation(operationBase):
 
 class StaticValueOperation(operationBase):
     def perform_operation(self, operation_data):
-        logging.info("Performing StaticValue Operation")
+        logging.debug("Performing StaticValue Operation")
         target_category = operation_data.get("target_category")
         target_items = operation_data.get("target_items")
         target_values = operation_data.get("target_values")
@@ -204,7 +204,7 @@ class ModifyOperation(operationBase):
     # TODO: Change operation name to ModifyIntersection
 
     def perform_operation(self, operation_data):
-        logging.info("Performing Union Modify Operation")
+        logging.debug("Performing Union Modify Operation")
         source_category = operation_data.get("source_category", "")
         source_items = operation_data.get("source_items", [])
         target_category = operation_data.get("target_category", "")
@@ -216,7 +216,7 @@ class ModifyOperation(operationBase):
             collated_data
         )
         if not same_data_across_files:
-            logging.info(
+            logging.debug(
                 "Values are not same across the files, Intersection Operation could not be performed"
             )
             # TODO: put a quesiton mark for the value:
@@ -228,7 +228,7 @@ class ModifyOperation(operationBase):
 
 class IntersectionOperation(operationBase):
     def perform_operation(self, operation_data):
-        logging.info("Performing IntersectionOperation")
+        logging.debug("Performing IntersectionOperation")
         source_category = operation_data.get("source_category", "")
         source_items = operation_data.get("source_items", [])
         target_category = operation_data.get("target_category", "")
@@ -251,7 +251,7 @@ class IntersectionOperation(operationBase):
 
 class ConditionalUnionOperation(operationBase):
     def perform_operation(self, operation_data):
-        logging.info("Performing ConditionalUnion Operation")
+        logging.debug("Performing ConditionalUnion Operation")
         source_category = operation_data.get("source_category", "")
         source_items = operation_data.get("source_items", [])
         target_category = operation_data.get("target_category", "")
@@ -282,7 +282,7 @@ class ConditionalUnionOperation(operationBase):
 
 class ConditionalDistinctUnionOperation(operationBase):
     def perform_operation(self, operation_data):
-        logging.info("Performing ConditionalUnion Operation")
+        logging.debug("Performing ConditionalUnion Operation")
         source_category = operation_data.get("source_category", "")
         source_items = operation_data.get("source_items", [])
         target_category = operation_data.get("target_category", "")
@@ -320,7 +320,7 @@ class CopyFillOperation(operationBase):
     # Writes it as many times as the target rows.
 
     def perform_operation(self, operation_data):
-        logging.info("Performing CopyFill Operation")
+        logging.debug("Performing CopyFill Operation")
         source_category = operation_data.get("source_category", "")
         source_items = operation_data.get("source_items", [])
         target_category = operation_data.get("target_category")
@@ -407,7 +407,7 @@ class CopyForEachRowOperation(operationBase):
     """
 
     def perform_operation(self, operation_data):
-        logging.info("Performing CopyForEachRow Operation")
+        logging.debug("Performing CopyForEachRow Operation")
         source_category = operation_data.get("source_category", "")
         source_items = operation_data.get("source_items", [])
         target_category = operation_data.get("target_category", "")
@@ -484,7 +484,7 @@ class CopyForEachRowOperation(operationBase):
 
 class DeletionOperation(operationBase):
     def perform_operation(self, operation_data):
-        logging.info("Performing Deletion Operation")
+        logging.debug("Performing Deletion Operation")
         target_category = operation_data.get("target_category", "")
         target_items = operation_data.get("target_items", [])
 
@@ -494,7 +494,7 @@ class DeletionOperation(operationBase):
 
 class ExternalInformationOperation(operationBase):
     def perform_operation(self, operation_data):
-        logging.info("Performing External Information Operation")
+        logging.debug("Performing External Information Operation")
         # Source category is from the investigation file.
         source_category = operation_data.get("source_category", "")
         source_items = operation_data.get("source_items", [])
@@ -521,7 +521,7 @@ class ExternalInformationOperation(operationBase):
 
 class SQLOperation(operationBase):
     def perform_operation(self, operation_data):
-        logging.info("Performing SQL query Operation")
+        logging.debug("Performing SQL query Operation")
         target_category = operation_data.get("target_category", "")
         target_items = operation_data.get("target_items", [])
         operation_parameters = operation_data.get("operation_parameters", {})
@@ -538,7 +538,7 @@ class SQLOperation(operationBase):
 
 class CopyFromPickleOperation(operationBase):
     def perform_operation(self, operation_data):
-        logging.info("Performing CopyFromPickle Operation")
+        logging.debug("Performing CopyFromPickle Operation")
         target_category = operation_data.get("target_category", "")
         target_items = operation_data.get("target_items", [])
         source_items = operation_data.get("source_items", [])
@@ -560,12 +560,12 @@ class NoopOperation(operationBase):
 
 class JQFilterOperation(operationBase):
     def perform_operation(self, operation_data):
-        logging.info("Performing JQ Filter Operation")
+        logging.debug("Performing JQ Filter Operation")
         target_category = operation_data.get("target_category", "")
         target_items = operation_data.get("target_items", [])
         operation_parameters = operation_data.get("operation_parameters", {})
         jq_filter = operation_parameters.get("jq", "")
-        logging.info(f"Category: {target_category}, Item(s): {target_items}, JQ Filter: {jq_filter}")
+        logging.debug(f"Category: {target_category}, Item(s): {target_items}, JQ Filter: {jq_filter}")
 
         # Get filtered data from JSON reader
         filtered_data = self.reader.jq_filter(jq_filter)

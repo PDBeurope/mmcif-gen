@@ -10,6 +10,8 @@ import pickle
 import os
 import json
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+from collections import defaultdict
+
 
 
 class CIFReader:
@@ -120,6 +122,7 @@ class SqliteReader:
         self.data = {} 
         self.denormalised_data = []
         self.conn = sqlite3.connect(sqlite_path, uri=True)
+        self.cursor = self.conn.cursor()
 
     @contextmanager
     def sqlite_db_connection(self):
@@ -138,7 +141,60 @@ class SqliteReader:
             for row in response:
                 result.append(row)
         return result
-    
+
+    def create_mmcif_tables_from_csv(self, csv_path):
+        logging.info(f"Creating MMCIF styled tables from CSV file: {csv_path}")
+        tables = defaultdict(lambda: defaultdict(list))
+
+        # --- Parse CSV manually (handle duplicate "Value" columns)
+        with open(csv_path, newline='', encoding='utf-8') as f:
+            reader = csv.reader(f)
+            headers = next(reader)
+            # Find start of "Value" columns
+            value_start_idx = next(i for i, h in enumerate(headers) if h.strip().lower().startswith('value'))
+
+            for row in reader:
+                if not any(row):  # skip empty lines
+                    continue
+                if not row[0].strip():  # skip rows without Category
+                    continue
+
+                category = row[0].strip()
+                item = row[1].strip()
+                if not category or not item:
+                    continue
+
+                # Extract only the "Value" cells
+                values = [v.strip() for v in row[value_start_idx:] if v.strip() != '']
+
+                # Store values for this item
+                if values:
+                    tables[category][item] = values
+
+        # --- Create tables
+        for category, items in tables.items():
+            columns = list(items.keys())
+            num_rows = max(len(v) for v in items.values())
+
+            self.cursor.execute(f'DROP TABLE IF EXISTS "{category}"')
+
+            # Build table schema (TEXT columns)
+            col_defs = ', '.join(f'"{col}" TEXT' for col in columns)
+            self.cursor.execute(f'CREATE TABLE IF NOT EXISTS "{category}" ({col_defs})')
+
+            # Insert row-wise data
+            for i in range(num_rows):
+                row_values = [items[col][i] if i < len(items[col]) else None for col in columns]
+                placeholders = ', '.join(['?'] * len(columns))
+                self.cursor.execute(
+                    f'INSERT INTO "{category}" ({", ".join(columns)}) VALUES ({placeholders})',
+                    row_values
+                )
+
+        self.conn.commit()
+        logging.info("Tables created successfully for categories: %s", ", ".join(tables.keys()))
+
+
     def create_table_from_csv(self, csv_file):
         logging.info(f"Creating table from CSV file: {csv_file}")
         table_name = os.path.splitext(os.path.basename(csv_file))[0]
@@ -251,7 +307,7 @@ class InvestigationStorage:
         return self.mmcif_order.get(category, [])
 
     def write_data_to_cif(self, output_file, prefer_pairs: bool = False) -> None:
-        logging.info("Writing Investigation cif file")
+        logging.info(f"Writing cif file: {output_file}")
         write_options = gemmi.cif.WriteOptions()
         write_options.align_loops = 50
         write_options.align_pairs = 50
@@ -296,6 +352,21 @@ class PickleReader:
         if self.pickle_path:
             with open(self.pickle_path, 'rb') as file:
                 self.data = pickle.load(file)
+
+class CSVReader:
+    def __init__(self, csv_path):
+        self.data = {}
+        self.csv_path = csv_path
+        self.load_csv()
+
+    def load_csv(self):
+        with open(self.csv_path, mode="r", newline="") as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                for key, value in row.items():
+                    if key not in self.data:
+                        self.data[key] = []
+                    self.data[key].append(value)
 
 class ExternalInformation:
     def __init__(self, filename) -> None:

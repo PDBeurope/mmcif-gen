@@ -1,17 +1,25 @@
 from mmcif_gen.investigation_engine import InvestigationEngine
-from mmcif_gen.investigation_io import SqliteReader,CIFReader,PickleReader
+from mmcif_gen.investigation_io import SqliteReader,CSVReader
 from typing import List
 import sys
 import os
 import logging
+import json
+from enum import Enum
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
-class InvestigationXChem(InvestigationEngine):
+class CifType(Enum):
+    Investigation = "Investigation"
+    Model = "Model"
+
+class CifXChem(InvestigationEngine):
         
-    def __init__(self, sqlite_path: str, investigation_id: str, output_path: str, json_path: str, cif_type: str) -> None:
-        logging.info("Instantiating XChem Investigation subclass")
+    def __init__(self, investigation_id: str, sqlite_path: str, data_csv: str, chemical_csv: str, output_path: str, json_path: str, cif_type: CifType) -> None:
+        logging.info(f"Instantiating XChem CIF subclass - {cif_type.value}")
         self.sqlite_reader = SqliteReader(sqlite_path)
+        self.data_csv = data_csv
+        self.chemical_csv =chemical_csv
         self.operation_file_json = json_path
         self.excluded_libraries = ["'Diffraction Test'","'Solvent'"]
         self.cif_type = cif_type
@@ -19,21 +27,41 @@ class InvestigationXChem(InvestigationEngine):
 
     def pre_run(self) -> None:
         logging.info("Pre-running")
-        if self.cif_type == "investigation":
-            libraries=["XChem_Libraries_2024-02-01.csv"]
-            for library in libraries:
-                self.load_library_csv(f"./external_data/{library}")
-            self.create_experiment_table()
-            self.find_missing_compound_information()
+        if self.cif_type == CifType.Investigation:
+            chemical_csv_name = self.load_library_csv(self.chemical_csv)
+            self.sqlite_reader.create_mmcif_tables_from_csv(self.data_csv)
+            self.create_experiment_table(chemical_csv_name)
+            self.find_missing_compound_information(chemical_csv_name)
+
         super().pre_run()
 
-    def find_missing_compound_information(self) -> None:
-        missing_compounds = self.sqlite_reader.sql_execute(f"SELECT DISTINCT b.CompoundCode, b.ID, b.LibraryName FROM mainTable b LEFT JOIN `XChem_Libraries_2024-02-01` a ON b.CompoundCode = a.vendor_catalog_ID WHERE a.vendor_catalog_ID IS NULL AND b.LibraryName NOT IN ({','.join(self.excluded_libraries)})")
-        logging.warning(f"Number of missing compounds: {len(missing_compounds)}")
-        for compound in missing_compounds:
-            logging.warning(f"Compound Code: {compound[0]}, ID: {compound[1]}, Library Name: {compound[2]}")
+    def read_json_operations(self) -> None:
+        '''This is called by pre run in base class'''
+        logging.info("Reading JSON operation files")
+        with open(self.operation_file_json, "r") as file:
+            json_data = json.load(file)
+            if self.cif_type == CifType.Investigation:
+                self.operations = json_data.get("investigation", []).get("operations", [])
+                self.investigation_storage.mmcif_order = json_data.get("investigation", []).get("mmcif_order", [])
+            elif self.cif_type == CifType.Model:
+                self.operations = json_data.get("model", []).get("operations", [])
+                self.investigation_storage.mmcif_order = json_data.get("model", []).get("mmcif_order", [])
+            else:
+                raise ValueError(f"Invalid CIF type: {self.cif_type}")
 
-    def create_experiment_table(self) -> None:
+    def get_output_file_name(self) -> str:
+        if self.cif_type == CifType.Investigation:
+            return f"{self.output_path}/{self.investigation_id}.cif"
+        else:
+            return f"{self.output_path}/{self.investigation_id}_model.cif"
+
+    def find_missing_compound_information(self, chemical_csv_name: str) -> None:
+        missing_compounds = self.sqlite_reader.sql_execute(f"SELECT DISTINCT b.CompoundCode, b.ID, b.LibraryName FROM mainTable b LEFT JOIN `{chemical_csv_name}` a ON b.CompoundCode = a.vendor_catalog_ID WHERE a.vendor_catalog_ID IS NULL AND b.LibraryName NOT IN ({','.join(self.excluded_libraries)})")
+        logging.warning(f"Number of missing compounds: {len(missing_compounds)}")
+        # for compound in missing_compounds:
+            # logging.warning(f"Compound Code: {compound[0]}, ID: {compound[1]}, Library Name: {compound[2]}")
+
+    def create_experiment_table(self, chemical_csv_name: str) -> None:
         # Retrieve distinct series based on the provided query
         distinct_series = self.sqlite_reader.sql_execute('''
             SELECT DISTINCT LibraryName 
@@ -58,7 +86,7 @@ class InvestigationXChem(InvestigationEngine):
         experimental_data = self.sqlite_reader.sql_execute(f'''
             SELECT a.CompoundCode, a.LibraryName, a.CompoundSMILES, a.RefinementOutcome, b.`Parent InChI Key` 
             FROM mainTable a 
-            INNER JOIN `XChem_Libraries_2024-02-01` b 
+            INNER JOIN `{chemical_csv_name}` b 
                 ON a.CompoundCode = b.vendor_catalog_ID
             WHERE a.LibraryName NOT IN ({','.join(self.excluded_libraries)});
         ''')
@@ -171,6 +199,8 @@ class InvestigationXChem(InvestigationEngine):
     def load_library_csv(self, csv_file: str) -> None:
         # Load csv file and put this on an sqlite table in the existing sqlite_reader
         self.sqlite_reader.create_table_from_csv(csv_file)
+        table_name = csv_file.split("/")[-1].split(".")[0]
+        return table_name
 
 def get_cif_file_paths(folder_path : str) -> List[str]:
     cif_file_paths = []
@@ -179,7 +209,7 @@ def get_cif_file_paths(folder_path : str) -> List[str]:
             if ".txt" in file:
                 cif_file_paths.append(os.path.join(root, file))
     if not cif_file_paths:
-        logging.warn(f"No cif files in the folder path: {folder_path}")
+        logging.warning(f"No cif files in the folder path: {folder_path}")
         raise Exception("Model file path is empty")
     return cif_file_paths
 
@@ -192,19 +222,24 @@ def xchem_subparser(subparsers, parent_parser):
         help="Path to the .sqlite file for each data set"
     )
     parser_xchem.add_argument(
-        "--cif-type",
-        help="Type of the CIF file that will be generated",
-        default="model",
-        choices=["model", "investigation"]
+        "--data-csv",
+        help="Path to the .csv file for each data set"
+    )
+    parser_xchem.add_argument(
+        "--chemical-csv",
+        help="Path to the .csv file for each data set"
     )
 
-def run(sqlite_path : str, investigation_id: str, output_path: str, json_path: str, cif_type: str) -> None:
-    im = InvestigationXChem(sqlite_path, investigation_id, output_path, json_path, cif_type)
-    im.pre_run()
-    im.run()
+def run(investigation_id: str, sqlite_path: str, data_csv: str, chemical_csv: str,  output_path: str, json_path: str) -> None:
+    investigation = CifXChem(investigation_id, sqlite_path, data_csv, chemical_csv, output_path, json_path, cif_type=CifType.Investigation)
+    investigation.pre_run()
+    investigation.run()
+    model = CifXChem(investigation_id, sqlite_path, data_csv, chemical_csv, output_path, json_path, cif_type=CifType.Model)
+    model.pre_run()
+    model.run()
 
 def run_investigation_xchem(args):
-    if not args.sqlite:
-        logging.error("XChem facility requires path to --sqlite file")
+    if not args.sqlite or not args.data_csv or not args.chemical_csv:
+        logging.error("XChem facility requires path to --sqlite file, --data-csv and --chemical-csv files")
         return 1
-    run(args.sqlite, args.id, args.output_folder, args.json, args.cif_type)
+    run(args.id, args.sqlite, args.data_csv, args.chemical_csv, args.output_folder, args.json)

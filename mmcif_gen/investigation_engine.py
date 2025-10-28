@@ -57,6 +57,8 @@ class InvestigationEngine:
                 operation_reader = self.reader
             elif operation_reader == "json":
                 operation_reader = self.json_reader
+            elif operation_reader == "csv":
+                operation_reader = self.csv_reader
         except KeyError:
             logging.error(f"Resorting to default reader")
             operation_reader = self.reader
@@ -110,12 +112,16 @@ class InvestigationEngine:
                 operation_type = operation_data["operation"]
                 operation_reader = operation_data.get("reader", None)
                 operation = self.operation_factory(operation_type, operation_reader)
+                logging.info(f"Processsing {operation_data['target_category']} with: {operation_type}")
                 operation.perform_operation(operation_data)
             except Exception as e:
                 logging.error(f"Operation Failed:")
                 logging.exception(e)
 
         self.investigation_storage.write_data_to_cif(
-            f"{self.output_path}/{self.investigation_id}.cif",
+            self.get_output_file_name(),
             prefer_pairs=False
         )
+    def get_output_file_name(self) -> str:
+        return f"{self.output_path}/{self.investigation_id}.cif"
+        

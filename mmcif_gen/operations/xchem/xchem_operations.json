@@ -1,215 +1,665 @@
 {
-    "operations": [
-        {
-            "reader" : "sqlite",
-            "target_category" : "_pdbx_contact_author",
-            "target_items" : ["name_salutation","name_first","name_last","name_mi","role","organization_type","organization_name","email","address_1","city","state_province","postal_code","country","phone","identifier_ORCID"],
-            "operation" : "sql_query",
-            "operation_parameters" :{
-                "query" : "SELECT DISTINCT contact_author_salutation, contact_author_first_name, contact_author_last_name, contact_author_middle_name, contact_author_role, contact_author_organization_type, contact_author_organization_name, contact_author_email, contact_author_address, contact_author_city, contact_author_State_or_Province, contact_author_Zip_Code, contact_author_Country, contact_author_phone_number, contact_author_ORCID FROM depositTable WHERE contact_author_ORCID IS NOT NULL AND contact_author_ORCID != '' GROUP BY contact_author_ORCID"
+    "investigation": {
+        "operations": [
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_ligscreen_investigation_author",
+                "target_items": [
+                    "campaign_id",
+                    "ordinal",
+                    "name",
+                    "identifier_orcid"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT DISTINCT 1 as campaign_id, 1 as ordinal, contact_author_first_name || ' ' || contact_author_last_name as name, contact_author_ORCID as identifier_orcid FROM depositTable WHERE contact_author_ORCID IS NOT NULL AND contact_author_ORCID != '' GROUP BY contact_author_ORCID"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_investigation",
+                "target_items": [
+                    "type",
+                    "db",
+                    "project_id",
+                    "external_url"
+                ],
+                "target_values": [
+                    "Ligand Screening",
+                    "ligscreen",
+                    "fh12345",
+                    "URL required from Fragalysis"
+                ],
+                "operation": "static_value"
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_investigation",
+                "target_items": [
+                    "title"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT DISTINCT group_description FROM depositTable WHERE group_description IS NOT NULL AND group_description != '' GROUP BY group_description"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_investigation",
+                "target_items": [
+                    "id"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT DISTINCT investigation_id FROM experiments"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "source_category": "_pdbx_investigation",
+                "source_items": [
+                    "id"
+                ],
+                "target_category": "_pdbx_ligscreen_investigation_author",
+                "target_items": [
+                    "investigation_id"
+                ],
+                "operation": "copy_fill"
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_ligscreen_investigation_campaign",
+                "target_items": [
+                    "year"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT SUBSTR(MIN(DataCollectionDate), 1, 4) AS Year FROM mainTable"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_ligscreen_investigation_campaign",
+                "target_items": [
+                    "campaign_id",
+                    "proc_pipeline",
+                    "facility"
+                ],
+                "target_values": [
+                    "1",
+                    "XCE",
+                    "Diamond"
+                ],
+                "operation": "static_value"
+            },
+            {
+                "reader": "sqlite",
+                "source_category": "_pdbx_investigation",
+                "source_items": [
+                    "id"
+                ],
+                "target_category": "_pdbx_ligscreen_investigation_campaign",
+                "target_items": [
+                    "investigation_id"
+                ],
+                "operation": "copy_fill"
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_ligscreen_investigation_series",
+                "target_items": [
+                    "series_id",
+                    "campaign_id",
+                    "investigation_id",
+                    "fragment_lib"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT DISTINCT series_id, campaign_id, investigation_id, library_name FROM experiments"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_investigation_entity_poly",
+                "target_items": [
+                    "type"
+                ],
+                "operation": "static_value",
+                "target_values": [
+                    "need from XCA"
+                ]
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_investigation_entity_poly",
+                "target_items": [
+                    "seq_one_letter_code_with_nstd"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT DISTINCT molecule_one_letter_sequence FROM depositTable WHERE molecule_one_letter_sequence IS NOT NULL AND molecule_one_letter_sequence != '' GROUP BY molecule_one_letter_sequence"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_investigation_entity_poly",
+                "target_item": "poly_entity_id",
+                "operation": "auto_increment"
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_investigation_entity_nonpoly",
+                "target_items": [
+                    "name",
+                    "chem_comp_id",
+                    "formula_weight",
+                    "formula",
+                    "inchi_descriptor",
+                    "cas_identifier"
+                ],
+                "target_values": [
+                    "water",
+                    "HOH",
+                    "18.015",
+                    "H2 O",
+                    "Sample data - needs to come from XCA",
+                    "required from XCA"
+                ],
+                "operation": "static_value"
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_investigation_entity_nonpoly",
+                "target_item": "nonpoly_entity_id",
+                "operation": "auto_increment"
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_ligscreen_investigation_lib_component",
+                "target_items": [
+                    "id",
+                    "name",
+                    "formula_weight",
+                    "formula",
+                    "inchikey"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT DISTINCT b.fraglib_component_id as id, a.Name, parent_MW, a.parent_formula, a.`Parent InChi Code` FROM `chemicals` a, experiments b WHERE a.vendor_catalog_id = b.compound_code ORDER BY b.fraglib_component_id"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "source_category": "_pdbx_ligscreen_investigation_lib_component",
+                "source_items": [
+                    "id",
+                    "id"
+                ],
+                "target_category": "_pdbx_ligscreen_investigation_lib_component_mix",
+                "target_items": [
+                    "id",
+                    "lib_component_id"
+                ],
+                "operation": "copy"
+            },
+            {
+                "reader": "sqlite",
+                "source_category": "_pdbx_investigation_entity_poly",
+                "source_items": [
+                    "poly_entity_id",
+                    "poly_entity_id"
+                ],
+                "target_category": "_pdbx_investigation_poly_descript",
+                "target_items": [
+                    "id",
+                    "poly_entity_id"
+                ],
+                "operation": "copy"
+            },
+            {
+                "reader": "sqlite",
+                "source_category": "_pdbx_investigation_entity_nonpoly",
+                "source_items": [
+                    "nonpoly_entity_id",
+                    "nonpoly_entity_id"
+                ],
+                "target_category": "_pdbx_investigation_nonpoly_descript",
+                "target_items": [
+                    "id",
+                    "nonpoly_entity_id"
+                ],
+                "operation": "copy"
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_investigation_sample",
+                "target_items": [
+                    "poly_descript_id",
+                    "nonpoly_descript_id",
+                    "sample_id"
+                ],
+                "target_values": [
+                    "1",
+                    "1",
+                    "1"
+                ],
+                "operation": "static_value"
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_investigation_sample",
+                "target_item": "investigation_id",
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT DISTINCT investigation_id FROM experiments"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_ligscreen_investigation_screening_exp",
+                "target_items": [
+                    "screening_exp_id",
+                    "series_id",
+                    "campaign_id",
+                    "investigation_id",
+                    "sample_id",
+                    "lib_component_mix_id",
+                    "exp_method",
+                    "exp_details",
+                    "data_deposited",
+                    "exp_external_url"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT screening_exp_id, series_id, campaign_id, investigation_id, sample_id, fraglib_component_id as lib_component_mix_id, 'X-RAY DIFFRACTION' as method, library_name as exp_details, data_deposited, 'URL required from Fragalysis' as exp_external_url FROM experiments"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_ligscreen_investigation_screening_result",
+                "target_items": [
+                    "screening_exp_id",
+                    "result_id",
+                    "outcome",
+                    "lib_component_id",
+                    "outcome_assessment",
+                    "outcome_description",
+                    "outcome_details"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT screening_exp_id, result_id, outcome, fraglib_component_id as lib_component_id, outcome_assessment, outcome_description, outcome_details FROM experiments"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_ligscreen_investigation_screening_result",
+                "target_item": "result_id",
+                "operation": "auto_increment"
             }
-        },
-        {
-            "reader" : "sqlite",
-            "target_category" : "_pdbx_contact_author",
-            "target_items" : ["name_salutation","name_first","name_last","name_mi","role","organization_type","organization_name","email","address_1","city","state_province","postal_code","country","phone","identifier_ORCID"],
-            "operation" : "sql_query",
-            "operation_parameters" :{
-                "query" : "SELECT DISTINCT contact_author_PI_salutation, contact_author_PI_first_name, contact_author_PI_last_name, contact_author_PI_middle_name, contact_author_PI_role, contact_author_PI_organization_type, contact_author_PI_organization_name, contact_author_PI_email, contact_author_PI_address, contact_author_PI_city, contact_author_PI_State_or_Province, contact_author_PI_Zip_Code, contact_author_PI_Country, contact_author_PI_phone_number, contact_author_PI_ORCID FROM depositTable WHERE contact_author_PI_ORCID IS NOT NULL AND contact_author_PI_ORCID != '' GROUP BY contact_author_PI_ORCID"
-            }
-        },
-        {
-            "target_category" : "_pdbx_contact_author",
-            "target_item" : "id",
-            "operation" : "auto_increment"
-        },
-        {
-            "reader" : "pickle",
-            "source_items" : ["structure_author_name"],
-            "target_category" : "_audit_author",
-            "target_items" : ["name"],
-            "operation" : "copy_from_pickle"
-        },
-        {
-            "target_category" : "_audit_author",
-            "target_item" : "ordinal",
-            "operation" : "auto_increment"
-        },
-
-        {
-            "target_category" : "_pdbx_investigation",
-            "target_items" : ["type","db","project","external_url"],
-            "target_values": ["Fragment Screening", "frag_hub", "fh12345", null],
-            "operation" : "static_value"
-        },
-        {
-            "reader" : "sqlite",
-            "target_category" : "_pdbx_investigation",
-            "target_items" : ["title"],
-            "operation" : "sql_query",
-            "operation_parameters" :{
-                "query" : "SELECT DISTINCT group_description FROM depositTable WHERE group_description IS NOT NULL AND group_description != '' GROUP BY group_description"
-            }
-        },
-        {
-            "reader" : "sqlite",
-            "target_category" : "_pdbx_investigation",
-            "target_items" : ["id"],
-            "operation" : "sql_query",
-            "operation_parameters" :{
-                "query" : "SELECT DISTINCT investigation_id FROM experiments"
-            }
-        },
-        {
-            "reader" : "sqlite",
-            "target_category" : "_pdbx_fraghub_investigation_campaign",
-            "target_items" : ["year"],
-            "operation" : "sql_query",
-            "operation_parameters" :{
-                "query" : "SELECT SUBSTR(MIN(DataCollectionDate), 1, 4) AS Year FROM mainTable"
-            }
-        },
-        {
-            "target_category" : "_pdbx_fraghub_investigation_campaign",
-            "target_items" : ["campaign_id ", "proc_pipeline", "facility"],
-            "target_values": ["1", "XCE", "Diamond"],
-            "operation" : "static_value"
-        },
-        {
-            "source_category" : "_pdbx_investigation",
-            "source_items" : ["id"],
-            "target_category" : "_pdbx_fraghub_investigation_campaign",
-            "target_items" : ["investigation_id"],
-            "operation" : "copy_fill"
-        },
-        {
-            "reader" : "sqlite",
-            "target_category" : "_pdbx_fraghub_investigation_series",
-            "target_items" : ["series_id","campaign_id","investigation_id","fragment_lib"],
-            "operation" : "sql_query",
-            "operation_parameters" :{
-                "query" : "SELECT DISTINCT series_id, campaign_id, investigation_id, library_name FROM experiments"
-            }
-        },
-        {
-            "reader" : "cif",
-            "source_category" : "_entity",
-            "source_items" : ["type","src_method"],
-            "target_category" : "_pdbx_investigation_entity_poly",
-            "target_items" : ["type","src_method"],
-            "operation" : "distinct_union",
-            "operation_parameters" :{
-                "primary_parameters" : ["type"]
-            }
-        },
-        {
-            "reader" : "sqlite",
-            "target_category" : "_pdbx_investigation_entity_poly",
-            "target_items" : ["seq_one_letter_code "],
-            "operation" : "sql_query",
-            "operation_parameters" :{
-                "query" : "SELECT DISTINCT molecule_one_letter_sequence FROM depositTable WHERE molecule_one_letter_sequence IS NOT NULL AND molecule_one_letter_sequence != '' GROUP BY molecule_one_letter_sequence"
-            }
-        },
-        
-        {
-            "target_category" : "_pdbx_investigation_entity_poly",
-            "target_item" : "poly_entity_id",
-            "operation" : "auto_increment"
-        },
-    
-        {
-            "target_category" : "_pdbx_investigation_entity_nonpoly",
-            "target_items" : ["name","chem_comp_id","formula_weight","formula","inchi_descriptor","cas_identifier"],
-            "target_values": ["water","HOH","18.015","H2 O","XLYOFNOQVPJJNP-UHFFFAOYSA-N",null],
-            "operation" : "static_value"
-        },
-        {
-            "target_category" : "_pdbx_investigation_entity_nonpoly",
-            "target_item" : "nonpoly_entity_id",
-            "operation" : "auto_increment"
-        },
-        {
-            "reader" : "sqlite",
-            "target_category" : "_pdbx_fraghub_investigation_fraglib_component",
-            "target_items" : ["id", "name","formula_weight","formula","inchikey"],
-            "operation" : "sql_query",
-            "operation_parameters" :{
-                "query" : "SELECT DISTINCT b.fraglib_component_id, a.Name, parent_MW, a.parent_formula, a.`Parent InChi Code` FROM `XChem_Libraries_2024-02-01` a, experiments b WHERE a.vendor_catalog_id = b.compound_code ORDER BY b.fraglib_component_id"
-            }
-        },
-        {
-            "source_category" : "_pdbx_fraghub_investigation_fraglib_component",
-            "source_items" : ["id", "id"],
-            "target_category" : "_pdbx_fraghub_investigation_frag_component_mix",
-            "target_items" : ["id", "frag_component_id"],
-            "operation" : "copy"
-        },
-        {
-            "source_category" : "_pdbx_investigation_entity_poly",
-            "source_items" : ["poly_entity_id", "poly_entity_id"],
-            "target_category" : "_pdbx_investigation_poly_descript",
-            "target_items" : ["id", "poly_entity_id"],
-            "operation" : "copy"
-        },
-        {
-            "source_category" : "_pdbx_investigation_entity_nonpoly",
-            "source_items" : ["nonpoly_entity_id", "nonpoly_entity_id"],
-            "target_category" : "_pdbx_investigation_nonpoly_descript",
-            "target_items" : ["id", "nonpoly_entity_id"],
-            "operation" : "copy"
-        },
-        {
-            "target_category" : "_pdbx_investigation_sample",
-            "target_items" : ["poly_descript_id","nonpoly_descript_id","sample_id"],
-            "target_values": ["1","1","1"],
-            "operation" : "static_value"
-        },
-        {
-            "reader" : "sqlite",
-            "target_category" : "_pdbx_investigation_sample",
-            "target_item" : "investigation_id",
-            "operation" : "sql_query",
-            "operation_parameters" :{
-                "query" : "SELECT DISTINCT investigation_id FROM experiments"
-            }
-        },
-        {
-            "reader" : "sqlite",
-            "target_category" : "_pdbx_fraghub_investigation_screening_exp",
-            "target_items" : ["screening_exp_id","series_id","campaign_id","investigation_id","sample_id","fragment_component_mix_id","exp_method", "exp_details", "data_deposited"],
-            "operation" : "sql_query",
-            "operation_parameters" :{
-                "query" : "SELECT screening_exp_id, series_id, campaign_id, investigation_id, sample_id, fraglib_component_id, 'X-RAY DIFFRACTION' as method, library_name, data_deposited as details FROM experiments"
-            }
-        },
-        {
-            "reader" : "sqlite",
-            "target_category" : "_pdbx_fraghub_investigation_screening_result",
-            "target_items" : ["screening_exp_id","result_id","outcome","fraglib_component_id","outcome_assessment","outcome_description","outcome_details"],
-            "operation" : "sql_query",
-            "operation_parameters" :{
-                "query" : "SELECT screening_exp_id, result_id, outcome, fraglib_component_id, outcome_assessment, outcome_description, outcome_details FROM experiments"
-            }
-        },
-        {
-            "target_category" : "_pdbx_fraghub_investigation_screening_result",
-            "target_item" : "result_id",
-            "operation" : "auto_increment"
+        ],
+        "mmcif_order": {
+            "_pdbx_ligscreen_investigation_author": [
+                "ordinal"
+            ],
+            "_pdbx_investigation_archived_data": [
+                "id"
+            ],
+            "_pdbx_ligscreen_investigation_campaign": [
+                "campaign_id"
+            ],
+            "_pdbx_investigation_entity_poly": [
+                "poly_entity_id"
+            ],
+            "_pdbx_investigation_entity_nonpoly": [
+                "nonpoly_entity_id"
+            ],
+            "_pdbx_ligscreen_investigation_lib_component": [
+                "id"
+            ],
+            "_pdbx_ligscreen_investigation_series": [
+                "series_id"
+            ],
+            "_pdbx_ligscreen_investigation_screening_exp": [
+                "screening_exp_id",
+                "instance_id"
+            ],
+            "_pdbx_ligscreen_investigation_screening_result": [
+                "result_id"
+            ]
         }
-],
-    "mmcif_order": {
-        "_pdbx_contact_author": ["id"],
-        "_audit_author" : ["pdbx_ordinal", "name"],
-        "_pdbx_investigation_archived_data" : ["id"],
-        "_pdbx_fraghub_investigation_campaign" : ["campaign_id"],
-        "_pdbx_investigation_entity_poly" : ["poly_entity_id"],
-        "_pdbx_investigation_entity_nonpoly" : ["nonpoly_entity_id"],
-        "_pdbx_fraghub_investigation_fraglib_component" : ["id"],
-        "_pdbx_fraghub_investigation_series" : ["series_id"],
-        "_pdbx_fraghub_investigation_screening_exp":["screening_exp_id","instance_id"],
-        "_pdbx_fraghub_investigation_screening_result" : ["result_id"]
+    },
+    "model": {
+        "operations": [
+            {
+                "reader": "sqlite",
+                "target_category": "_software",
+                "target_items": [
+                    "pdbx_ordinal",
+                    "classification",
+                    "name",
+                    "version"
+                ],
+                "operation": "static_value",
+                "target_values": [
+                    "1",
+                    "refinement",
+                    "Refmac or Buster",
+                    null
+                ]
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_software",
+                "target_items": [
+                    "pdbx_ordinal",
+                    "classification",
+                    "name",
+                    "version"
+                ],
+                "operation": "static_value",
+                "target_values": [
+                    "2",
+                    "data reduction",
+                    "XDS",
+                    null
+                ]
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_software",
+                "target_items": [
+                    "pdbx_ordinal",
+                    "classification",
+                    "name",
+                    "version"
+                ],
+                "operation": "static_value",
+                "target_values": [
+                    "3",
+                    "data_integration_software",
+                    "XDS",
+                    null
+                ]
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_software",
+                "target_items": [
+                    "pdbx_ordinal",
+                    "classification",
+                    "name",
+                    "version"
+                ],
+                "operation": "static_value",
+                "target_values": [
+                    "4",
+                    "phasing_software",
+                    "PHASER",
+                    null
+                ]
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_software",
+                "target_items": [
+                    "pdbx_ordinal",
+                    "classification",
+                    "name",
+                    "version"
+                ],
+                "operation": "static_value",
+                "target_values": [
+                    "5",
+                    "",
+                    "AIMLESS",
+                    null
+                ]
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_initial_refinement_model",
+                "target_items": [
+                    "type",
+                    "source_name",
+                    "details"
+                ],
+                "operation": "static_value",
+                "target_values": [
+                    "experimental model",
+                    "PDB",
+                    null
+                ]
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_contact_author",
+                "target_items": [
+                    "id",
+                    "name_first",
+                    "name_last",
+                    "address_1",
+                    "address_2",
+                    "city",
+                    "postal_code",
+                    "country",
+                    "email",
+                    "phone",
+                    "identifier_ORCID",
+                    "role",
+                    "organization_type"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT id, name_first, name_last, address_1, address_2, city, postal_code, country, email, phone, identifier_ORCID, role, organization_type FROM _pdbx_contact_author"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_audit_support",
+                "target_items": [
+                    "ordinal",
+                    "funding_organization",
+                    "country",
+                    "grant_number"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT ordinal, funding_organization, country, grant_number FROM _pdbx_audit_support"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_audit_author",
+                "target_items": [
+                    "pdbx_ordinal",
+                    "name"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT pdbx_ordinal, name FROM _audit_author"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_struct",
+                "target_items": [
+                    "entry_id",
+                    "title"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT entry_id, title FROM _struct"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_struct_keywords",
+                "target_items": [
+                    "entry_id",
+                    "pdbx_keywords",
+                    "text"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT entry_id, pdbx_keywords, text FROM _struct_keywords"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_citation_author",
+                "target_items": [
+                    "pdbx_ordinal",
+                    "citation_id",
+                    "name"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT pdbx_ordinal, citation_id, name FROM _citation_author"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_citation",
+                "target_items": [
+                    "id",
+                    "journal_abbrev",
+                    "title"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT id, journal_abbrev, title FROM _citation"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_database_status",
+                "target_items": [
+                    "entry_id",
+                    "dep_release_code_coordinates",
+                    "dep_release_code_sequence"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT entry_id, dep_release_code_coordinates, dep_release_code_sequence FROM _pdbx_database_status"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_deposit_group",
+                "target_items": [
+                    "group_id",
+                    "group_description",
+                    "group_title",
+                    "group_type"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT group_id, group_description, group_title, group_type FROM _pdbx_deposit_group"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_exptl_crystal_grow",
+                "target_items": [
+                    "crystal_id",
+                    "method",
+                    "pH",
+                    "temp",
+                    "pdbx_details"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT crystal_id, method, pH, temp, pdbx_details FROM _exptl_crystal_grow"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_exptl",
+                "target_items": [
+                    "entry_id",
+                    "method",
+                    "crystals_number"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT entry_id, method, crystals_number FROM _exptl"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_entity",
+                "target_items": [
+                    "id",
+                    "type",
+                    "src_method",
+                    "pdbx_description",
+                    "pdbx_mutation"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT id, type, src_method, pdbx_description, pdbx_mutation FROM _entity"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_entity_poly",
+                "target_items": [
+                    "entity_id",
+                    "type",
+                    "pdbx_seq_one_letter_code",
+                    "pdbx_strand_id",
+                    "pdbx_seq_db_id",
+                    "pdbx_seq_db_name"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT entity_id, type, pdbx_seq_one_letter_code, pdbx_strand_id, pdbx_seq_db_id, pdbx_seq_db_name FROM _entity_poly"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_entity_src_gen",
+                "target_items": [
+                    "entity_id",
+                    "gene_src_strain",
+                    "pdbx_gene_src_scientific_name",
+                    "pdbx_gene_src_ncbi_taxonomy_id",
+                    "pdbx_host_org_scientific_name",
+                    "pdbx_host_org_ncbi_taxonomy_id"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT entity_id, gene_src_strain, pdbx_gene_src_scientific_name, pdbx_gene_src_ncbi_taxonomy_id, pdbx_host_org_scientific_name, pdbx_host_org_ncbi_taxonomy_id FROM _entity_src_gen"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_refine",
+                "target_items": [
+                    "pdbx_method_to_determine_struct",
+                    "pdbx_starting_model"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT pdbx_method_to_determine_struct, pdbx_starting_model FROM _refine"
+                }
+            }
 
-
+        ],
+        "mmcif_order": {
+            "_software": [
+                "pdbx_ordinal"
+            ],
+            "_refine": [
+                "pdbx_diffrn_id"
+            ],
+            "_pdbx_initial_refinement_model": [
+                "id"
+            ],
+            "_exptl_crystal_grow": [
+                "crystal_id"
+            ]
+        }
     }
 }
