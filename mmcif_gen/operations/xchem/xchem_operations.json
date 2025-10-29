@@ -185,7 +185,7 @@
                 ],
                 "operation": "sql_query",
                 "operation_parameters": {
-                    "query": "SELECT DISTINCT b.fraglib_component_id as id, a.Name, parent_MW, a.parent_formula, a.`Parent InChi Code` FROM `chemicals` a, experiments b WHERE a.vendor_catalog_id = b.compound_code ORDER BY b.fraglib_component_id"
+                    "query": "SELECT DISTINCT fraglib_component_id as id, '?' as Name, mol_weight, formula, inchi_key FROM experiments ORDER BY fraglib_component_id"
                 }
             },
             {
@@ -509,13 +509,13 @@
                 "reader": "sqlite",
                 "target_category": "_citation_author",
                 "target_items": [
-                    "pdbx_ordinal",
+                    "ordinal",
                     "citation_id",
                     "name"
                 ],
                 "operation": "sql_query",
                 "operation_parameters": {
-                    "query": "SELECT pdbx_ordinal, citation_id, name FROM _citation_author"
+                    "query": "SELECT ordinal, citation_id, name FROM _citation_author"
                 }
             },
             {
