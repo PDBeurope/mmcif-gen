@@ -1,11 +1,14 @@
 from mmcif_gen.investigation_engine import InvestigationEngine
 from mmcif_gen.investigation_io import SqliteReader,CSVReader
-from typing import List
+from typing import List, Tuple
+from mmcif_gen.util.output_grabber import OutputGrabber
 import sys
 import os
 import logging
 import json
 from enum import Enum
+from rdkit import Chem
+from rdkit.Chem import Descriptors
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
@@ -15,11 +18,10 @@ class CifType(Enum):
 
 class CifXChem(InvestigationEngine):
         
-    def __init__(self, investigation_id: str, sqlite_path: str, data_csv: str, chemical_csv: str, output_path: str, json_path: str, cif_type: CifType) -> None:
+    def __init__(self, investigation_id: str, sqlite_path: str, data_csv: str, output_path: str, json_path: str, cif_type: CifType) -> None:
         logging.info(f"Instantiating XChem CIF subclass - {cif_type.value}")
         self.sqlite_reader = SqliteReader(sqlite_path)
         self.data_csv = data_csv
-        self.chemical_csv =chemical_csv
         self.operation_file_json = json_path
         self.excluded_libraries = ["'Diffraction Test'","'Solvent'"]
         self.cif_type = cif_type
@@ -28,10 +30,8 @@ class CifXChem(InvestigationEngine):
     def pre_run(self) -> None:
         logging.info("Pre-running")
         if self.cif_type == CifType.Investigation:
-            chemical_csv_name = self.load_library_csv(self.chemical_csv)
             self.sqlite_reader.create_mmcif_tables_from_csv(self.data_csv)
-            self.create_experiment_table(chemical_csv_name)
-            self.find_missing_compound_information(chemical_csv_name)
+            self.create_experiment_table()
 
         super().pre_run()
 
@@ -55,13 +55,52 @@ class CifXChem(InvestigationEngine):
         else:
             return f"{self.output_path}/{self.investigation_id}_model.cif"
 
-    def find_missing_compound_information(self, chemical_csv_name: str) -> None:
-        missing_compounds = self.sqlite_reader.sql_execute(f"SELECT DISTINCT b.CompoundCode, b.ID, b.LibraryName FROM mainTable b LEFT JOIN `{chemical_csv_name}` a ON b.CompoundCode = a.vendor_catalog_ID WHERE a.vendor_catalog_ID IS NULL AND b.LibraryName NOT IN ({','.join(self.excluded_libraries)})")
-        logging.warning(f"Number of missing compounds: {len(missing_compounds)}")
-        # for compound in missing_compounds:
-            # logging.warning(f"Compound Code: {compound[0]}, ID: {compound[1]}, Library Name: {compound[2]}")
+    def get_experimental_data(self) -> List[Tuple[str, str, str, str, str]]:
+        experimental_data = self.sqlite_reader.sql_execute(f'''
+            SELECT DISTINCT a.CompoundCode, a.LibraryName, a.CompoundSMILES, a.RefinementOutcome, "detail_placeholder" as CompoundDetails 
+            FROM mainTable a 
+            WHERE a.LibraryName NOT IN ({','.join(self.excluded_libraries)});
+        ''')
 
-    def create_experiment_table(self, chemical_csv_name: str) -> None:
+        compound_details = {}
+        out_stderr = OutputGrabber(sys.stderr)
+        with out_stderr:
+            try:
+                for smile_string in experimental_data:
+                    mol = Chem.MolFromSmiles(smile_string[2])
+                    inchi = Chem.MolToInchi(mol)
+                    inchi_key = Chem.InchiToInchiKey(inchi)
+                    compound_details[smile_string[0]] = {
+                        "inchi_key": inchi_key,
+                        "formula": Chem.rdMolDescriptors.CalcMolFormula(mol),
+                        "mol_weight": Descriptors.MolWt(mol)
+                    }
+            except Exception as e:
+                logging.error("Conversion failure")
+
+        updated_data = []
+        for row in experimental_data:
+            row = list(row)  # convert tuple to list
+            compound_code = row[0]  # assuming index 0 = CompoundCode
+            details = compound_details.get(compound_code, "")
+            row[4] = details  # replace placeholder (index 4)
+            updated_data.append(tuple(row)) 
+
+        return updated_data
+    
+    def create_experiment_table(self) -> None:
+        experimental_data = self.get_experimental_data()
+
+        # inchi_keys_mapping = {inchi_key[4]: idx + 1 for idx, inchi_key in enumerate(experimental_data)}
+        inchi_keys_mapping = {}
+        alloted_id = 1
+        for inchi_key in experimental_data:
+            if inchi_key[4]["inchi_key"] in inchi_keys_mapping:
+                continue
+            else:
+                inchi_keys_mapping[inchi_key[4]["inchi_key"]] = alloted_id
+                alloted_id += 1
+        
         # Retrieve distinct series based on the provided query
         distinct_series = self.sqlite_reader.sql_execute('''
             SELECT DISTINCT LibraryName 
@@ -80,26 +119,6 @@ class CifXChem(InvestigationEngine):
             else:
                 series_mapping[row[0]] = alloted_id
                 alloted_id += 1
-            
-        logging.info(f"Series Mapping: {series_mapping}")
-        
-        experimental_data = self.sqlite_reader.sql_execute(f'''
-            SELECT a.CompoundCode, a.LibraryName, a.CompoundSMILES, a.RefinementOutcome, b.`Parent InChI Key` 
-            FROM mainTable a 
-            INNER JOIN `{chemical_csv_name}` b 
-                ON a.CompoundCode = b.vendor_catalog_ID
-            WHERE a.LibraryName NOT IN ({','.join(self.excluded_libraries)});
-        ''')
-
-        # inchi_keys_mapping = {inchi_key[4]: idx + 1 for idx, inchi_key in enumerate(experimental_data)}
-        inchi_keys_mapping = {}
-        alloted_id = 1
-        for inchi_key in experimental_data:
-            if inchi_key[4] in inchi_keys_mapping:
-                continue
-            else:
-                inchi_keys_mapping[inchi_key[4]] = alloted_id
-                alloted_id += 1
 
         # Drop the experiments table if it exists
         self.sqlite_reader.sql_execute("DROP TABLE IF EXISTS experiments")
@@ -117,6 +136,9 @@ class CifXChem(InvestigationEngine):
                 compound_smiles TEXT,
                 compound_code TEXT,
                 fragment_component_mix_id INTEGER,
+                inchi_key TEXT,
+                formula TEXT,
+                mol_weight TEXT,
                 result_id INTEGER,
                 fraglib_component_id INTEGER,
                 refinement_outcome TEXT,
@@ -127,11 +149,13 @@ class CifXChem(InvestigationEngine):
                 data_deposited TEXT
             )
         ''')
+            
+        logging.info(f"Series Mapping: {series_mapping}")
         
         with self.sqlite_reader.sqlite_db_connection() as cursor:
             for index, experiment in enumerate(experimental_data):
                 library_name = experiment[1]
-                inchi_key = experiment[4]
+                inchi_key = experiment[4]["inchi_key"]
                 refinement_outcome = experiment[3]
 
                 
@@ -167,18 +191,18 @@ class CifXChem(InvestigationEngine):
                 fraglib_component_id = inchi_keys_mapping.get(inchi_key)
                 
                 if series_id is None:
-                    logging.warning(f"LibraryName '{library_name}' not found in series mapping.")
+                    # logging.warning(f"LibraryName '{library_name}' not found in series mapping.")
                     continue  # Skip insertion if series_id is not found
                 
                 # Single insertion with all fields, including series_id and series
                 cursor.execute('''
                     INSERT INTO experiments (
                         investigation_id, library_name, compound_smiles, compound_code, refinement_outcome,
-                        campaign_id, sample_id, fraglib_component_id,
+                        campaign_id, sample_id, fraglib_component_id, inchi_key, formula, mol_weight,
                         outcome, outcome_assessment, outcome_details,
                         series_id, series, data_deposited
                     ) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ''', (
                     self.investigation_id, 
                     library_name, 
@@ -188,6 +212,9 @@ class CifXChem(InvestigationEngine):
                     1,  # campaign_id
                     1,  # sample_id
                     fraglib_component_id,
+                    experiment[4]["inchi_key"],
+                    experiment[4]["formula"],
+                    experiment[4]["mol_weight"],
                     outcome, 
                     outcome_assessment, 
                     outcome_details,
@@ -195,12 +222,6 @@ class CifXChem(InvestigationEngine):
                     series,
                     data_deposited
                 ))
-    
-    def load_library_csv(self, csv_file: str) -> None:
-        # Load csv file and put this on an sqlite table in the existing sqlite_reader
-        self.sqlite_reader.create_table_from_csv(csv_file)
-        table_name = csv_file.split("/")[-1].split(".")[0]
-        return table_name
 
 def get_cif_file_paths(folder_path : str) -> List[str]:
     cif_file_paths = []
@@ -225,21 +246,17 @@ def xchem_subparser(subparsers, parent_parser):
         "--data-csv",
         help="Path to the .csv file for each data set"
     )
-    parser_xchem.add_argument(
-        "--chemical-csv",
-        help="Path to the .csv file for each data set"
-    )
 
-def run(investigation_id: str, sqlite_path: str, data_csv: str, chemical_csv: str,  output_path: str, json_path: str) -> None:
-    investigation = CifXChem(investigation_id, sqlite_path, data_csv, chemical_csv, output_path, json_path, cif_type=CifType.Investigation)
+def run(investigation_id: str, sqlite_path: str, data_csv: str,  output_path: str, json_path: str) -> None:
+    investigation = CifXChem(investigation_id, sqlite_path, data_csv, output_path, json_path, cif_type=CifType.Investigation)
     investigation.pre_run()
     investigation.run()
-    model = CifXChem(investigation_id, sqlite_path, data_csv, chemical_csv, output_path, json_path, cif_type=CifType.Model)
+    model = CifXChem(investigation_id, sqlite_path, data_csv, output_path, json_path, cif_type=CifType.Model)
     model.pre_run()
     model.run()
 
 def run_investigation_xchem(args):
-    if not args.sqlite or not args.data_csv or not args.chemical_csv:
-        logging.error("XChem facility requires path to --sqlite file, --data-csv and --chemical-csv files")
+    if not args.sqlite or not args.data_csv :
+        logging.error("XChem facility requires path to --sqlite file, --data-csv")
         return 1
-    run(args.id, args.sqlite, args.data_csv, args.chemical_csv, args.output_folder, args.json)
+    run(args.id, args.sqlite, args.data_csv, args.output_folder, args.json)
