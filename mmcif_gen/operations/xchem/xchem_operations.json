@@ -333,91 +333,6 @@
         "operations": [
             {
                 "reader": "sqlite",
-                "target_category": "_software",
-                "target_items": [
-                    "pdbx_ordinal",
-                    "classification",
-                    "name",
-                    "version"
-                ],
-                "operation": "static_value",
-                "target_values": [
-                    "1",
-                    "refinement",
-                    "Refmac or Buster",
-                    null
-                ]
-            },
-            {
-                "reader": "sqlite",
-                "target_category": "_software",
-                "target_items": [
-                    "pdbx_ordinal",
-                    "classification",
-                    "name",
-                    "version"
-                ],
-                "operation": "static_value",
-                "target_values": [
-                    "2",
-                    "data reduction",
-                    "XDS",
-                    null
-                ]
-            },
-            {
-                "reader": "sqlite",
-                "target_category": "_software",
-                "target_items": [
-                    "pdbx_ordinal",
-                    "classification",
-                    "name",
-                    "version"
-                ],
-                "operation": "static_value",
-                "target_values": [
-                    "3",
-                    "data_integration_software",
-                    "XDS",
-                    null
-                ]
-            },
-            {
-                "reader": "sqlite",
-                "target_category": "_software",
-                "target_items": [
-                    "pdbx_ordinal",
-                    "classification",
-                    "name",
-                    "version"
-                ],
-                "operation": "static_value",
-                "target_values": [
-                    "4",
-                    "phasing_software",
-                    "PHASER",
-                    null
-                ]
-            },
-            {
-                "reader": "sqlite",
-                "target_category": "_software",
-                "target_items": [
-                    "pdbx_ordinal",
-                    "classification",
-                    "name",
-                    "version"
-                ],
-                "operation": "static_value",
-                "target_values": [
-                    "5",
-                    "",
-                    "AIMLESS",
-                    null
-                ]
-            },
-            {
-                "reader": "sqlite",
                 "target_category": "_pdbx_initial_refinement_model",
                 "target_items": [
                     "type",
@@ -648,9 +563,6 @@
 
         ],
         "mmcif_order": {
-            "_software": [
-                "pdbx_ordinal"
-            ],
             "_refine": [
                 "pdbx_diffrn_id"
             ],
