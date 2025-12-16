@@ -448,6 +448,18 @@
             },
             {
                 "reader": "sqlite",
+                "target_category": "_diffrn",
+                "target_items": [
+                    "crystal_id",
+                    "ambient_temp"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT crystal_id, ambient_temp, title FROM _diffrn"
+                }
+            },
+            {
+                "reader": "sqlite",
                 "target_category": "_pdbx_database_status",
                 "target_items": [
                     "entry_id",
