@@ -455,7 +455,7 @@
                 ],
                 "operation": "sql_query",
                 "operation_parameters": {
-                    "query": "SELECT crystal_id, ambient_temp, title FROM _diffrn"
+                    "query": "SELECT crystal_id, ambient_temp FROM _diffrn"
                 }
             },
             {

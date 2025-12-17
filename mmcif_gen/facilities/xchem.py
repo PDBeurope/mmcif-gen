@@ -20,7 +20,7 @@ class CifXChem(InvestigationEngine):
         
     def __init__(self, investigation_id: str, sqlite_path: str, data_csv: str, output_path: str, json_path: str, cif_type: CifType) -> None:
         logging.info(f"Instantiating XChem CIF subclass - {cif_type.value}")
-        self.sqlite_reader = SqliteReader(sqlite_path)
+        self.sqlite_reader = SqliteReader(sqlite_path, use_temp_copy=True)
         self.data_csv = data_csv
         self.operation_file_json = json_path
         self.excluded_libraries = ["'Diffraction Test'","'Solvent'"]
@@ -59,7 +59,7 @@ class CifXChem(InvestigationEngine):
         experimental_data = self.sqlite_reader.sql_execute(f'''
             SELECT DISTINCT a.CompoundCode, a.LibraryName, a.CompoundSMILES, a.RefinementOutcome, "detail_placeholder" as CompoundDetails 
             FROM mainTable a 
-            WHERE a.LibraryName NOT IN ({','.join(self.excluded_libraries)});
+            WHERE a.CompoundSMILES is not null and a.LibraryName NOT IN ({','.join(self.excluded_libraries)});
         ''')
 
         compound_details = {}
