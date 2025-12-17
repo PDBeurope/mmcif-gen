@@ -35,6 +35,9 @@ These files can be written, but can also be fetched from the github repository u
 # Fetch configuration for a specific facility
 mmcif-gen fetch-facility-json dls-metadata
 
+# Or
+mmcif-gen fetch-facility-json xchem_operations
+
 # Specify custom output directory
 mmcif-gen fetch-facility-json dls-metadata -o ./mapping_operations
 ```
@@ -96,13 +99,12 @@ mmcif-gen make-mmcif --json dls_metadata.json --output-folder ./out --id I_1234 
 Parameters required
 ```
 $ mmcif-gen make-mmcif xchem --help                                                                      
-usage: mmcif-gen make-mmcif xchem [-h] [--sqlite SQLITE] [--cif-type {model,investigation}]
+usage: mmcif-gen make-mmcif xchem [-h] [--sqlite SQLITE] [--data-csv DATA_CSV]
 
 options:
-  -h, --help            show this help message and exit
-  --sqlite SQLITE       Path to the .sqlite file for each data set
-  --cif-type {model,investigation}
-                        Type of the CIF file that will be generated
+  -h, --help           show this help message and exit
+  --sqlite SQLITE      Path to the .sqlite file for each data set
+  --data-csv DATA_CSV  Path to the .csv file for each data set
 ```
 
 Example command:
