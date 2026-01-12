@@ -109,12 +109,12 @@ options:
 
 Example command after fetching facility json:
 ```
-mmcif-gen make-mmcif xchem --sqlite mmcif_gen/test/data/tim/soakDBDataFile.sqlite --data-csv mmcif_gen/test/data/tim/metadata.csv
+mmcif-gen make-mmcif xchem --sqlite mmcif_gen/test/data/soakDBDataFile.sqlite --data-csv mmcif_gen/test/data/metadata.csv
 ```
 
 Or you can manually specifiy the operation json as follows:
 ```
-mmcif-gen make-mmcif --json mmcif_gen/operations/xchem/xchem_operations.json xchem --sqlite mmcif_gen/test/data/tim/soakDBDataFile.sqlite --data-csv mmcif_gen/test/data/tim/metadata.csv
+mmcif-gen make-mmcif --json mmcif_gen/operations/xchem/xchem_operations.json xchem --sqlite mmcif_gen/test/data/soakDBDataFile.sqlite --data-csv mmcif_gen/test/data/metadata.csv
 ```
 
 ### Working with Investigation Files
