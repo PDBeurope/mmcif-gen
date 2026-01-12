@@ -117,7 +117,7 @@ class InvestigationEngine:
             except Exception as e:
                 logging.error(f"Operation Failed:")
                 logging.exception(e)
-
+                
         self.investigation_storage.write_data_to_cif(
             self.get_output_file_name(),
             prefer_pairs=False

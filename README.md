@@ -107,9 +107,14 @@ options:
   --data-csv DATA_CSV  Path to the .csv file for each data set
 ```
 
-Example command:
+Example command after fetching facility json:
 ```
-mmcif-gen make-mmcif --id 001 --json mmcif_gen/operations/xchem/xchem_metadata.json --output-folder pdbedeposit xchem --sqlite mmcif_gen/test/data/lb32633-1-soakDBDataFile.sqlite --cif-type model
+mmcif-gen make-mmcif xchem --sqlite mmcif_gen/test/data/tim/soakDBDataFile.sqlite --data-csv mmcif_gen/test/data/tim/metadata.csv
+```
+
+Or you can manually specifiy the operation json as follows:
+```
+mmcif-gen make-mmcif --json mmcif_gen/operations/xchem/xchem_operations.json xchem --sqlite mmcif_gen/test/data/tim/soakDBDataFile.sqlite --data-csv mmcif_gen/test/data/tim/metadata.csv
 ```
 
 ### Working with Investigation Files

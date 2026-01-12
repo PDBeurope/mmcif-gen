@@ -120,10 +120,10 @@ class CIFReader:
                 return len(first_item)
 
 class SqliteReader:
-    def __init__(self, sqlite_path, use_temp_copy=False) -> None:
+    def __init__(self, sqlite_path, use_temp=False) -> None:
         self.data = {} 
         self.denormalised_data = []
-        if use_temp_copy:
+        if use_temp:
             self.temp_path = self._create_temp_copy(sqlite_path)
             self.conn = sqlite3.connect(self.temp_path)
         else:
@@ -132,10 +132,13 @@ class SqliteReader:
 
     def _create_temp_copy(self, sqlite_path):
         """Creates a temporary file copy of the SQLite DB for isolated writes."""
-        temp_dir = tempfile.gettempdir()
-        temp_path = os.path.join(temp_dir, f"{os.path.basename(sqlite_path)}.tmp.db")
-        logging.info(f"Creating temp copy of DB at: {temp_path}")
-        shutil.copy2(sqlite_path, temp_path)
+        sqlite_folder = os.path.dirname(sqlite_path)
+        temp_path = os.path.join(sqlite_folder, f"{os.path.basename(sqlite_path)}.tmp.db")
+        if os.path.exists(temp_path):
+            return temp_path
+        else:
+            logging.info(f"Creating temp copy of DB at: {temp_path}")
+            shutil.copy2(sqlite_path, temp_path)
         return temp_path
 
     @contextmanager

@@ -20,7 +20,7 @@ class CifXChem(InvestigationEngine):
         
     def __init__(self, investigation_id: str, sqlite_path: str, data_csv: str, output_path: str, json_path: str, cif_type: CifType) -> None:
         logging.info(f"Instantiating XChem CIF subclass - {cif_type.value}")
-        self.sqlite_reader = SqliteReader(sqlite_path, use_temp_copy=True)
+        self.sqlite_reader = SqliteReader(sqlite_path, use_temp=True)
         self.data_csv = data_csv
         self.operation_file_json = json_path
         self.excluded_libraries = ["'Diffraction Test'","'Solvent'"]
@@ -34,6 +34,12 @@ class CifXChem(InvestigationEngine):
             self.create_experiment_table()
 
         super().pre_run()
+
+    def post_run(self) -> None:
+        if self.cif_type == CifType.Model:
+            logging.info("Post-running - Deleting temp DB")
+            self.sqlite_reader.conn.close()
+            os.remove(self.sqlite_reader.temp_path)
 
     def read_json_operations(self) -> None:
         '''This is called by pre run in base class'''
@@ -254,6 +260,7 @@ def run(investigation_id: str, sqlite_path: str, data_csv: str,  output_path: st
     model = CifXChem(investigation_id, sqlite_path, data_csv, output_path, json_path, cif_type=CifType.Model)
     model.pre_run()
     model.run()
+    model.post_run()
 
 def run_investigation_xchem(args):
     if not args.sqlite or not args.data_csv :
