@@ -130,7 +130,8 @@ Investigation files are created in a very similar way:
 mmcif-gen make-mmcif --json pdbe_investigation.json --output-folder ./out --id I_1234 pdbe --model-folder ./models 
 
 # Using PDB IDs
-mmcif-gen make-mmcif  --json pdbe_investigation.json --output-folder ./out pdbe  --pdb-ids 6dmn 6dpp 6do8
+mmcif-gen make-mmcif --json mmcif_gen/operations/pdbe/pdbe_investigation.json --output-folder ./out --id I_321  pdbe --pdb-ids 6dmn 6dpp 6do8
+
 
 # Using CSV input
 mmcif-gen make-mmcif  --json pdbe_investigation.json --output-folder ./out pdbe --csv-file groups.csv 
