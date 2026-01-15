@@ -1,65 +1,5 @@
 {
     "operations": [{
-        "source_category": "_pdbx_contact_author",
-        "source_items": [
-          "address_1",
-          "address_2",
-          "address_3",
-          "city",
-          "continent",
-          "country",
-          "email",
-          "fax",
-          "identifier_ORCID",
-          "legacy_address",
-          "name_first",
-          "name_last",
-          "name_mi",
-          "name_salutation",
-          "organization_type",
-          "phone",
-          "postal_code",
-          "role",
-          "state_province"
-        ],
-        "target_category": "_pdbx_ligscreen_investigation_author",
-        "target_items": "_same",
-        "operation": "distinct_union",
-        "operation_parameters": {
-          "primary_parameters": ["identifier_ORCID", "role"],
-          "secondary_parameters": ["name_first", "name_last", "role"]
-        }
-      },
-      {
-        "target_category": "_pdbx_ligscreen_investigation_author",
-        "target_item": "id",
-        "operation": "auto_increment"
-      },
-      {
-        "source_category": "_audit_author",
-        "source_items": ["name"],
-        "target_category": "_audit_author",
-        "target_items": "_same",
-        "operation": "distinct_union",
-        "operation_parameters": { "primary_parameters": ["name"] }
-      },
-      {
-        "source_category": "_audit_author",
-        "source_items": ["identifier_ORCID"],
-        "target_category": "_audit_author",
-        "target_items": "_same",
-        "operation": "distinct_union",
-        "operation_parameters": {
-          "primary_parameters": ["identifier_ORCID"],
-          "secondary_parameters": ["name"]
-        }
-      },
-      {
-        "target_category": "_audit_author",
-        "target_item": "pdbx_ordinal",
-        "operation": "auto_increment"
-      },
-      {
         "target_category": "_pdbx_investigation",
         "target_items": ["id"],
         "reader": "sqlite",
@@ -214,8 +154,8 @@
       },
       {
         "target_category": "_pdbx_ligscreen_investigation_series",
-        "target_items": ["fragment_lib", "frag_lib_details"],
-        "target_values": ["Other", null],
+        "target_items": ["type_of_library", "library", "lib_identification_method"],
+        "target_values": ["FRAGLIB", "Other", "other"],
         "operation": "static_value"
       },
       {
@@ -235,6 +175,7 @@
         "target_items": [
           "poly_entity_id",
           "type",
+          "seq_one_letter_code_sample",
           "seq_one_letter_code_with_nstd",
           "ref_db_name",
           "ref_db_code",
@@ -243,7 +184,7 @@
         "reader": "sqlite",
         "operation": "sql_query",
         "operation_parameters": {
-          "query": "SELECT investigation_entity_id, poly_type, seq_one_letter_code, db_name, db_code, db_accession from denormalized_data where type=\"polymer\" GROUP BY investigation_entity_id"
+          "query": "SELECT investigation_entity_id, poly_type, seq_one_letter_code_can,seq_one_letter_code, db_name, db_code, db_accession from denormalized_data where type=\"polymer\" GROUP BY investigation_entity_id"
         }
       },
       {
@@ -331,7 +272,7 @@
       },
       {
         "target_category": "_pdbx_ligscreen_investigation_lib_component_mix",
-        "target_items": ["id", "lib_component_mix_id"],
+        "target_items": ["id", "lib_component_id"],
         "reader": "sqlite",
         "operation": "sql_query",
         "operation_parameters": {
@@ -459,7 +400,7 @@
         "target_category": "_pdbx_ligscreen_investigation_screening_result",
         "target_items": [
           "outcome",
-          "fraglib_component_id",
+          "lib_component_id",
           "outcome_assessment",
           "outcome_description",
           "outcome_details"
@@ -469,23 +410,61 @@
       },
       {
         "target_category": "_pdbx_ligscreen_investigation_screening_result",
-        "target_item": "screening_result_id",
+        "target_item": "result_id",
         "operation": "auto_increment"
+      },
+      {
+        "target_category": "_pdbx_ligscreen_investigation_author",
+        "target_item": ["ordinal"],
+        "operation": "auto_increment"
+      },
+      {
+        "source_category": "_pdbx_ligscreen_investigation_campaign",
+        "source_items": ["campaign_id"],
+        "target_category": "_pdbx_ligscreen_investigation_author",
+        "target_items": ["campaign_id"],
+        "operation": "copy_fill"
+      },
+      {
+        "source_category": "_pdbx_investigation",
+        "source_items": ["id"],
+        "target_category": "_pdbx_ligscreen_investigation_author",
+        "target_items": ["investigation_id"],
+        "operation": "copy_fill"
+      },
+      {
+        "source_category": "_audit_author",
+        "source_items": ["name"],
+        "target_category": "_pdbx_ligscreen_investigation_author",
+        "target_items": "_same",
+        "operation": "distinct_union",
+        "operation_parameters": { "primary_parameters": ["name"] }
+      },
+      {
+        "source_category": "_audit_author",
+        "source_items": ["identifier_ORCID"],
+        "target_category": "_pdbx_ligscreen_investigation_author",
+        "target_items": "_same",
+        "operation": "distinct_union",
+        "operation_parameters": {
+          "primary_parameters": ["identifier_ORCID"],
+          "secondary_parameters": ["name"]
+          }
       }
+
 
 ],
     "mmcif_order": {
-        "_pdbx_contact_author": ["id"],
-        "_audit_author" : ["pdbx_ordinal", "name"],
+        "_pdbx_ligscreen_investigation_author": ["ordinal"],
         "_pdbx_investigation_archived_data" : ["id"],
-        "_pdbx_fraghub_investigation_campaign" : ["campaign_id"],
+        "_pdbx_ligscreen_investigation_campaign" : ["campaign_id"],
+        "_pdbx_ligscreen_investigation_series" : ["series_id"],
         "_pdbx_investigation_entity_poly" : ["poly_entity_id"],
         "_pdbx_investigation_entity_nonpoly" : ["nonpoly_entity_id"],
-        "_pdbx_fraghub_investigation_fraglib_component" : ["id"],
-        "_pdbx_fraghub_investigation_series" : ["series_id"],
-        "_pdbx_fraghub_investigation_screening_exp":["screening_exp_id","instance_id"],
-        "_pdbx_fraghub_investigation_screening_result" : ["result_id"]
-
+        "_pdbx_ligscreen_investigation_lib_component_mix" : ["id"],
+        "_pdbx_ligscreen_investigation_lib_component" : ["id"],
+        "_pdbx_ligscreen_investigation_screening_exp":["screening_exp_id","instance_id"],
+        "_pdbx_ligscreen_investigation_screening_result" : ["result_id"]
 
     }
 }
