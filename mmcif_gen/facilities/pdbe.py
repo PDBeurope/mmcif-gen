@@ -201,7 +201,7 @@ class InvestigationPdbe(InvestigationEngine):
                 insert_query = """
                     INSERT INTO denormalized_data
                     (investigation_entity_id, pdb_id, file_name, model_file_no, entity_id, type, seq_one_letter_code_can, seq_one_letter_code, chem_comp_id, src_method, description, poly_type)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """
                 cursor.execute(
                     insert_query,
