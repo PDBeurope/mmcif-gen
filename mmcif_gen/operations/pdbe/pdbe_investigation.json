@@ -308,7 +308,7 @@
       },
       {
         "target_category": "_pdbx_ligscreen_investigation_lib_component_mix",
-        "target_items": ["id", "lib_component_mix_id"],
+        "target_items": ["id", "lib_component_id"],
         "reader": "sqlite",
         "operation": "sql_query",
         "operation_parameters": {
