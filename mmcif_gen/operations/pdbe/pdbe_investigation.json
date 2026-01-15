@@ -456,13 +456,14 @@
     "mmcif_order": {
         "_pdbx_ligscreen_investigation_author": ["ordinal"],
         "_pdbx_investigation_archived_data" : ["id"],
-        "_pdbx_fraghub_investigation_campaign" : ["campaign_id"],
+        "_pdbx_ligscreen_investigation_campaign" : ["campaign_id"],
+        "_pdbx_ligscreen_investigation_series" : ["series_id"],
         "_pdbx_investigation_entity_poly" : ["poly_entity_id"],
         "_pdbx_investigation_entity_nonpoly" : ["nonpoly_entity_id"],
-        "_pdbx_fraghub_investigation_fraglib_component" : ["id"],
-        "_pdbx_fraghub_investigation_series" : ["series_id"],
-        "_pdbx_fraghub_investigation_screening_exp":["screening_exp_id","instance_id"],
-        "_pdbx_fraghub_investigation_screening_result" : ["result_id"]
+        "_pdbx_ligscreen_investigation_lib_component_mix" : ["id"],
+        "_pdbx_ligscreen_investigation_lib_component" : ["id"],
+        "_pdbx_ligscreen_investigation_screening_exp":["screening_exp_id","instance_id"],
+        "_pdbx_ligscreen_investigation_screening_result" : ["result_id"]
 
 
     }
