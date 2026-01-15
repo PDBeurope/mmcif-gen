@@ -449,6 +449,7 @@
         "operation_parameters": {
           "primary_parameters": ["identifier_ORCID"],
           "secondary_parameters": ["name"]
+          }
       }
 
 
@@ -464,7 +465,6 @@
         "_pdbx_ligscreen_investigation_lib_component" : ["id"],
         "_pdbx_ligscreen_investigation_screening_exp":["screening_exp_id","instance_id"],
         "_pdbx_ligscreen_investigation_screening_result" : ["result_id"]
-
 
     }
 }
