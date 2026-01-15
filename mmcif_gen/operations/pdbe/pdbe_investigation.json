@@ -400,7 +400,7 @@
         "target_category": "_pdbx_ligscreen_investigation_screening_result",
         "target_items": [
           "outcome",
-          "fraglib_component_id",
+          "lib_component_id",
           "outcome_assessment",
           "outcome_description",
           "outcome_details"
@@ -410,7 +410,7 @@
       },
       {
         "target_category": "_pdbx_ligscreen_investigation_screening_result",
-        "target_item": "screening_result_id",
+        "target_item": "result_id",
         "operation": "auto_increment"
       },
       {
