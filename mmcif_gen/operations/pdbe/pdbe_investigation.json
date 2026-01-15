@@ -190,8 +190,8 @@
       },
       {
         "target_category": "_pdbx_ligscreen_investigation_series",
-        "target_items": ["fragment_lib", "frag_lib_details"],
-        "target_values": ["Other", null],
+        "target_items": ["type_of_library", "library", "lib_identification_method"],
+        "target_values": ["FRAGLIB", "Other", "other"],
         "operation": "static_value"
       },
       {
