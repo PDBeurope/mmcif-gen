@@ -211,6 +211,7 @@
         "target_items": [
           "poly_entity_id",
           "type",
+          "seq_one_letter_code_sample",
           "seq_one_letter_code_with_nstd",
           "ref_db_name",
           "ref_db_code",
@@ -219,7 +220,7 @@
         "reader": "sqlite",
         "operation": "sql_query",
         "operation_parameters": {
-          "query": "SELECT investigation_entity_id, poly_type, seq_one_letter_code, db_name, db_code, db_accession from denormalized_data where type=\"polymer\" GROUP BY investigation_entity_id"
+          "query": "SELECT investigation_entity_id, poly_type, seq_one_letter_code_can,seq_one_letter_code, db_name, db_code, db_accession from denormalized_data where type=\"polymer\" GROUP BY investigation_entity_id"
         }
       },
       {

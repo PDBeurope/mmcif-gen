@@ -65,6 +65,7 @@ class InvestigationPdbe(InvestigationEngine):
                 file_name TEXT,
                 entity_id TEXT,
                 type TEXT,
+                seq_one_letter_code_can TEXT,
                 seq_one_letter_code TEXT,
                 chem_comp_id TEXT,
                 src_method TEXT,
@@ -127,6 +128,7 @@ class InvestigationPdbe(InvestigationEngine):
                     if entity_type == "polymer":
                         seq_one_letter_code = ""
                         poly_type = ""
+                        seq_one_letter_code_can = ""
                         # Check if the entity has polymer data
                         if entity_poly_category is not None:
                             for poly_row in entity_poly_category:
@@ -141,6 +143,11 @@ class InvestigationPdbe(InvestigationEngine):
                                     ]
                                     poly_type = poly_row[
                                         poly_columns["_entity_poly.type"]
+                                    ]
+                                    seq_one_letter_code_can = poly_row[
+                                        poly_columns[
+                                            "_entity_poly.pdbx_seq_one_letter_code_can"
+                                        ]
                                     ]
 
                         ordinal = ordinals.get(seq_one_letter_code, False)
@@ -178,7 +185,8 @@ class InvestigationPdbe(InvestigationEngine):
                             "model_file_no": "",  
                             "entity_id": entity_id,
                             "type": entity_type,
-                            "seq_one_letter_code": seq_one_letter_code.strip(";").rstrip('\n'),  # Placeholder for polymer data
+                            "seq_one_letter_code_can": seq_one_letter_code_can.strip(";").rstrip('\n'), 
+                            "seq_one_letter_code": seq_one_letter_code.strip(";").rstrip('\n'),
                             "chem_comp_id": chem_comp_id,
                             "src_method": src_method,
                             "poly_type": poly_type.strip("'"),
@@ -192,8 +200,8 @@ class InvestigationPdbe(InvestigationEngine):
             for row in denormalized_data:
                 insert_query = """
                     INSERT INTO denormalized_data
-                    (investigation_entity_id, pdb_id, file_name, model_file_no, entity_id, type, seq_one_letter_code, chem_comp_id, src_method, description, poly_type)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    (investigation_entity_id, pdb_id, file_name, model_file_no, entity_id, type, seq_one_letter_code_can, seq_one_letter_code, chem_comp_id, src_method, description, poly_type)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """
                 cursor.execute(
                     insert_query,
@@ -204,6 +212,7 @@ class InvestigationPdbe(InvestigationEngine):
                         row["model_file_no"],
                         row["entity_id"],
                         row["type"],
+                        row["seq_one_letter_code_can"],
                         row["seq_one_letter_code"],
                         row["chem_comp_id"],
                         row["src_method"],
