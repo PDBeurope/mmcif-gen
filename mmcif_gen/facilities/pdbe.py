@@ -501,7 +501,7 @@ def run_investigation_pdbe(args):
     if args.model_folder:
         run(args.model_folder, args.id,args.output_folder, args.json)
     elif args.pdb_ids:
-        download_and_run_pdbe_investigation(args.pdb_ids, args.investigation_id, args.output_folder, args.json)
+        download_and_run_pdbe_investigation(args.pdb_ids, args.id, args.output_folder, args.json)
     elif args.csv_file:
         group_data = parse_csv(args.csv_file)
         for group, entry in group_data.items():

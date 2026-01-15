@@ -414,6 +414,25 @@
         "operation": "auto_increment"
       },
       {
+        "source_category": "_audit_author",
+        "source_items": ["identifier_ORCID"],
+        "target_category": "_pdbx_ligscreen_investigation_author",
+        "target_items": "_same",
+        "operation": "distinct_union",
+        "operation_parameters": {
+          "primary_parameters": ["identifier_ORCID"],
+          "secondary_parameters": ["name"]
+          }
+      },
+      {
+        "source_category": "_audit_author",
+        "source_items": ["name"],
+        "target_category": "_pdbx_ligscreen_investigation_author",
+        "target_items": "_same",
+        "operation": "distinct_union",
+        "operation_parameters": { "primary_parameters": ["name"] }
+      },
+      {
         "target_category": "_pdbx_ligscreen_investigation_author",
         "target_item": ["ordinal"],
         "operation": "auto_increment"
@@ -431,25 +450,6 @@
         "target_category": "_pdbx_ligscreen_investigation_author",
         "target_items": ["investigation_id"],
         "operation": "copy_fill"
-      },
-      {
-        "source_category": "_audit_author",
-        "source_items": ["name"],
-        "target_category": "_pdbx_ligscreen_investigation_author",
-        "target_items": "_same",
-        "operation": "distinct_union",
-        "operation_parameters": { "primary_parameters": ["name"] }
-      },
-      {
-        "source_category": "_audit_author",
-        "source_items": ["identifier_ORCID"],
-        "target_category": "_pdbx_ligscreen_investigation_author",
-        "target_items": "_same",
-        "operation": "distinct_union",
-        "operation_parameters": {
-          "primary_parameters": ["identifier_ORCID"],
-          "secondary_parameters": ["name"]
-          }
       }
 
 
