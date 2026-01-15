@@ -3,7 +3,7 @@
                 "operations/dls/dls_metadata.json"],
     "maxiv" : [ "operations/maxiv/maxiv_investigation.json"],
     "xchem" : ["operations/xchem/xchem_operations.json"],
-    "pdbe" : ["operations/pdbe/pdbe_operations.json"],
+    "pdbe" : ["operations/pdbe/pdbe_investigation.json"],
     "crims" : ["operations/crimms/crims_metadata.json"],
     "esrf" : ["operations/esrf/esrf_investigations.json"]
 }
