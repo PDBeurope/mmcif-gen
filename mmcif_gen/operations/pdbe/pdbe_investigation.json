@@ -415,7 +415,7 @@
       },
       {
         "target_category": "_pdbx_ligscreen_investigation_author",
-        "target_item": "ordinal
+        "target_item": ["ordinal"],
         "operation": "auto_increment"
       },
       {
