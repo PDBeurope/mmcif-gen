@@ -421,14 +421,14 @@
       {
         "source_category": "_pdbx_ligscreen_investigation_campaign",
         "source_items": ["campaign_id"],
-        "target_category": "_pdbx_ligscreen_investigation_author
+        "target_category": "_pdbx_ligscreen_investigation_author",
         "target_items": ["campaign_id"],
-        "operation": "copy_fill
+        "operation": "copy_fill"
       },
       {
         "source_category": "_pdbx_investigation",
         "source_items": ["id"],
-        "target_category": "_pdbx_ligscreen_investigation_authoR
+        "target_category": "_pdbx_ligscreen_investigation_author",
         "target_items": ["investigation_id"],
         "operation": "copy_fill"
       },
@@ -454,7 +454,7 @@
 
 ],
     "mmcif_order": {
-        "_pdbx_contact_author": ["id"],
+        "_pdbx_ligscreen_investigation_author": ["ordinal"],
         "_pdbx_investigation_archived_data" : ["id"],
         "_pdbx_fraghub_investigation_campaign" : ["campaign_id"],
         "_pdbx_investigation_entity_poly" : ["poly_entity_id"],
