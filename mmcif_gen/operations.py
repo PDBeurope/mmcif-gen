@@ -191,7 +191,8 @@ class StaticValueOperation(operationBase):
 
         self.investigation_storage.add_category(target_category)
         data = self.investigation_storage.data[target_category]
-        rows_to_write = 1
+        first_item = self.investigation_storage[target_category].keys()[0]
+        rows_to_write = len(self.investigation_storage[target_category][first_item])
 
         for index, item in enumerate(target_items):
             if item not in data:
