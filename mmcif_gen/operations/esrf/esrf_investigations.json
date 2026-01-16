@@ -136,19 +136,16 @@
         }
       },
       {
-        "reader": "json",
-        "operation": "jq_filter",
         "target_category": "_pdbx_investigation",
-        "target_items": "type",
-        "operation_parameters": {
-          "jq": "[\"FRAGHUB_LIGAND_SCREENING\"]"
-        }
+        "target_items": ["id"],
+        "target_values": ["I_54321"],
+        "operation": "static_value"
       },
       {
         "reader": "json",
         "operation": "jq_filter",
         "target_category": "_pdbx_investigation",
-        "target_items": "id",
+        "target_items": "project_id",
         "operation_parameters": {
           "jq": "[.id | tostring]"
         }
@@ -166,19 +163,25 @@
         "reader": "json",
         "operation": "jq_filter",
         "target_category": "_pdbx_investigation",
-        "target_items": "title",
+        "target_items": "details",
         "operation_parameters": {
-          "jq": "[\"Investigation into \" + .target_name + \" (\" + .construct_name + \")\"]"
+          "jq": "[\"Investigation into \" + .target_name + \" (\" + .construct_name + \"). Project: \" + .project_name + \""]"
         }
       },
       {
         "reader": "json",
         "operation": "jq_filter",
         "target_category": "_pdbx_investigation",
-        "target_items": "details",
+        "target_items": "title",
         "operation_parameters": {
           "jq": "[\"Fragment screening investigation for target \" + .target_name]"
         }
+      },
+      {
+        "target_category": "_pdbx_investigation",
+        "target_items": ["type", "db", "external_url"],
+        "target_values": ["Ligand Screening", "ligscreen", null],
+        "operation": "static_value"
       },
       {
         "reader": "json",
