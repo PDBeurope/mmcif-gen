@@ -616,7 +616,7 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_screening_result",
+        "target_category": "_pdbx_ligscreen_investigation_screening_result",
         "target_items": "screening_exp_id",
         "operation_parameters": {
           "jq": "[.campaigns[].crystals[] | .datasets[] | .processings[] | null]"
@@ -626,7 +626,7 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_screening_result",
+        "target_category": "_pdbx_ligscreen_investigation_screening_result",
         "target_items": "result_id",
         "operation_parameters": {
           "jq": "[.campaigns[].crystals[] | .datasets[] | .processings[] | null]"
@@ -636,7 +636,7 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_screening_result",
+        "target_category": "_pdbx_ligscreen_investigation_screening_result",
         "target_items": "outcome",
         "operation_parameters": {
           "jq": "[.campaigns[].crystals[].datasets[].processings[].hit]"
@@ -700,7 +700,7 @@
         "screening_exp_id",
         "instance_id"
       ],
-      "_pdbx_fraghub_investigation_screening_result": [
+      "_pdbx_ligscreen_investigation_screening_result": [
         "result_id"
       ]
     },
