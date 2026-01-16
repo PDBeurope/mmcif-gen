@@ -1,141 +1,6 @@
 {
     "operations": [
       {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "id",
-        "operation_parameters": {
-          "jq": "[.audit_author.id | tostring]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "address_1",
-        "operation_parameters": {
-          "jq": "[.organization.address_1]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "address_2",
-        "operation_parameters": {
-          "jq": "[.organization.address_2]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "address_3",
-        "operation_parameters": {
-          "jq": "[null]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "city",
-        "operation_parameters": {
-          "jq": "[.organization.city]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "country",
-        "operation_parameters": {
-          "jq": "[.organization.country]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "email",
-        "operation_parameters": {
-          "jq": "[.audit_author.email]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "name_first",
-        "operation_parameters": {
-          "jq": "[.audit_author.firstname]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "name_last",
-        "operation_parameters": {
-          "jq": "[.audit_author.familyname]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "organization_type",
-        "operation_parameters": {
-          "jq": "[.organization.type]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "phone",
-        "operation_parameters": {
-          "jq": "[.audit_author.telephone]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "postal_code",
-        "operation_parameters": {
-          "jq": "[.organization.postcode]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_audit_author",
-        "target_items": "pdbx_ordinal",
-        "operation_parameters": {
-          "jq": "[range(1; (.authors | length) + 1)]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_audit_author",
-        "target_items": "address",
-        "operation_parameters": {
-          "jq": "[.authors[] | .organization.address_1 + \", \" + .organization.address_2 + \", \" + .organization.city + \", \" + .organization.country + \", \" + .organization.postcode]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_audit_author",
-        "target_items": "name",
-        "operation_parameters": {
-          "jq": "[.authors[].name]"
-        }
-      },
-      {
         "target_category": "_pdbx_investigation",
         "target_items": ["id"],
         "target_values": ["I_54321"],
@@ -196,15 +61,6 @@
         "reader": "json",
         "operation": "jq_filter",
         "target_category": "_pdbx_ligscreen_investigation_campaign",
-        "target_items": "investigation_id",
-        "operation_parameters": {
-          "jq": "[.campaigns[] | .id | tostring]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_ligscreen_investigation_campaign",
         "target_items": "proc_pipeline",
         "operation_parameters": {
           "jq": "[.campaigns[].processing_pipeline]"
@@ -229,6 +85,13 @@
         }
       },
       {
+        "source_category": "_pdbx_investigation",
+        "source_items": ["id"],
+        "target_category": "_pdbx_ligscreen_investigation_campaign",
+        "target_items": ["investigation_id"],
+        "operation": "copy_fill"
+      },
+      {
         "reader": "json",
         "operation": "jq_filter",
         "target_category": "_pdbx_ligscreen_investigation_series",
@@ -250,15 +113,6 @@
         "reader": "json",
         "operation": "jq_filter",
         "target_category": "_pdbx_ligscreen_investigation_series",
-        "target_items": "investigation_id",
-        "operation_parameters": {
-          "jq": "[.campaigns[] | .id | tostring]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_ligscreen_investigation_series",
         "target_items": "lib_details",
         "operation_parameters": {
           "jq": "[.campaigns[].crystals[].compounds[].collections[].name]"
@@ -271,13 +125,11 @@
         "operation": "static_value"
       },
       {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_investigation_sample",
-        "target_items": "investigation_id",
-        "operation_parameters": {
-          "jq": "[.campaigns[].crystals[] | .id | tostring]"
-        }
+        "source_category": "_pdbx_investigation",
+        "source_items": ["id"],
+        "target_category": "_pdbx_ligscreen_investigation_series",
+        "target_items": ["investigation_id"],
+        "operation": "copy_fill"
       },
       {
         "reader": "json",
@@ -307,6 +159,13 @@
         "operation_parameters": {
           "jq": "[.campaigns[].crystals[].uuid]"
         }
+      },
+      {
+        "source_category": "_pdbx_investigation",
+        "source_items": ["id"],
+        "target_category": "_pdbx_investigation_sample",
+        "target_items": ["investigation_id"],
+        "operation": "copy_fill"
       },
       {
         "reader": "json",
@@ -564,15 +423,6 @@
         "reader": "json",
         "operation": "jq_filter",
         "target_category": "_pdbx_ligscreen_investigation_screening_exp",
-        "target_items": "investigation_id",
-        "operation_parameters": {
-          "jq": "[.campaigns[] | .crystals[] | .id | tostring]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_ligscreen_investigation_screening_exp",
         "target_items": "sample_id",
         "operation_parameters": {
           "jq": "[.campaigns[].crystals[].uuid]"
@@ -617,6 +467,13 @@
         "operation": "static_value"
       },
       {
+        "source_category": "_pdbx_investigation",
+        "source_items": ["id"],
+        "target_category": "_pdbx_ligscreen_investigation_screening_exp",
+        "target_items": ["investigation_id"],
+        "operation": "copy_fill"
+      },
+      {
         "reader": "json",
         "operation": "jq_filter",
         "target_category": "_pdbx_ligscreen_investigation_screening_result",
@@ -649,15 +506,6 @@
         "reader": "json",
         "operation": "jq_filter",
         "target_category": "_pdbx_investigation_focus",
-        "target_items": "investigation_id",
-        "operation_parameters": {
-          "jq": "[.id | tostring]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_investigation_focus",
         "target_items": "component_id",
         "operation_parameters": {
           "jq": "[.construct_uuid]"
@@ -671,6 +519,47 @@
         "operation_parameters": {
           "jq": "[.construct_name]"
         }
+      },
+      {
+        "source_category": "_pdbx_investigation",
+        "source_items": ["id"],
+        "target_category": "_pdbx_investigation_focus",
+        "target_items": ["investigation_id"],
+        "operation": "copy_fill"
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_pdbx_ligscreen_investigation_author",
+        "target_items": "ordinal",
+        "operation_parameters": {
+          "jq": "[range(1; (.authors | length) + 1)]"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_pdbx_ligscreen_investigation_author",
+        "target_items": "name",
+        "operation_parameters": {
+          "jq": "[.authors[].name]"
+        }
+      }
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_pdbx_ligscreen_investigation_author",
+        "target_items": "campaign_id",
+        "operation_parameters": {
+          "jq": "[.campaigns[].id | tostring]"
+        }
+      },
+      {
+        "source_category": "_pdbx_investigation",
+        "source_items": ["id"],
+        "target_category": "_pdbx_ligscreen_investigation_author",
+        "target_items": ["investigation_id"],
+        "operation": "copy_fill"
       }
     ],
     "mmcif_order": {
