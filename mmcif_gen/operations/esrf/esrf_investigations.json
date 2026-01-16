@@ -228,7 +228,7 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_series",
+        "target_category": "_pdbx_ligscreen_investigation_series",
         "target_items": "series_id",
         "operation_parameters": {
           "jq": "[.campaigns[].id | tostring]"
@@ -237,7 +237,7 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_series",
+        "target_category": "_pdbx_ligscreen_investigation_series",
         "target_items": "campaign_id",
         "operation_parameters": {
           "jq": "[.campaigns[].id | tostring]"
@@ -246,17 +246,23 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_series",
+        "target_category": "_pdbx_ligscreen_investigation_series",
         "target_items": "investigation_id",
         "operation_parameters": {
           "jq": "[.campaigns[] | .id | tostring]"
         }
       },
       {
+        "target_category": "_pdbx_ligscreen_investigation_series",
+        "target_items": ["type_of_library", "library", "lib_identification_method"],
+        "target_values": ["OTHER", "Other", "other"],
+        "operation": "static_value"
+      },
+      {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_series",
-        "target_items": "fragment_lib",
+        "target_category": "_pdbx_ligscreen_investigation_series",
+        "target_items": "lib_details",
         "operation_parameters": {
           "jq": "[.campaigns[].crystals[].compounds[].collections[].name]"
         }
@@ -677,7 +683,7 @@
       "_pdbx_fraghub_investigation_fraglib_component": [
         "id"
       ],
-      "_pdbx_fraghub_investigation_series": [
+      "_pdbx_ligscreen_investigation_series": [
         "series_id"
       ],
       "_pdbx_fraghub_investigation_screening_exp": [
