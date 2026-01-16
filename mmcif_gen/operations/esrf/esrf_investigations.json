@@ -253,12 +253,6 @@
         }
       },
       {
-        "target_category": "_pdbx_ligscreen_investigation_series",
-        "target_items": ["type_of_library", "library", "lib_identification_method"],
-        "target_values": ["OTHER", "Other", "other"],
-        "operation": "static_value"
-      },
-      {
         "reader": "json",
         "operation": "jq_filter",
         "target_category": "_pdbx_ligscreen_investigation_series",
@@ -266,6 +260,12 @@
         "operation_parameters": {
           "jq": "[.campaigns[].crystals[].compounds[].collections[].name]"
         }
+      },
+      {
+        "target_category": "_pdbx_ligscreen_investigation_series",
+        "target_items": ["type_of_library", "library", "lib_identification_method"],
+        "target_values": ["OTHER", "Other", "other"],
+        "operation": "static_value"
       },
       {
         "reader": "json",
@@ -532,7 +532,7 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_screening_exp",
+        "target_category": "_pdbx_ligscreen_investigation_screening_exp",
         "target_items": "screening_exp_id",
         "operation_parameters": {
           "jq": "[.campaigns[].crystals[] | null]"
@@ -542,7 +542,7 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_screening_exp",
+        "target_category": "_pdbx_ligscreen_investigation_screening_exp",
         "target_items": "series_id",
         "operation_parameters": {
           "jq": "[.campaigns[] | .crystals[] | .campaign_id | tostring]"
@@ -551,7 +551,7 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_screening_exp",
+        "target_category": "_pdbx_ligscreen_investigation_screening_exp",
         "target_items": "campaign_id",
         "operation_parameters": {
           "jq": "[.campaigns[] | .crystals[] | .campaign_id | tostring]"
@@ -560,7 +560,7 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_screening_exp",
+        "target_category": "_pdbx_ligscreen_investigation_screening_exp",
         "target_items": "investigation_id",
         "operation_parameters": {
           "jq": "[.campaigns[] | .crystals[] | .id | tostring]"
@@ -569,7 +569,7 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_screening_exp",
+        "target_category": "_pdbx_ligscreen_investigation_screening_exp",
         "target_items": "sample_id",
         "operation_parameters": {
           "jq": "[.campaigns[].crystals[].uuid]"
@@ -578,17 +578,17 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_screening_exp",
-        "target_items": "fragment_component_mix_id",
+        "target_category": "_pdbx_ligscreen_investigation_screening_exp",
+        "target_items": "lib_component_mix_id",
         "operation_parameters": {
           "jq": "[.campaigns[].crystals[] | null]"
         },
-        "auto_increment_field": "fragment_component_mix_id"
+        "auto_increment_field": "lib_component_mix_id"
       },
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_screening_exp",
+        "target_category": "_pdbx_ligscreen_investigation_screening_exp",
         "target_items": "exp_method",
         "operation_parameters": {
           "jq": "[.campaigns[].crystals[] | \"X-ray diffraction\"]"
@@ -597,11 +597,21 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_screening_exp",
+        "target_category": "_pdbx_ligscreen_investigation_screening_exp",
         "target_items": "data_deposited",
         "operation_parameters": {
-          "jq": "[.campaigns[].crystals[] | \"yes\"]"
+          "jq": "[.campaigns[].crystals[] | \"N\"]"
         }
+      },
+      {
+        "target_category": "_pdbx_ligscreen_investigation_screening_exp",
+        "target_items": [
+          "exp_details",
+          "exp_external_url",
+          "instance_id"
+        ],
+        "target_values": [null, null, "1"],
+        "operation": "static_value"
       },
       {
         "reader": "json",
@@ -686,7 +696,7 @@
       "_pdbx_ligscreen_investigation_series": [
         "series_id"
       ],
-      "_pdbx_fraghub_investigation_screening_exp": [
+      "_pdbx_ligscreen_investigation_screening_exp": [
         "screening_exp_id",
         "instance_id"
       ],
