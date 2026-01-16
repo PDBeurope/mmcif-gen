@@ -183,7 +183,7 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_campaign",
+        "target_category": "_pdbx_ligscreen_investigation_campaign",
         "target_items": "campaign_id",
         "operation_parameters": {
           "jq": "[.campaigns[].id | tostring]"
@@ -192,7 +192,7 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_campaign",
+        "target_category": "_pdbx_ligscreen_investigation_campaign",
         "target_items": "investigation_id",
         "operation_parameters": {
           "jq": "[.campaigns[] | .id | tostring]"
@@ -201,7 +201,7 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_campaign",
+        "target_category": "_pdbx_ligscreen_investigation_campaign",
         "target_items": "proc_pipeline",
         "operation_parameters": {
           "jq": "[.campaigns[].processing_pipeline]"
@@ -210,7 +210,7 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_campaign",
+        "target_category": "_pdbx_ligscreen_investigation_campaign",
         "target_items": "year",
         "operation_parameters": {
           "jq": "[.campaigns[].campaign_created_at | fromdateiso8601 | strftime(\"%Y\")]"
@@ -219,7 +219,7 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_campaign",
+        "target_category": "_pdbx_ligscreen_investigation_campaign",
         "target_items": "facility",
         "operation_parameters": {
           "jq": "[.campaigns[].facility]"
@@ -665,7 +665,7 @@
       "_pdbx_investigation_archived_data": [
         "id"
       ],
-      "_pdbx_fraghub_investigation_campaign": [
+      "_pdbx_ligscreen_investigation_campaign": [
         "campaign_id"
       ],
       "_pdbx_investigation_entity_poly": [
