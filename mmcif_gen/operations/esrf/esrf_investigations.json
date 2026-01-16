@@ -47,12 +47,14 @@
         "target_items": ["type", "db", "external_url"],
         "target_values": ["Ligand Screening", "ligscreen", null],
         "operation": "static_value"
+        }
       },
       {
         "reader": "json",
         "operation": "jq_filter",
         "target_category": "_pdbx_ligscreen_investigation_campaign",
         "target_items": "campaign_id",
+        "target_items": "investigation_id",
         "operation_parameters": {
           "jq": "[.campaigns[].id | tostring]"
         }
@@ -114,6 +116,7 @@
         "operation": "jq_filter",
         "target_category": "_pdbx_ligscreen_investigation_series",
         "target_items": "lib_details",
+        "target_items": "investigation_id",
         "operation_parameters": {
           "jq": "[.campaigns[].crystals[].compounds[].collections[].name]"
         }
