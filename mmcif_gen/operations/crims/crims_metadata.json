@@ -125,6 +125,132 @@
         "operation_parameters": {
           "jq": "if .campaigns[0].crystals[0].datasets[0].datacollection_metadata.source == \"synchrotron\" then \"Y\" else empty end"
         }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_pdbx_contact_author",
+        "target_items": "id",
+        "operation_parameters": {
+          "jq": "[.audit_author.id | tostring]"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_pdbx_contact_author",
+        "target_items": "address_1",
+        "operation_parameters": {
+          "jq": "[.organization.address_1]"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_pdbx_contact_author",
+        "target_items": "address_2",
+        "operation_parameters": {
+          "jq": "[.organization.address_2]"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_pdbx_contact_author",
+        "target_items": "address_3",
+        "operation_parameters": {
+          "jq": "[null]"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_pdbx_contact_author",
+        "target_items": "city",
+        "operation_parameters": {
+          "jq": "[.organization.city]"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_pdbx_contact_author",
+        "target_items": "country",
+        "operation_parameters": {
+          "jq": "[.organization.country]"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_pdbx_contact_author",
+        "target_items": "email",
+        "operation_parameters": {
+          "jq": "[.audit_author.email]"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_pdbx_contact_author",
+        "target_items": "name_first",
+        "operation_parameters": {
+          "jq": "[.audit_author.firstname]"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_pdbx_contact_author",
+        "target_items": "name_last",
+        "operation_parameters": {
+          "jq": "[.audit_author.familyname]"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_pdbx_contact_author",
+        "target_items": "organization_type",
+        "operation_parameters": {
+          "jq": "[.organization.type]"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_pdbx_contact_author",
+        "target_items": "phone",
+        "operation_parameters": {
+          "jq": "[.audit_author.telephone]"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_pdbx_contact_author",
+        "target_items": "postal_code",
+        "operation_parameters": {
+          "jq": "[.organization.postcode]"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_audit_author",
+        "target_items": "pdbx_ordinal",
+        "operation_parameters": {
+          "jq": "[range(1; (.authors | length) + 1)]"
+        }
+      },
+      {
+        "reader": "json",
+        "operation": "jq_filter",
+        "target_category": "_audit_author",
+        "target_items": "name",
+        "operation_parameters": {
+          "jq": "[.authors[].name]"
+        }
       }
     ],
     "mmcif_order": {
