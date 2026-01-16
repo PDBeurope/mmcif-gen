@@ -450,7 +450,7 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_fraglib_component",
+        "target_category": "_pdbx_ligscreen_investigation_lib_component",
         "target_items": "id",
         "operation_parameters": {
           "jq": "[.campaigns[].crystals[].compounds[].id | tostring]"
@@ -459,7 +459,7 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_fraglib_component",
+        "target_category": "_pdbx_ligscreen_investigation_lib_component",
         "target_items": "name",
         "operation_parameters": {
           "jq": "[.campaigns[].crystals[].compounds[].compound_name]"
@@ -468,7 +468,7 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_fraglib_component",
+        "target_category": "_pdbx_ligscreen_investigation_lib_component",
         "target_items": "formula",
         "operation_parameters": {
           "jq": "[.campaigns[].crystals[].compounds[].formula]"
@@ -477,7 +477,7 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_fraglib_component",
+        "target_category": "_pdbx_ligscreen_investigation_lib_component",
         "target_items": "formula_weight",
         "operation_parameters": {
           "jq": "[.campaigns[].crystals[].compounds[].formula_weight]"
@@ -486,7 +486,7 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_fraglib_component",
+        "target_category": "_pdbx_ligscreen_investigation_lib_component",
         "target_items": "inchi_descriptor",
         "operation_parameters": {
           "jq": "[.campaigns[].crystals[].compounds[].inchi]"
@@ -495,8 +495,8 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_fraglib_component",
-        "target_items": "inchi_key",
+        "target_category": "_pdbx_ligscreen_investigation_lib_component",
+        "target_items": "inchikey",
         "operation_parameters": {
           "jq": "[.campaigns[].crystals[].compounds[].inchikey]"
         }
@@ -504,7 +504,7 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_fraglib_component",
+        "target_category": "_pdbx_ligscreen_investigation_lib_component",
         "target_items": "cas_identifier",
         "operation_parameters": {
           "jq": "[.campaigns[].crystals[].compounds[] | null]"
@@ -680,7 +680,7 @@
       "_pdbx_investigation_entity_nonpoly": [
         "nonpoly_entity_id"
       ],
-      "_pdbx_fraghub_investigation_fraglib_component": [
+      "_pdbx_ligscreen_investigation_lib_component": [
         "id"
       ],
       "_pdbx_ligscreen_investigation_series": [
