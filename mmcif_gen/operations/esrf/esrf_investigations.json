@@ -513,8 +513,8 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_frag_component_mix",
-        "target_items": "fraglib_component_id",
+        "target_category": "_pdbx_ligscreen_investigation_lib_component_mix",
+        "target_items": "lib_component_id",
         "operation_parameters": {
           "jq": "[.campaigns[].crystals[].compounds[].id | tostring]"
         }
@@ -522,7 +522,7 @@
       {
         "reader": "json",
         "operation": "jq_filter",
-        "target_category": "_pdbx_fraghub_investigation_frag_component_mix",
+        "target_category": "_pdbx_ligscreen_investigation_lib_component_mix",
         "target_items": "id",
         "operation_parameters": {
           "jq": "[.campaigns[].crystals[] | .compounds[] | null]"
