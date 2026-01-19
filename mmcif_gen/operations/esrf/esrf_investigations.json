@@ -47,7 +47,6 @@
         "target_items": ["type", "db", "external_url"],
         "target_values": ["Ligand Screening", "ligscreen", null],
         "operation": "static_value"
-        }
       },
       {
         "reader": "json",
