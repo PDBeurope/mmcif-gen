@@ -418,7 +418,7 @@
       },
       {
         "source_category": "_audit_author",
-        "source_items": ["identifier_ORCID"],
+        "source_items": ["identifier_ORCID", "name"],
         "target_category": "_pdbx_ligscreen_investigation_author",
         "target_items": "_same",
         "operation": "distinct_union",
