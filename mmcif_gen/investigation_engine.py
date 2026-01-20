@@ -1,6 +1,7 @@
 from mmcif_gen.investigation_io import InvestigationStorage
 from mmcif_gen.operations import (
     operationBase,
+    UnionOperation,
     IntersectionOperation,
     CopyOperation,
     CopyFillOperation,
