@@ -442,20 +442,7 @@
         "target_category": "_pdbx_ligscreen_investigation_author",
         "target_items": ["investigation_id"],
         "operation": "copy_fill"
-      },
-      {
-        "source_category": "_audit_author",
-        "source_items": ["identifier_ORCID"],
-        "target_category": "_pdbx_ligscreen_investigation_author",
-        "target_items": "_same",
-        "operation": "conditional_distinct_union",
-        "operation_parameters": {
-          "distinct_key": ["identifier_ORCID"],
-          "conditional_variable": "_audit_author.identifier_ORCID",
-          "value": [".+"]
-        }
       }
-
 
 ],
     "mmcif_order": {
