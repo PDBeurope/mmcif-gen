@@ -122,12 +122,14 @@ class InvestigationPdbe(InvestigationEngine):
                     description = row[entity_columns["_entity.pdbx_description"]].strip("'").strip(";").strip("\n")
                     chem_comp_id = ""
                     seq_one_letter_code = ""
+                    seq_one_letter_code_can = None
+                    poly_type = ""
                     ordinal = ""
 
                     if entity_type == "polymer":
                         seq_one_letter_code = ""
                         poly_type = ""
-                        seq_one_letter_code_can = ""
+                        seq_one_letter_code_can = None
                         # Check if the entity has polymer data
                         if entity_poly_category is not None:
                             for poly_row in entity_poly_category:
@@ -184,8 +186,8 @@ class InvestigationPdbe(InvestigationEngine):
                             "model_file_no": "",  
                             "entity_id": entity_id,
                             "type": entity_type,
-                            "seq_one_letter_code_can": seq_one_letter_code_can.strip(";").rstrip('\n'), 
-                            "seq_one_letter_code": seq_one_letter_code.strip(";").rstrip('\n'),
+                            "seq_one_letter_code_can": seq_one_letter_code_can.strip(";").rstrip('\n') if seq_one_letter_code_can else None, 
+                            "seq_one_letter_code": seq_one_letter_code.strip(";").rstrip('\n') if seq_one_letter_code else None,
                             "chem_comp_id": chem_comp_id,
                             "src_method": src_method,
                             "poly_type": poly_type.strip("'"),
