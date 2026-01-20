@@ -191,8 +191,13 @@ class StaticValueOperation(operationBase):
 
         self.investigation_storage.add_category(target_category)
         data = self.investigation_storage.data[target_category]
-        first_item = self.investigation_storage[target_category].keys()[0]
-        rows_to_write = len(self.investigation_storage[target_category][first_item])
+        
+        # Handle empty categories gracefully
+        if not data:
+            rows_to_write = 1  # Default to 1 row for empty categories
+        else:
+            first_item = list(data.keys())[0]
+            rows_to_write = len(data[first_item])
 
         for index, item in enumerate(target_items):
             if item not in data:
