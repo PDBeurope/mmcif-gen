@@ -22,12 +22,15 @@
         "operation": "intersection"
       },
       {
-        "source_category": "_struct",
-        "source_items": ["pdbx_descriptor"],
+        "source_category": "_entity",
+        "source_items": ["pdbx_description"],
         "target_category": "_pdbx_investigation",
         "target_items": ["details"],
-        "operation": "modify_intersection",
-        "operation_parameters": "Ligand Screening of {}"
+        "operation": "conditional_union",
+        "operation_parameters": {
+          "conditional_variable": "_entity.type",
+          "value": ["polymer"]
+        }
       },
       {
         "source_category": "_database_2",
