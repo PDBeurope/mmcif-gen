@@ -106,8 +106,8 @@
         "source_category": "_struct",
         "source_items": ["title"],
         "target_category": "_pdbx_investigation_archived_data",
-        "target_item": "archived_data_details",
-        "operation": "intersection"
+        "target_items": ["archived_data_details"],
+        "operation": "union"
       },
       {
         "source_category": "_diffrn_source",
