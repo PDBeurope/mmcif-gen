@@ -27,9 +27,7 @@ class InvestigationPdbe(InvestigationEngine):
         logging.info("Instantiating PDBe Investigation subclass")
         self.reader = CIFReader()
         self.model_file_path = model_file_path
-        # Use absolute path based on module location instead of relative path
-        module_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        self.operation_file_json = os.path.join(module_dir, "operations", "pdbe", "pdbe_investigation.json")
+        self.operation_file_json = "./operations/pdbe/pdbe_investigation.json"
         self.sqlite_reader = SqliteReader("pdbe_sqlite.db")
         super().__init__(investigation_id, output_path)
 
