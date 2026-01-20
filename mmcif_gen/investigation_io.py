@@ -397,8 +397,8 @@ class ExternalInformation:
         with open(self.filename, mode="r", newline="") as file:
             reader = csv.DictReader(file)
             for row in reader:
-                chem_comp_id = row["CHEM_COMP_ID"]
-                descriptor = row["DESCRIPTOR"]
+                chem_comp_id = row["CCD_ID"]
+                descriptor = row["InChIKey"]
                 self.inchi_keys[chem_comp_id] = descriptor
 
     def _get_inchi_key(self, chem_comp_id):
