@@ -117,7 +117,7 @@ class InvestigationPdbe(InvestigationEngine):
             if entity_category is not None:
                 for row in entity_category:
                     entity_id = row[entity_columns["_entity.id"]]
-                    entity_type = row[entity_columns["_entity.type"]]
+                    entity_type = row[entity_columns["_entity.type"]].strip("'").strip()
                     src_method = row[entity_columns["_entity.src_method"]]
                     description = row[entity_columns["_entity.pdbx_description"]].strip("'").strip(";").strip("\n")
                     chem_comp_id = ""
@@ -185,7 +185,7 @@ class InvestigationPdbe(InvestigationEngine):
                             "file_name": file_name,
                             "model_file_no": "",  
                             "entity_id": entity_id,
-                            "type": entity_type,
+                            "type": entity_type.strip("'").strip(),
                             "seq_one_letter_code_can": seq_one_letter_code_can.strip(";").rstrip('\n') if seq_one_letter_code_can else None, 
                             "seq_one_letter_code": seq_one_letter_code.strip(";").rstrip('\n') if seq_one_letter_code else None,
                             "chem_comp_id": chem_comp_id,
@@ -409,6 +409,10 @@ class InvestigationPdbe(InvestigationEngine):
         for file_name, datablock in self.reader.data.items():
             struct_ref_category = datablock.find_mmcif_category("_struct_ref")
             database_2_category = datablock.find_mmcif_category("_database_2")
+            
+            if struct_ref_category is None:
+                continue
+                
             struct_ref_columns = {
                 name: i for i, name in enumerate(struct_ref_category.tags)
             }
