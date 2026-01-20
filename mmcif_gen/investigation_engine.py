@@ -63,7 +63,9 @@ class InvestigationEngine:
             logging.error(f"Resorting to default reader")
             operation_reader = self.reader
 
-        if operation_type == "distinct_union":
+        if operation_type == "union":
+            return UnionOperation(self.investigation_storage, operation_reader)
+        elif operation_type == "distinct_union":
             return UnionDistinctOperation(self.investigation_storage, operation_reader)
         elif operation_type == "intersection":
             return IntersectionOperation(self.investigation_storage, operation_reader)
