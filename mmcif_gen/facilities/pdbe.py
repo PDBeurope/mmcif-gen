@@ -27,10 +27,66 @@ class InvestigationPdbe(InvestigationEngine):
         logging.info("Instantiating PDBe Investigation subclass")
         self.reader = CIFReader()
         self.model_file_path = model_file_path
-        module_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        self.operation_file_json = os.path.join(module_dir, "operations", "pdbe", "pdbe_investigation.json")
+        self.operation_file_json = self._resolve_json_path(pdbe_investigation_json)
         self.sqlite_reader = SqliteReader("pdbe_sqlite.db")
         super().__init__(investigation_id, output_path)
+
+    def _resolve_json_path(self, pdbe_investigation_json: str) -> str:
+        """
+        Resolve the JSON file path with fallback mechanisms for different deployment scenarios.
+        
+        Priority order:
+        1. If absolute path is provided and exists, use it
+        2. If relative path exists from current directory, use it
+        3. Check production deployment location
+        4. Check module-relative location (development)
+        5. Raise error if none found
+        """
+        import sys
+        
+        # If it's an absolute path and exists, use it directly
+        if os.path.isabs(pdbe_investigation_json) and os.path.exists(pdbe_investigation_json):
+            logging.info(f"Using absolute path: {pdbe_investigation_json}")
+            return pdbe_investigation_json
+        
+        # If relative path exists from current directory, use it
+        if os.path.exists(pdbe_investigation_json):
+            abs_path = os.path.abspath(pdbe_investigation_json)
+            logging.info(f"Using relative path resolved to: {abs_path}")
+            return abs_path
+        
+        # Check production deployment location
+        # Extract executable directory from sys.executable
+        if sys.executable:
+            exec_dir = os.path.dirname(sys.executable)
+            prod_path = os.path.join(exec_dir, "operations", "pdbe", "pdbe_investigation.json")
+            if os.path.exists(prod_path):
+                logging.info(f"Using production path: {prod_path}")
+                return prod_path
+        
+        # Check module-relative location (development scenario)
+        module_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        dev_path = os.path.join(module_dir, "operations", "pdbe", "pdbe_investigation.json")
+        if os.path.exists(dev_path):
+            logging.info(f"Using development path: {dev_path}")
+            return dev_path
+        
+        # If none of the above work, raise a descriptive error
+        attempted_paths = [
+            pdbe_investigation_json,
+            prod_path if 'prod_path' in locals() else "N/A (no sys.executable)",
+            dev_path
+        ]
+        
+        error_msg = (
+            f"Could not find pdbe_investigation.json in any of the expected locations:\n"
+            f"  - Provided path: {pdbe_investigation_json}\n"
+            f"  - Production path: {attempted_paths[1]}\n"
+            f"  - Development path: {attempted_paths[2]}\n"
+            f"Please ensure the JSON file exists or provide the correct path."
+        )
+        logging.error(error_msg)
+        raise FileNotFoundError(error_msg)
 
     def pre_run(self) -> None:
         logging.info("Pre-running")
