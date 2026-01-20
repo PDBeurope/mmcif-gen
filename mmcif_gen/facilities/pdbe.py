@@ -10,7 +10,6 @@ import tempfile
 import shutil
 import csv
 from contextlib import contextmanager
-import sqlite3
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
@@ -27,8 +26,7 @@ class InvestigationPdbe(InvestigationEngine):
         logging.info("Instantiating PDBe Investigation subclass")
         self.reader = CIFReader()
         self.model_file_path = model_file_path
-        module_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        self.operation_file_json = os.path.join(module_dir, "operations", "pdbe", "pdbe_investigation.json")
+        self.operation_file_json = pdbe_investigation_json
         self.sqlite_reader = SqliteReader("pdbe_sqlite.db")
         super().__init__(investigation_id, output_path)
 
@@ -521,7 +519,7 @@ def get_cif_file_paths(folder_path : str) -> List[str]:
             if ".cif" in file and ".gz" not in file:
                 cif_file_paths.append(os.path.join(root, file))
     if not cif_file_paths:
-        logging.warn(f"No cif files in the folder path: {folder_path}")
+        logging.warning(f"No cif files in the folder path: {folder_path}")
         raise Exception("Model file path is empty")
     return cif_file_paths
 
