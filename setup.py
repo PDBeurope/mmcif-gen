@@ -8,7 +8,7 @@ with open(os.path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name="mmcif_gen",
-    version="1.2.2.2",
+    version="1.2.2.3",
     packages=find_packages(),
     install_requires=[
         "argparse",
