@@ -28,10 +28,11 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 
 class InvestigationEngine:
-    def __init__(self, investigation_id: str, output_path: str) -> None:
-        self.investigation_storage = InvestigationStorage(investigation_id)
+    def __init__(self, investigation_id: str, output_path: str, external_data_dir: str = "./external_data") -> None:
+        self.investigation_storage = InvestigationStorage(investigation_id, external_data_dir)
         self.output_path = output_path
         self.investigation_id = investigation_id
+        self.external_data_dir = external_data_dir
         self.operations = []
 
     def pre_run(self) -> None:

@@ -22,13 +22,13 @@ FTP_URL_ARCHIVE = (
 
 class InvestigationPdbe(InvestigationEngine):
         
-    def __init__(self, model_file_path: List[str], investigation_id: str, output_path: str, pdbe_investigation_json: str="./operations/pdbe/pdbe_investigation.json") -> None:
+    def __init__(self, model_file_path: List[str], investigation_id: str, output_path: str, pdbe_investigation_json: str="./operations/pdbe/pdbe_investigation.json", external_data_dir: str="./external_data") -> None:
         logging.info("Instantiating PDBe Investigation subclass")
         self.reader = CIFReader()
         self.model_file_path = model_file_path
         self.operation_file_json = pdbe_investigation_json
         self.sqlite_reader = SqliteReader("pdbe_sqlite.db")
-        super().__init__(investigation_id, output_path)
+        super().__init__(investigation_id, output_path, external_data_dir)
 
     def pre_run(self) -> None:
         logging.info("Pre-running")
@@ -42,6 +42,7 @@ class InvestigationPdbe(InvestigationEngine):
         self.add_exptl_data()
         self.add_investigation_id(self.investigation_id)
         super().pre_run()
+
 
 
     def sql_execute(self, query):
@@ -458,7 +459,7 @@ class InvestigationPdbe(InvestigationEngine):
 
 
 
-def download_and_run_pdbe_investigation(pdb_ids: List[str], investigation_id: str, output_path:str, json_path: str) -> None:
+def download_and_run_pdbe_investigation(pdb_ids: List[str], investigation_id: str, output_path:str, json_path: str, external_data_dir: str = "./external_data") -> None:
     logging.info(f"Creating investigation files for pdb ids: {pdb_ids}")
     temp_dir = tempfile.mkdtemp()
     try:
@@ -480,7 +481,7 @@ def download_and_run_pdbe_investigation(pdb_ids: List[str], investigation_id: st
             else:
                 logging.info(f"Failed to download {pdb_code}.cif.gz")
 
-        run(temp_dir, investigation_id, output_path, json_path)
+        run(temp_dir, investigation_id, output_path, json_path, external_data_dir)
 
     except Exception as e:
         logging.exception(f"An error occurred: {str(e)}")
@@ -497,15 +498,16 @@ def download_and_run_pdbe_investigation(pdb_ids: List[str], investigation_id: st
         shutil.rmtree(temp_dir)
 
 def run_investigation_pdbe(args):
+    external_data_dir = getattr(args, 'external_data_dir', './external_data')
     if args.model_folder:
-        run(args.model_folder, args.id,args.output_folder, args.json)
+        run(args.model_folder, args.id, args.output_folder, args.json, external_data_dir)
     elif args.pdb_ids:
-        download_and_run_pdbe_investigation(args.pdb_ids, args.id, args.output_folder, args.json)
+        download_and_run_pdbe_investigation(args.pdb_ids, args.id, args.output_folder, args.json, external_data_dir)
     elif args.csv_file:
         group_data = parse_csv(args.csv_file)
         for group, entry in group_data.items():
             try:
-                download_and_run_pdbe_investigation(entry, group, args.output_folder, args.json)
+                download_and_run_pdbe_investigation(entry, group, args.output_folder, args.json, external_data_dir)
             except Exception as e:
                 logging.exception(e)
     else:
@@ -524,12 +526,12 @@ def get_cif_file_paths(folder_path : str) -> List[str]:
     return cif_file_paths
 
 
-def run(folder_path : str, investigation_id: str, output_path: str, json_path: str) -> None:
+def run(folder_path : str, investigation_id: str, output_path: str, json_path: str, external_data_dir: str = "./external_data") -> None:
     model_file_path = get_cif_file_paths(folder_path)
     print("List of CIF file paths:")
     for file_path in model_file_path:
         print(file_path)
-    im = InvestigationPdbe(model_file_path, investigation_id, output_path, json_path)
+    im = InvestigationPdbe(model_file_path, investigation_id, output_path, json_path, external_data_dir)
     im.pre_run()
     im.run()
 
@@ -563,3 +565,36 @@ def pdbe_subparser(subparsers, parent_parser):
         nargs="+",
         help="Create investigation from set of pdb ids, space seperated",
     )
+    parser_pdbe.add_argument(
+        "--external-data-dir",
+        help="Directory containing external data files",
+        default="./external_data"
+    )
+
+def pull_inchikeys_ref(output_dir: str = "external_data") -> None:
+    """Download InChI keys reference file from PDBeChem and save locally."""
+    url = "https://ftp.ebi.ac.uk/pub/databases/msd/pdbechem_v2/ccd/components_inchikeys.csv"
+    
+    # Create output directory
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # Define output file path
+    output_file = os.path.join(output_dir, "chem_comp_inchikey.csv")
+    
+    try:
+        logging.info(f"Downloading InChIKeys reference from PDBeChem: {url}")
+        response = requests.get(url)
+        response.raise_for_status()
+        
+        with open(output_file, 'w', newline='', encoding='utf-8') as f:
+            f.write(response.text)
+        
+        logging.info(f"Successfully downloaded and saved to {output_file}")
+        print(f"InChI keys reference file saved to: {output_file}")
+        
+    except requests.RequestException as e:
+        logging.error(f"Failed to download InChI keys reference: {e}")
+        raise Exception(f"Download failed: {e}")
+    except IOError as e:
+        logging.error(f"Failed to save file: {e}")
+        raise Exception(f"File save failed: {e}")

@@ -282,10 +282,11 @@ class SqliteReader:
             return False
 
 class InvestigationStorage:
-    def __init__(self, investigation_id):
+    def __init__(self, investigation_id, external_data_dir="./external_data"):
         self.data = {}
         self.mmcif_order = {}
         self.investigation_id = investigation_id
+        self.external_data_dir = external_data_dir
 
     def add_category(self, category_name):
         if category_name not in self.data:
@@ -397,8 +398,8 @@ class ExternalInformation:
         with open(self.filename, mode="r", newline="") as file:
             reader = csv.DictReader(file)
             for row in reader:
-                chem_comp_id = row["CHEM_COMP_ID"]
-                descriptor = row["DESCRIPTOR"]
+                chem_comp_id = row["CCD_ID"]
+                descriptor = row["InChIKey"]
                 self.inchi_keys[chem_comp_id] = descriptor
 
     def _get_inchi_key(self, chem_comp_id):

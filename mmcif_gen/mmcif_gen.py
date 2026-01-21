@@ -1,4 +1,4 @@
-from mmcif_gen.facilities.pdbe import pdbe_subparser, run_investigation_pdbe
+from mmcif_gen.facilities.pdbe import pdbe_subparser, run_investigation_pdbe, pull_inchikeys_ref
 from mmcif_gen.facilities.maxiv import maxiv_subparser, run_investigation_maxiv
 from mmcif_gen.facilities.dls import dls_subparser, run_investigation_dls
 from mmcif_gen.facilities.xchem import xchem_subparser, run_investigation_xchem
@@ -125,6 +125,17 @@ def setup_parsers():
         default="."
     )
 
+    # pull-inchikeys-ref command
+    pull_parser = subparsers.add_parser(
+        "pull-inchikeys-ref",
+        help="Download InChIKeys reference file from PDBeChem"
+    )
+    pull_parser.add_argument(
+        "-o", "--output-dir",
+        help="Output directory for external data",
+        default="external_data"
+    )
+
     # make-mmcif command
     make_parser = subparsers.add_parser(
         "make-mmcif",
@@ -196,6 +207,9 @@ def main():
 
         index_of_match = available_jsons_pruned.index(json_name)
         cli_manager.fetch_facility_json(available_jsons[index_of_match], args.output_dir)
+
+    elif args.command == "pull-inchikeys-ref":
+        pull_inchikeys_ref(args.output_dir)
 
     elif args.command == "make-mmcif":
         available_facilities = cli_manager.get_available_facilities()

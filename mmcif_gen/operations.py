@@ -503,8 +503,11 @@ class ExternalInformationOperation(operationBase):
         target_items = operation_data.get("target_items", [])
         operation_parameters = operation_data.get("operation_parameters", {})
         filename = operation_parameters.get("file")
+        
+        # Get external data directory from the investigation storage's engine
+        external_data_dir = getattr(self.investigation_storage, 'external_data_dir', "./external_data")
 
-        external_inchi = ExternalInformation("./external_data/" + filename)
+        external_inchi = ExternalInformation(os.path.join(external_data_dir, filename))
         self.investigation_storage.add_category(target_category)
         data = self.investigation_storage.data[target_category].setdefault(
             target_items[0], []
