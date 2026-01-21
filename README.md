@@ -25,6 +25,16 @@ The tool provides two main commands:
 1. `fetch-facility-json`: Fetch facility-specific JSON configuration files
 2. `make-mmcif`: Generate mmCIF files using the configurations
 
+### Version Information
+
+To check the installed version:
+
+```bash
+mmcif-gen --version
+# or
+mmcif-gen -v
+```
+
 ### Fetching Facility JSON Files
 
 The JSON operations files determine how the data would be mapped from the original source and translated into mmCIF format.
