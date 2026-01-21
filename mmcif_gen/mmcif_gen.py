@@ -131,7 +131,7 @@ def setup_parsers():
         help="Download InChIKeys reference file from PDBeChem"
     )
     pull_parser.add_argument(
-        "-o", "--output-dir",
+        "-e", "--external-data-dir",
         help="Output directory for external data",
         default="external_data"
     )
@@ -209,7 +209,7 @@ def main():
         cli_manager.fetch_facility_json(available_jsons[index_of_match], args.output_dir)
 
     elif args.command == "pull-inchikeys-ref":
-        pull_inchikeys_ref(args.output_dir)
+        pull_inchikeys_ref(args.external_data_dir)
 
     elif args.command == "make-mmcif":
         available_facilities = cli_manager.get_available_facilities()
