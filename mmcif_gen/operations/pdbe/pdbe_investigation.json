@@ -107,11 +107,7 @@
         "source_items": ["title"],
         "target_category": "_pdbx_investigation_archived_data",
         "target_items": ["archived_data_details"],
-        "operation": "union",
-        "operation_parameters": {
-          "primary_parameters": ["title"],
-          "secondary_parameters": ["title"]
-        }
+        "operation": "copy"
       },
       {
         "source_category": "_diffrn_source",
