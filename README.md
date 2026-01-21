@@ -20,6 +20,12 @@ pip install mmcif-gen
 
 ## Usage
 
+### General Options
+
+* `-v`, `--version`: Show the program's version number.
+
+### Main Commands
+
 The tool provides two main commands:
 
 1. `fetch-facility-json`: Fetch facility-specific JSON configuration files
@@ -50,9 +56,10 @@ The general syntax for generating mmCIF files is:
 
 ```bash
 mmcif-gen make-mmcif <facility> [options]
-````
+```
 
 Full list of options:
+
 ```
 [w3_pdb05@pdb-001 Investigations]$ mmcif-gen make-mmcif --help
 usage: mmcif-gen make-mmcif [-h] [--json JSON] [--output-folder OUTPUT_FOLDER]
@@ -82,10 +89,10 @@ optional arguments:
 
 Each facility has its own set of required parameters, which can be checked by running the command with the `--help` flag.
 
-
 ```
 mmcif-gen make-mmcif pdbe --help
 ```
+
 #### Example Usage
 
 #### DLS (Diamond Light Source)
@@ -96,9 +103,11 @@ mmcif-gen make-mmcif --json dls_metadata.json --output-folder ./out --id I_1234 
 ```
 
 #### XChem
+
 Parameters required
+
 ```
-$ mmcif-gen make-mmcif xchem --help                                                                      
+$ mmcif-gen make-mmcif xchem --help                                                                    
 usage: mmcif-gen make-mmcif xchem [-h] [--sqlite SQLITE] [--data-csv DATA_CSV]
 
 options:
@@ -108,11 +117,13 @@ options:
 ```
 
 Example command after fetching facility json:
+
 ```
 mmcif-gen make-mmcif xchem --sqlite mmcif_gen/test/data/soakDBDataFile.sqlite --data-csv mmcif_gen/test/data/metadata.csv
 ```
 
 Or you can manually specifiy the operation json as follows:
+
 ```
 mmcif-gen make-mmcif --json mmcif_gen/operations/xchem/xchem_operations.json xchem --sqlite mmcif_gen/test/data/soakDBDataFile.sqlite --data-csv mmcif_gen/test/data/metadata.csv
 ```
@@ -151,7 +162,6 @@ mmcif-gen make-mmcif maxiv --json maxiv_investigation.json --sqlite fragmax.sqli
 mmcif-gen make-mmcif xchem --json xchem_investigation.json --sqlite soakdb.sqlite --txt ./metadata --deposit ./deposit --output-folder ./out
 ```
 
-
 ## Data Enrichment
 
 For investigation files that need enrichment with additional data (e.g., ground state information):
@@ -185,7 +195,6 @@ The tool uses JSON configuration files to define how data should be transformed 
 
 Refer to existing JSON files in the `operations/` directory for examples.
 
-
 ## Development
 
 ### Project Structure
@@ -214,7 +223,6 @@ python -m unittest discover -s tests
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
-
 
 ## Support
 
