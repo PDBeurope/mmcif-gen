@@ -552,6 +552,70 @@ def parse_csv(csv_file:str) -> Dict:
             else:
                 group_data[group_id] = [entry_id]
     return group_data
+
+def get_model_files_from_folder(folder_path: str) -> List[str]:
+    """Get model files from a folder."""
+    model_files = []
+    if os.path.exists(folder_path):
+        for file in os.listdir(folder_path):
+            if file.endswith('.cif') or file.endswith('.cif.gz'):
+                model_files.append(os.path.join(folder_path, file))
+    return model_files
+
+def get_model_files_from_csv(csv_file: str) -> List[str]:
+    """Get model files from CSV file with GROUP_ID and ENTRY_ID columns."""
+    model_files = []
+    group_data = parse_csv(csv_file)
+    for group_id, entry_ids in group_data.items():
+        for entry_id in entry_ids:
+            # Download or locate the file for this entry_id
+            file_path = download_pdb_file(entry_id)
+            if file_path:
+                model_files.append(file_path)
+    return model_files
+
+def get_model_files_from_pdb_ids(pdb_ids: List[str]) -> List[str]:
+    """Get model files from list of PDB IDs."""
+    model_files = []
+    for pdb_id in pdb_ids:
+        file_path = download_pdb_file(pdb_id)
+        if file_path:
+            model_files.append(file_path)
+    return model_files
+
+def download_pdb_file(pdb_id: str) -> str:
+    """Download PDB file for given PDB ID."""
+    pdb_id = pdb_id.lower()
+    
+    # Try updated files first
+    updated_url = FTP_URL_UPDATED.format(pdb_id[1:3], pdb_id)
+    archive_url = FTP_URL_ARCHIVE.format(pdb_id[1:3], pdb_id)
+    
+    for url in [updated_url, archive_url]:
+        try:
+            response = requests.get(url)
+            if response.status_code == 200:
+                # Create temporary file
+                with tempfile.NamedTemporaryFile(suffix='.cif.gz', delete=False) as temp_file:
+                    temp_file.write(response.content)
+                    temp_path = temp_file.name
+                
+                # Extract if gzipped
+                if temp_path.endswith('.gz'):
+                    with gzip.open(temp_path, 'rb') as gz_file:
+                        with tempfile.NamedTemporaryFile(suffix='.cif', delete=False) as extracted_file:
+                            shutil.copyfileobj(gz_file, extracted_file)
+                            extracted_path = extracted_file.name
+                    os.unlink(temp_path)  # Remove compressed file
+                    return extracted_path
+                else:
+                    return temp_path
+        except Exception as e:
+            logging.warning(f"Failed to download {pdb_id} from {url}: {e}")
+            continue
+    
+    logging.error(f"Could not download file for PDB ID: {pdb_id}")
+    return None
     
 def pdbe_subparser(subparsers, parent_parser):
     parser_pdbe = subparsers.add_parser("pdbe",help="Parameter requirements for investigation files from PDBe data", parents=[parent_parser])
