@@ -13,6 +13,7 @@ import os
 import pathlib
 import requests
 import sys
+import pkg_resources
 from typing import Dict, List, Optional
 
 file_handler = RotatingFileHandler('mmcifgen.log', maxBytes=100000, backupCount=3)
@@ -90,6 +91,11 @@ def setup_parsers():
     parser = argparse.ArgumentParser(
         prog="mmcif-gen",
         description="Generate mmCIF files from various facility data sources"
+    )
+    parser.add_argument(
+        "-v", "--version",
+        action="version",
+        version=f"%(prog)s {pkg_resources.get_distribution('mmcif_gen').version}"
     )
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
