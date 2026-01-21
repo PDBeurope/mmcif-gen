@@ -95,7 +95,8 @@ def setup_parsers():
     parser.add_argument(
         "-v", "--version",
         action="version",
-        version=f"%(prog)s {pkg_resources.get_distribution('mmcif_gen').version}"
+        version=f"%(prog)s {pkg_resources.get_distribution('mmcif_gen').version}",
+        help="Show program version and exit"
     )
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
