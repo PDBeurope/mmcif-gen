@@ -569,3 +569,46 @@ def pdbe_subparser(subparsers, parent_parser):
         nargs="+",
         help="Create investigation from set of pdb ids, space seperated",
     )
+    parser_pdbe.add_argument(
+        "--debug-columns",
+        action="store_true",
+        help="Debug column length mismatches in investigation data"
+    )
+    parser_pdbe.add_argument(
+        "--database-path",
+        default="pdbe_sqlite.db",
+        help="Path to SQLite database for debugging"
+    )
+    parser_pdbe.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Enable verbose debugging output"
+    )
+    parser_pdbe.add_argument(
+        "--output-file",
+        help="Name for debugging output files (without extension)"
+    )
+
+def run_investigation_pdbe(args):
+    if hasattr(args, 'debug_columns') and args.debug_columns:
+        from mmcif_gen.facilities.pdbe_debug_columns import run_pdbe_debug_columns
+        # Set up args for debugging
+        args.json_config = args.json
+        run_pdbe_debug_columns(args)
+        return
+    
+    # Original investigation logic
+    model_files = []
+    if args.model_folder:
+        model_files = get_model_files_from_folder(args.model_folder)
+    elif args.csv_file:
+        model_files = get_model_files_from_csv(args.csv_file)
+    elif args.pdb_ids:
+        model_files = get_model_files_from_pdb_ids(args.pdb_ids)
+    else:
+        print("Error: Must specify either --model-folder, --csv-file, or --pdb-ids")
+        sys.exit(1)
+    
+    investigation = InvestigationPdbe(model_files, args.id, args.output_folder, args.json)
+    investigation.pre_run()
+    investigation.run()
