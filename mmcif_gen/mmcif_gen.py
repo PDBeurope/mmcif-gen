@@ -5,6 +5,7 @@ from mmcif_gen.facilities.xchem import xchem_subparser, run_investigation_xchem
 from mmcif_gen.facilities.crims import crims_subparser, run_investigation_crims
 from mmcif_gen.facilities.esrf import esrf_subparser, run_investigation_esrf
 import argparse
+import importlib.metadata
 import json
 import logging
 from logging.handlers import RotatingFileHandler
@@ -90,6 +91,19 @@ def setup_parsers():
     parser = argparse.ArgumentParser(
         prog="mmcif-gen",
         description="Generate mmCIF files from various facility data sources"
+    )
+    try:
+        version = importlib.metadata.version("mmcif_gen")
+    except importlib.metadata.PackageNotFoundError:
+        # package is not installed
+        version = "unknown"
+
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="version",
+        version=f"%(prog)s {version}",
+        help="Reports the program's version number."
     )
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
