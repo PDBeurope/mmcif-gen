@@ -558,8 +558,8 @@
                 }
             }
             {
-                "reader": "sqlite","_pdbx_initial_refinement_model"
-                "target_category": "",
+                "reader": "sqlite",
+                "target_category": "_pdbx_initial_refinement_model",
                 "target_items": [
                     "id",
                     "type",
