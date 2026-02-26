@@ -556,7 +556,7 @@
                 "operation_parameters": {
                     "query": "SELECT pdbx_method_to_determine_struct, pdbx_starting_model FROM _refine"
                 }
-            }
+            },
             {
                 "reader": "sqlite",
                 "target_category": "_pdbx_initial_refinement_model",
