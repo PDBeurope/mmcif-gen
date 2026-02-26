@@ -333,21 +333,6 @@
         "operations": [
             {
                 "reader": "sqlite",
-                "target_category": "_pdbx_initial_refinement_model",
-                "target_items": [
-                    "type",
-                    "source_name",
-                    "details"
-                ],
-                "operation": "static_value",
-                "target_values": [
-                    "experimental model",
-                    "PDB",
-                    null
-                ]
-            },
-            {
-                "reader": "sqlite",
                 "target_category": "_pdbx_contact_author",
                 "target_items": [
                     "id",
@@ -572,7 +557,20 @@
                     "query": "SELECT pdbx_method_to_determine_struct, pdbx_starting_model FROM _refine"
                 }
             }
-
+            {
+                "reader": "sqlite",
+                "target_category": "_pdbx_initial_refinement_model",
+                "target_items": [
+                    "id",
+                    "type",
+                    "source_name",
+                    "accession_code"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT id, type, source_name, accession_code FROM _pdbx_initial_refinement_model"
+                }
+            }
         ],
         "mmcif_order": {
             "_refine": [
