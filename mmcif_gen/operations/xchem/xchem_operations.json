@@ -529,6 +529,20 @@
             },
             {
                 "reader": "sqlite",
+                "target_category": "_struct_ref",
+                "target_items": [
+                    "id",
+                    "entity_id",
+                    "db_name",
+                    "pdbx_db_accession"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT id, entity_id, db_name, pdbx_db_accession FROM _struct_ref"
+                }
+            },
+            {
+                "reader": "sqlite",
                 "target_category": "_entity_src_gen",
                 "target_items": [
                     "entity_id",
