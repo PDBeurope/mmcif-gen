@@ -162,3 +162,5 @@ cython_debug/
 out/*.cif
 .DS_Store
 .vscode/
+mmcif_gen/example_input/deposition_SLO8.json
+mmcif_gen/example_input/deposition_SLO8_2wavelengths.json
