@@ -24,7 +24,7 @@
         "target_category": "_exptl_crystal_grow",
         "target_items": "temp",
         "operation_parameters": {
-          "jq": ".campaigns[0].crystals[0].temperature"
+          "jq": "(.campaigns[0].crystals[0].temperature | tonumber) + 273.15"
         }
       },
       {
@@ -69,7 +69,7 @@
         "target_category": "_diffrn_source",
         "target_items": "pdbx_wavelength_list",
         "operation_parameters": {
-          "jq": ".campaigns[0].crystals[0].datasets[0].datacollection_metadata.wavelength_list"
+          "jq": "(.campaigns[0].crystals[0].datasets[0].datacollection_metadata.wavelength | tonumber) * 1000 | round | . / 1000"
         }
       },
       {
@@ -78,7 +78,7 @@
         "target_category": "_diffrn_source",
         "target_items": "pdbx_wavelength",
         "operation_parameters": {
-          "jq": ".campaigns[0].crystals[0].datasets[0].datacollection_metadata.wavelength"
+          "jq": "(.campaigns[0].crystals[0].datasets[0].datacollection_metadata.wavelength | tonumber) * 1000 | round | . / 1000"
         }
       },
       {
@@ -249,7 +249,7 @@
         "target_category": "_audit_author",
         "target_items": "name",
         "operation_parameters": {
-          "jq": "[.authors[].name]"
+          "jq": "[.authors[] | ((.familyname | ascii_downcase | split(\"\") | .[0] |= ascii_upcase | join(\"\")) + \", \" + (.firstname | split(\"\") | .[0] | ascii_upcase) + \".\")]"
         }
       }
     ],
