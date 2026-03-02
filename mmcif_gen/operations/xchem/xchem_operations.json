@@ -520,13 +520,25 @@
                     "entity_id",
                     "type",
                     "pdbx_seq_one_letter_code",
-                    "pdbx_strand_id",
-                    "pdbx_seq_db_id",
-                    "pdbx_seq_db_name"
+                    "pdbx_strand_id"
                 ],
                 "operation": "sql_query",
                 "operation_parameters": {
-                    "query": "SELECT entity_id, type, pdbx_seq_one_letter_code, pdbx_strand_id, pdbx_seq_db_id, pdbx_seq_db_name FROM _entity_poly"
+                    "query": "SELECT entity_id, type, pdbx_seq_one_letter_code, pdbx_strand_id FROM _entity_poly"
+                }
+            },
+            {
+                "reader": "sqlite",
+                "target_category": "_struct_ref",
+                "target_items": [
+                    "id",
+                    "entity_id",
+                    "db_name",
+                    "pdbx_db_accession"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT id, entity_id, db_name, pdbx_db_accession FROM _struct_ref"
                 }
             },
             {
