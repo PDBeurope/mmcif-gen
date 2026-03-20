@@ -449,11 +449,12 @@
                 "target_items": [
                     "entry_id",
                     "dep_release_code_coordinates",
-                    "dep_release_code_sequence"
+                    "dep_release_code_sequence",
+                    "status_code"
                 ],
                 "operation": "sql_query",
                 "operation_parameters": {
-                    "query": "SELECT entry_id, dep_release_code_coordinates, dep_release_code_sequence FROM _pdbx_database_status"
+                    "query": "SELECT entry_id, dep_release_code_coordinates, dep_release_code_sequence, status_code FROM _pdbx_database_status"
                 }
             },
             {
