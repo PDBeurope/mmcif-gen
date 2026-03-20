@@ -487,6 +487,17 @@
             },
             {
                 "reader": "sqlite",
+                "target_category": "_exptl_crystal",
+                "target_items": [
+                    "id"
+                ],
+                "operation": "sql_query",
+                "operation_parameters": {
+                    "query": "SELECT id FROM _exptl_crystal"
+                }
+            },
+            {
+                "reader": "sqlite",
                 "target_category": "_exptl",
                 "target_items": [
                     "entry_id",
@@ -534,11 +545,13 @@
                     "id",
                     "entity_id",
                     "db_name",
-                    "pdbx_db_accession"
+                    "pdbx_db_accession",
+                    "db_code"
+
                 ],
                 "operation": "sql_query",
                 "operation_parameters": {
-                    "query": "SELECT id, entity_id, db_name, pdbx_db_accession FROM _struct_ref"
+                    "query": "SELECT id, entity_id, db_name, pdbx_db_accession, db_code FROM _struct_ref"
                 }
             },
             {
@@ -546,6 +559,7 @@
                 "target_category": "_entity_src_gen",
                 "target_items": [
                     "entity_id",
+                    "pdbx_src_id",
                     "gene_src_strain",
                     "pdbx_gene_src_scientific_name",
                     "pdbx_gene_src_ncbi_taxonomy_id",
@@ -554,7 +568,7 @@
                 ],
                 "operation": "sql_query",
                 "operation_parameters": {
-                    "query": "SELECT entity_id, gene_src_strain, pdbx_gene_src_scientific_name, pdbx_gene_src_ncbi_taxonomy_id, pdbx_host_org_scientific_name, pdbx_host_org_ncbi_taxonomy_id FROM _entity_src_gen"
+                    "query": "SELECT entity_id, pdbx_src_id, gene_src_strain, pdbx_gene_src_scientific_name, pdbx_gene_src_ncbi_taxonomy_id, pdbx_host_org_scientific_name, pdbx_host_org_ncbi_taxonomy_id FROM _entity_src_gen"
                 }
             },
             {
@@ -585,11 +599,101 @@
             }
         ],
         "mmcif_order": {
+            "_pdbx_contact_author": [
+                "id",
+                "address_1",
+                "address_2",
+                "city",
+                "postal_code",
+                "country",
+                "email",
+                "name_first",
+                "name_last",
+                "phone",
+                "role",
+                "organization_type",
+                "identifier_ORCID"
+            ],
+            "_audit_author": [
+                "name",
+                "pdbx_ordinal"
+            ],
+            "_struct": [
+                "entry_id",
+                "title"
+            ],
+            "_struct_keywords": [
+               "entry_id",
+               "text",
+               "pdbx_keywords"
+           ],
+            "_exptl": [
+                "entry_id",
+                "crystals_number",
+                "method"
+            ],
+            "_citation": [
+                "id",
+                "journal_abbrev",
+                "title"
+            ],
+            "_citation_author": [
+               "citation_id",
+               "name",
+               "oridinal"
+            ],
+            "_entity_poly": [
+                "entity_id",
+                "type",
+                "pdbx_seq_one_letter_code",
+                "pdbx_strand_id"
+            ],
+            "_entity": [
+                "id",
+                "type",
+                "src_method",
+                "pdbx_description",
+                "pdbx_mutation"
+            ],
+            "_entity_src_gen": [
+                "entity_id",
+                "pdbx_src_id",
+                "gene_src_strain",
+                "pdbx_gene_src_scientific_name",
+                "pdbx_gene_src_ncbi_taxonomy_id",
+                "pdbx_host_org_scientific_name",
+                "pdbx_host_org_ncbi_taxonomy_id"
+           ],
+           "_struct_ref": [
+               "id",
+               "db_name",
+               "db_code",
+               "pdbx_db_accession",
+               "entity_id"
+            ],
+            "_exptl_crystal_grow": [
+               "crystal_id",
+               "method",
+               "pH",
+               "pdbx_details",
+               "temp"
+            ],
+            "_exptl_crystal": [
+               "id"
+            ],
+            "_diffrn": [
+               "ambient_temp",
+               "crystal_id"
+            ],
             "_refine": [
-                "pdbx_diffrn_id"
+                "pdbx_method_to_determine_struct",
+                "pdbx_starting_model"
             ],
             "_pdbx_initial_refinement_model": [
-                "id"
+                "id",
+                "type",
+                "source_name",
+                "accession_code"
             ],
             "_exptl_crystal_grow": [
                 "crystal_id"
