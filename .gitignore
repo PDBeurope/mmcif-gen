@@ -160,7 +160,10 @@ cython_debug/
 #.idea/
 
 out/*.cif
+out/*.csv
 .DS_Store
 .vscode/
 mmcif_gen/example_input/deposition_SLO8.json
 mmcif_gen/example_input/deposition_SLO8_2wavelengths.json
+scripts/*.md
+scripts/*.py
