@@ -565,11 +565,12 @@
                     "pdbx_gene_src_scientific_name",
                     "pdbx_gene_src_ncbi_taxonomy_id",
                     "pdbx_host_org_scientific_name",
-                    "pdbx_host_org_ncbi_taxonomy_id"
+                    "pdbx_host_org_ncbi_taxonomy_id",
+                    "pdbx_host_org_strain"
                 ],
                 "operation": "sql_query",
                 "operation_parameters": {
-                    "query": "SELECT entity_id, pdbx_src_id, gene_src_strain, pdbx_gene_src_scientific_name, pdbx_gene_src_ncbi_taxonomy_id, pdbx_host_org_scientific_name, pdbx_host_org_ncbi_taxonomy_id FROM _entity_src_gen"
+                    "query": "SELECT entity_id, pdbx_src_id, gene_src_strain, pdbx_gene_src_scientific_name, pdbx_gene_src_ncbi_taxonomy_id, pdbx_host_org_scientific_name, pdbx_host_org_ncbi_taxonomy_id, pdbx_host_org_strain FROM _entity_src_gen"
                 }
             },
             {
@@ -663,7 +664,8 @@
                 "pdbx_gene_src_scientific_name",
                 "pdbx_gene_src_ncbi_taxonomy_id",
                 "pdbx_host_org_scientific_name",
-                "pdbx_host_org_ncbi_taxonomy_id"
+                "pdbx_host_org_ncbi_taxonomy_id",
+                "pdbx_host_org_strain"
            ],
            "_struct_ref": [
                "id",
