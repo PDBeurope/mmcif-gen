@@ -167,3 +167,4 @@ mmcif_gen/example_input/deposition_SLO8.json
 mmcif_gen/example_input/deposition_SLO8_2wavelengths.json
 scripts/*.md
 scripts/*.py
+dev_mapping_review/
