@@ -312,7 +312,7 @@
         "target_category": "_pdbx_contact_author",
         "target_items": "organization_type",
         "operation_parameters": {
-          "jq": "[.organization.type]"
+          "jq": "[.organization.type | if . == \"industry\" then \"commercial\" elif . == \"academia\" then \"academic\" else empty end]"
         }
       },
       {
