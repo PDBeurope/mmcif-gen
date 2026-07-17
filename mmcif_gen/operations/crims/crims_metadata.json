@@ -1,278 +1,424 @@
 {
-    "operations": [
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_exptl_crystal_grow",
-        "target_items": "id",
-        "operation_parameters": {
-          "jq": "if (.campaigns[0].crystals | length) == 1 then \"1\" else empty end"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_exptl_crystal_grow",
-        "target_items": "method",
-        "operation_parameters": {
-          "jq": ".campaigns[0].crystals[0].method"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_exptl_crystal_grow",
-        "target_items": "temp",
-        "operation_parameters": {
-          "jq": "(.campaigns[0].crystals[0].temperature | tonumber) + 273.15"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_exptl_crystal_grow",
-        "target_items": "pH",
-        "operation_parameters": {
-          "jq": ".campaigns[0].crystals[0].pH"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_diffrn_radiation",
-        "target_items": "pdbx_monochromatic_or_laue_m_l",
-        "operation_parameters": {
-          "jq": "if (.campaigns[0].crystals[0].datasets[0].datacollection_metadata.wavelength_list | contains(\",\")) then null else \"M\" end"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_diffrn_radiation",
-        "target_items": "pdbx_diffrn_protocol",
-        "operation_parameters": {
-          "jq": "if (.campaigns[0].crystals[0].datasets[0].datacollection_metadata.wavelength_list | contains(\",\")) then null else \"SINGLE WAVELENGTH\" end"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_diffrn_source",
-        "target_items": "diffrn_id",
-        "operation_parameters": {
-          "jq": "if (.campaigns[0].crystals[0].datasets | length) == 1 then \"1\" else empty end"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_diffrn_source",
-        "target_items": "pdbx_wavelength_list",
-        "operation_parameters": {
-          "jq": "if (.campaigns[0].crystals[0].datasets[0].datacollection_metadata.wavelength_list | contains(\",\")) then null else ((.campaigns[0].crystals[0].datasets[0].datacollection_metadata.wavelength | tonumber) * 1000 | round | . / 1000) end"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_diffrn_source",
-        "target_items": "pdbx_wavelength",
-        "operation_parameters": {
-          "jq": "if (.campaigns[0].crystals[0].datasets[0].datacollection_metadata.wavelength_list | contains(\",\")) then null else ((.campaigns[0].crystals[0].datasets[0].datacollection_metadata.wavelength | tonumber) * 1000 | round | . / 1000) end"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_diffrn_source",
-        "target_items": "source",
-        "operation_parameters": {
-          "jq": ".campaigns[0].crystals[0].datasets[0].datacollection_metadata.source | ascii_upcase"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_diffrn_source",
-        "target_items": "type",
-        "operation_parameters": {
-          "jq": ".campaigns[0].crystals[0].datasets[0].facility_name + \" BEAMLINE \" + .campaigns[0].crystals[0].datasets[0].beamline_name"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_diffrn_source",
-        "target_items": "pdbx_synchrotron_beamline",
-        "operation_parameters": {
-          "jq": ".campaigns[0].crystals[0].datasets[0].beamline_name"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_diffrn_source",
-        "target_items": "pdbx_synchrotron_site",
-        "operation_parameters": {
-          "jq": ".campaigns[0].crystals[0].datasets[0].facility_name"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_diffrn_source",
-        "target_items": "pdbx_synchrotron_y_n",
-        "operation_parameters": {
-          "jq": "if .campaigns[0].crystals[0].datasets[0].datacollection_metadata.source == \"synchrotron\" then \"Y\" else empty end"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "id",
-        "operation_parameters": {
-          "jq": "[.audit_author.id | tostring]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "address_1",
-        "operation_parameters": {
-          "jq": "[.organization.address_1]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "address_2",
-        "operation_parameters": {
-          "jq": "[.organization.address_2]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "address_3",
-        "operation_parameters": {
-          "jq": "[null]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "city",
-        "operation_parameters": {
-          "jq": "[.organization.city]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "country",
-        "operation_parameters": {
-          "jq": "[.organization.country]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "email",
-        "operation_parameters": {
-          "jq": "[.audit_author.email]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "name_first",
-        "operation_parameters": {
-          "jq": "[.audit_author.firstname]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "name_last",
-        "operation_parameters": {
-          "jq": "[.audit_author.familyname]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "organization_type",
-        "operation_parameters": {
-          "jq": "[.organization.type]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "phone",
-        "operation_parameters": {
-          "jq": "[.audit_author.telephone]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_pdbx_contact_author",
-        "target_items": "postal_code",
-        "operation_parameters": {
-          "jq": "[.organization.postcode]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_audit_author",
-        "target_items": "pdbx_ordinal",
-        "operation_parameters": {
-          "jq": "[range(1; (.authors | length) + 1)]"
-        }
-      },
-      {
-        "reader": "json",
-        "operation": "jq_filter",
-        "target_category": "_audit_author",
-        "target_items": "name",
-        "operation_parameters": {
-          "jq": "[.authors[] | ((.familyname | ascii_downcase | split(\"\") | .[0] |= ascii_upcase | join(\"\")) + \", \" + (.firstname | split(\"\") | .[0] | ascii_upcase) + \".\")]"
-        }
+  "operations": [
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_exptl_crystal_grow",
+      "target_items": "id",
+      "operation_parameters": {
+        "jq": "if (.campaigns[0].crystals | length) == 1 then \"1\" else empty end"
       }
-    ],
-    "mmcif_order": {
-    "_exptl_crystal_grow": [
-      "id",
-      "method",
-      "temp",
-      "pH"
-    ],
-    "_diffrn_radiation": [
-      "pdbx_monochromatic_or_laue_m_l",
-      "pdbx_diffrn_protocol"
-    ],
-    "_diffrn_source": [
-      "diffrn_id",
-      "pdbx_wavelength_list",
-      "pdbx_wavelength",
-      "source",
-      "type",
-      "pdbx_synchrotron_beamline",
-      "pdbx_synchrotron_site",
-      "pdbx_synchrotron_y_n"
-    ]
-  }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_exptl_crystal_grow",
+      "target_items": "method",
+      "operation_parameters": {
+        "jq": ".campaigns[0].crystals[0].method"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_exptl_crystal_grow",
+      "target_items": "temp",
+      "operation_parameters": {
+        "jq": "(.campaigns[0].crystals[0].temperature | tonumber) + 273.15"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_exptl_crystal_grow",
+      "target_items": "pH",
+      "operation_parameters": {
+        "jq": ".campaigns[0].crystals[0].pH"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_entity",
+      "target_items": "id",
+      "operation_parameters": {
+        "jq": "if (.campaigns[0].crystals | length) == 1 then \"1\" else empty end"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_entity",
+      "target_items": "type",
+      "operation_parameters": {
+        "jq": "\"polymer\""
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_entity",
+      "target_items": "pdbx_description",
+      "operation_parameters": {
+        "jq": ".construct_name"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_entity",
+      "target_items": "src_method",
+      "operation_parameters": {
+        "jq": ".campaigns[0].crystals[0].datasets[0].datacollection_metadata.production_method"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_entity_poly",
+      "target_items": "entity_id",
+      "operation_parameters": {
+        "jq": "if (.campaigns[0].crystals | length) == 1 then \"1\" else empty end"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_entity_poly",
+      "target_items": "pdbx_seq_one_letter_code",
+      "operation_parameters": {
+        "jq": ".campaigns[0].crystals[0].one_letter_code"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_entity_poly",
+      "target_items": "type",
+      "operation_parameters": {
+        "jq": ".campaigns[0].crystals[0].type"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_entity_poly_seq",
+      "target_items": "entity_id",
+      "operation_parameters": {
+        "jq": "if (.campaigns[0].crystals | length) == 1 then \"1\" else empty end"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_radiation",
+      "target_items": "pdbx_monochromatic_or_laue_m_l",
+      "operation_parameters": {
+        "jq": "if (.campaigns[0].crystals[0].datasets[0].datacollection_metadata.wavelength_list | contains(\",\")) then \"L\" else \"M\" end"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_radiation",
+      "target_items": "pdbx_diffrn_protocol",
+      "operation_parameters": {
+        "jq": "if (.campaigns[0].crystals[0].datasets[0].datacollection_metadata.wavelength_list | contains(\",\")) then null else \"SINGLE WAVELENGTH\" end"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_radiation",
+      "target_items": "pdbx_scattering_type",
+      "operation_parameters": {
+        "jq": "\"x-ray\""
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_source",
+      "target_items": "diffrn_id",
+      "operation_parameters": {
+        "jq": "if (.campaigns[0].crystals[0].datasets | length) == 1 then \"1\" else empty end"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_source",
+      "target_items": "pdbx_wavelength_list",
+      "operation_parameters": {
+        "jq": "if (.campaigns[0].crystals[0].datasets[0].datacollection_metadata.wavelength_list | contains(\",\")) then null else ((.campaigns[0].crystals[0].datasets[0].datacollection_metadata.wavelength | tonumber) * 1000 | round | . / 1000) end"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_source",
+      "target_items": "pdbx_wavelength",
+      "operation_parameters": {
+        "jq": "if (.campaigns[0].crystals[0].datasets[0].datacollection_metadata.wavelength_list | contains(\",\")) then null else ((.campaigns[0].crystals[0].datasets[0].datacollection_metadata.wavelength | tonumber) * 1000 | round | . / 1000) end"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_radiation_wavelength",
+      "target_items": "wavelength",
+      "operation_parameters": {
+        "jq": "if (.campaigns[0].crystals[0].datasets[0].datacollection_metadata.wavelength_list | contains(\",\")) then null else ((.campaigns[0].crystals[0].datasets[0].datacollection_metadata.wavelength | tonumber) * 1000 | round | . / 1000) end"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_source",
+      "target_items": "source",
+      "operation_parameters": {
+        "jq": ".campaigns[0].crystals[0].datasets[0].datacollection_metadata.source | ascii_upcase"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_source",
+      "target_items": "type",
+      "operation_parameters": {
+        "jq": ".campaigns[0].crystals[0].datasets[0].facility_name + \" BEAMLINE \" + .campaigns[0].crystals[0].datasets[0].beamline_name"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_source",
+      "target_items": "pdbx_synchrotron_beamline",
+      "operation_parameters": {
+        "jq": ".campaigns[0].crystals[0].datasets[0].beamline_name"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_source",
+      "target_items": "pdbx_synchrotron_site",
+      "operation_parameters": {
+        "jq": ".campaigns[0].crystals[0].datasets[0].facility_name"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_source",
+      "target_items": "pdbx_synchrotron_y_n",
+      "operation_parameters": {
+        "jq": "if .campaigns[0].crystals[0].datasets[0].datacollection_metadata.source == \"synchrotron\" then \"Y\" else empty end"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_diffrn_detector",
+      "target_items": "pdbx_collection_date",
+      "operation_parameters": {
+        "jq": ".campaigns[0].crystals[0].datasets[0].bl_starting_date | .[0:4] + \"-\" + .[4:6] + \"-\" + .[6:8]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_pdbx_contact_author",
+      "target_items": "id",
+      "operation_parameters": {
+        "jq": "[.audit_author.id | tostring]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_pdbx_contact_author",
+      "target_items": "address_1",
+      "operation_parameters": {
+        "jq": "[.organization.address_1]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_pdbx_contact_author",
+      "target_items": "address_2",
+      "operation_parameters": {
+        "jq": "[.organization.address_2]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_pdbx_contact_author",
+      "target_items": "address_3",
+      "operation_parameters": {
+        "jq": "[null]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_pdbx_contact_author",
+      "target_items": "city",
+      "operation_parameters": {
+        "jq": "[.organization.city]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_pdbx_contact_author",
+      "target_items": "country",
+      "operation_parameters": {
+        "jq": "[.organization.country]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_pdbx_contact_author",
+      "target_items": "email",
+      "operation_parameters": {
+        "jq": "[.audit_author.email]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_pdbx_contact_author",
+      "target_items": "name_first",
+      "operation_parameters": {
+        "jq": "[.audit_author.firstname]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_pdbx_contact_author",
+      "target_items": "name_last",
+      "operation_parameters": {
+        "jq": "[.audit_author.familyname]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_pdbx_contact_author",
+      "target_items": "organization_type",
+      "operation_parameters": {
+        "jq": "[.organization.type | if . == \"industry\" then \"commercial\" elif . == \"academia\" then \"academic\" else empty end]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_pdbx_contact_author",
+      "target_items": "phone",
+      "operation_parameters": {
+        "jq": "[.audit_author.telephone]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_pdbx_contact_author",
+      "target_items": "postal_code",
+      "operation_parameters": {
+        "jq": "[.organization.postcode]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_audit_author",
+      "target_items": "pdbx_ordinal",
+      "operation_parameters": {
+        "jq": "[range(1; (.authors | length) + 1)]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_audit_author",
+      "target_items": "name",
+      "operation_parameters": {
+        "jq": "[.authors[] | ((.familyname | ascii_downcase | split(\"\") | .[0] |= ascii_upcase | join(\"\")) + \", \" + (.firstname | split(\"\") | .[0] | ascii_upcase) + \".\")]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_citation_author",
+      "target_items": "ordinal",
+      "operation_parameters": {
+        "jq": "[range(1; (.authors | length) + 1)]"
+      }
+    },
+    {
+      "reader": "json",
+      "operation": "jq_filter",
+      "target_category": "_citation_author",
+      "target_items": "name",
+      "operation_parameters": {
+        "jq": "[.authors[] | .firstname + \", \" + (.familyname | split(\" \") | map(select(length > 0) | split(\"\") | .[0] | ascii_upcase) | join(\".\")) + \".\"]"
+      }
+    }
+  ],
+  "mmcif_order": {
+  "_exptl_crystal_grow": [
+    "id",
+    "method",
+    "temp",
+    "pH"
+  ],
+  "_entity": [
+    "id",
+    "type",
+    "src_method",
+    "pdbx_description"
+  ],
+  "_entity_poly": [
+    "entity_id",
+    "pdbx_seq_one_letter_code",
+    "type"
+  ],
+  "_entity_poly_seq": [
+    "entity_id"
+  ],
+  "_diffrn_radiation": [
+    "pdbx_monochromatic_or_laue_m_l",
+    "pdbx_diffrn_protocol",
+    "pdbx_scattering_type"
+  ],
+  "_diffrn_radiation_wavelength": [
+    "wavelength"
+  ],
+  "_diffrn_source": [
+    "diffrn_id",
+    "pdbx_wavelength_list",
+    "pdbx_wavelength",
+    "source",
+    "type",
+    "pdbx_synchrotron_beamline",
+    "pdbx_synchrotron_site",
+    "pdbx_synchrotron_y_n"
+  ],
+  "_diffrn_detector": [
+    "pdbx_collection_date"
+  ],
+  "_audit_author": [
+    "pdbx_ordinal",
+    "name"
+  ],
+  "_citation_author": [
+    "ordinal",
+    "name"
+  ]
+}
 }
