@@ -186,7 +186,7 @@
       "target_category": "_diffrn_source",
       "target_items": "type",
       "operation_parameters": {
-        "jq": ".campaigns[0].crystals[0].datasets[0].facility_name + \" BEAMLINE \" + .campaigns[0].crystals[0].datasets[0].beamline_name"
+        "jq": ".campaigns[0].crystals[0].datasets[0].beamline_name | ascii_downcase as $b | if ($b == \"id30b\") then \"ESRF BEAMLINE ID30B\" elif ($b == \"id30a1\") then \"ESRF BEAMLINE MASSIF-1\" elif ($b == \"id30a3\") then \"ESRF BEAMLINE MASSIF-3\" elif ($b == \"id23eh1\" or $b == \"id231\") then \"ESRF BEAMLINE ID23-1\" elif ($b == \"id23eh2\") then \"ESRF BEAMLINE ID23-2\" elif ($b == \"p14\") then \"PETRA III, EMBL c/o DESY BEAMLINE P14 (MX2)\" elif ($b == \"p13\") then \"PETRA III, EMBL c/o DESY BEAMLINE P13 (MX1)\" elif ($b == \"proxima1\") then \"SOLEIL BEAMLINE PROXIMA 1\" elif ($b == \"proxima2a\" or $b == \"px2a\") then \"SOLEIL BEAMLINE PROXIMA 2\" elif ($b == \"i04\") then \"DIAMOND BEAMLINE I04\" elif ($b == \"i041\") then \"DIAMOND BEAMLINE I04-1\" elif ($b == \"i24\") then \"DIAMOND BEAMLINE I24\" elif ($b == \"x06sa\") then \"SLS BEAMLINE X06SA\" else empty end"
       }
     },
     {
@@ -195,7 +195,7 @@
       "target_category": "_diffrn_source",
       "target_items": "pdbx_synchrotron_beamline",
       "operation_parameters": {
-        "jq": ".campaigns[0].crystals[0].datasets[0].beamline_name"
+        "jq": ".campaigns[0].crystals[0].datasets[0].beamline_name | ascii_downcase as $b | if ($b == \"id30b\") then \"ID30B\" elif ($b == \"id30a1\") then \"MASSIF-1\" elif ($b == \"id30a3\") then \"MASSIF-3\" elif ($b == \"id23eh1\" or $b == \"id231\") then \"ID23-1\" elif ($b == \"id23eh2\") then \"ID23-2\" elif ($b == \"p14\") then \"P14 (MX2)\" elif ($b == \"p13\") then \"P13 (MX1)\" elif ($b == \"proxima1\") then \"PROXIMA 1\" elif ($b == \"proxima2a\" or $b == \"px2a\") then \"PROXIMA 2\" elif ($b == \"i04\") then \"I04\" elif ($b == \"i041\") then \"I04-1\" elif ($b == \"i24\") then \"I24\" elif ($b == \"x06sa\") then \"X06SA\" else empty end"
       }
     },
     {
