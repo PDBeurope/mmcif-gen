@@ -361,7 +361,8 @@
                     "ordinal",
                     "funding_organization",
                     "country",
-                    "grant_number"
+                    "grant_number",
+                    "details"
                 ],
                 "operation": "sql_query",
                 "operation_parameters": {
