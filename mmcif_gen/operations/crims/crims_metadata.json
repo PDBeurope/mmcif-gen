@@ -177,7 +177,7 @@
       "target_category": "_diffrn_source",
       "target_items": "source",
       "operation_parameters": {
-        "jq": ".campaigns[0].crystals[0].datasets[0].datacollection_metadata.source | ascii_upcase"
+        "jq": ".campaigns[0].crystals[0].datasets[0].datacollection_metadata.source as $s | if $s == ($s | ascii_upcase) then $s else ($s | ascii_upcase) end"
       }
     },
     {
@@ -186,7 +186,7 @@
       "target_category": "_diffrn_source",
       "target_items": "type",
       "operation_parameters": {
-        "jq": ".campaigns[0].crystals[0].datasets[0].beamline_name | ascii_downcase as $b | if ($b == \"id30b\") then \"ESRF BEAMLINE ID30B\" elif ($b == \"id30a1\") then \"ESRF BEAMLINE MASSIF-1\" elif ($b == \"id30a3\") then \"ESRF BEAMLINE MASSIF-3\" elif ($b == \"id23eh1\" or $b == \"id231\") then \"ESRF BEAMLINE ID23-1\" elif ($b == \"id23eh2\") then \"ESRF BEAMLINE ID23-2\" elif ($b == \"p14\") then \"PETRA III, EMBL c/o DESY BEAMLINE P14 (MX2)\" elif ($b == \"p13\") then \"PETRA III, EMBL c/o DESY BEAMLINE P13 (MX1)\" elif ($b == \"proxima1\") then \"SOLEIL BEAMLINE PROXIMA 1\" elif ($b == \"proxima2a\" or $b == \"px2a\") then \"SOLEIL BEAMLINE PROXIMA 2\" elif ($b == \"i04\") then \"DIAMOND BEAMLINE I04\" elif ($b == \"i041\") then \"DIAMOND BEAMLINE I04-1\" elif ($b == \"i24\") then \"DIAMOND BEAMLINE I24\" elif ($b == \"x06sa\") then \"SLS BEAMLINE X06SA\" else empty end"
+        "jq": ".campaigns[0].crystals[0].datasets[0].beamline_name | ascii_downcase as $b | {\"id30b\":\"ESRF BEAMLINE ID30B\",\"esrf beamline id30b\":\"ESRF BEAMLINE ID30B\",\"id30a1\":\"ESRF BEAMLINE MASSIF-1\",\"massif-1\":\"ESRF BEAMLINE MASSIF-1\",\"esrf beamline massif-1\":\"ESRF BEAMLINE MASSIF-1\",\"id30a3\":\"ESRF BEAMLINE MASSIF-3\",\"massif-3\":\"ESRF BEAMLINE MASSIF-3\",\"esrf beamline massif-3\":\"ESRF BEAMLINE MASSIF-3\",\"id23eh1\":\"ESRF BEAMLINE ID23-1\",\"id231\":\"ESRF BEAMLINE ID23-1\",\"id23-1\":\"ESRF BEAMLINE ID23-1\",\"esrf beamline id23-1\":\"ESRF BEAMLINE ID23-1\",\"id23eh2\":\"ESRF BEAMLINE ID23-2\",\"id23-2\":\"ESRF BEAMLINE ID23-2\",\"esrf beamline id23-2\":\"ESRF BEAMLINE ID23-2\",\"p14\":\"PETRA III, EMBL c/o DESY BEAMLINE P14 (MX2)\",\"p14 (mx2)\":\"PETRA III, EMBL c/o DESY BEAMLINE P14 (MX2)\",\"petra iii, embl c/o desy beamline p14 (mx2)\":\"PETRA III, EMBL c/o DESY BEAMLINE P14 (MX2)\",\"p13\":\"PETRA III, EMBL c/o DESY BEAMLINE P13 (MX1)\",\"p13 (mx1)\":\"PETRA III, EMBL c/o DESY BEAMLINE P13 (MX1)\",\"petra iii, embl c/o desy beamline p13 (mx1)\":\"PETRA III, EMBL c/o DESY BEAMLINE P13 (MX1)\",\"proxima1\":\"SOLEIL BEAMLINE PROXIMA 1\",\"proxima 1\":\"SOLEIL BEAMLINE PROXIMA 1\",\"soleil beamline proxima 1\":\"SOLEIL BEAMLINE PROXIMA 1\",\"proxima2a\":\"SOLEIL BEAMLINE PROXIMA 2\",\"px2a\":\"SOLEIL BEAMLINE PROXIMA 2\",\"proxima 2\":\"SOLEIL BEAMLINE PROXIMA 2\",\"soleil beamline proxima 2\":\"SOLEIL BEAMLINE PROXIMA 2\",\"i04\":\"DIAMOND BEAMLINE I04\",\"diamond beamline i04\":\"DIAMOND BEAMLINE I04\",\"i041\":\"DIAMOND BEAMLINE I04-1\",\"i04-1\":\"DIAMOND BEAMLINE I04-1\",\"diamond beamline i04-1\":\"DIAMOND BEAMLINE I04-1\",\"i24\":\"DIAMOND BEAMLINE I24\",\"diamond beamline i24\":\"DIAMOND BEAMLINE I24\",\"x06sa\":\"SLS BEAMLINE X06SA\",\"sls beamline x06sa\":\"SLS BEAMLINE X06SA\"}[$b] // empty"
       }
     },
     {
@@ -195,7 +195,7 @@
       "target_category": "_diffrn_source",
       "target_items": "pdbx_synchrotron_beamline",
       "operation_parameters": {
-        "jq": ".campaigns[0].crystals[0].datasets[0].beamline_name | ascii_downcase as $b | if ($b == \"id30b\") then \"ID30B\" elif ($b == \"id30a1\") then \"MASSIF-1\" elif ($b == \"id30a3\") then \"MASSIF-3\" elif ($b == \"id23eh1\" or $b == \"id231\") then \"ID23-1\" elif ($b == \"id23eh2\") then \"ID23-2\" elif ($b == \"p14\") then \"P14 (MX2)\" elif ($b == \"p13\") then \"P13 (MX1)\" elif ($b == \"proxima1\") then \"PROXIMA 1\" elif ($b == \"proxima2a\" or $b == \"px2a\") then \"PROXIMA 2\" elif ($b == \"i04\") then \"I04\" elif ($b == \"i041\") then \"I04-1\" elif ($b == \"i24\") then \"I24\" elif ($b == \"x06sa\") then \"X06SA\" else empty end"
+        "jq": ".campaigns[0].crystals[0].datasets[0].beamline_name | ascii_downcase as $b | {\"id30b\":\"ID30B\",\"esrf beamline id30b\":\"ID30B\",\"id30a1\":\"MASSIF-1\",\"massif-1\":\"MASSIF-1\",\"esrf beamline massif-1\":\"MASSIF-1\",\"id30a3\":\"MASSIF-3\",\"massif-3\":\"MASSIF-3\",\"esrf beamline massif-3\":\"MASSIF-3\",\"id23eh1\":\"ID23-1\",\"id231\":\"ID23-1\",\"id23-1\":\"ID23-1\",\"esrf beamline id23-1\":\"ID23-1\",\"id23eh2\":\"ID23-2\",\"id23-2\":\"ID23-2\",\"esrf beamline id23-2\":\"ID23-2\",\"p14\":\"P14 (MX2)\",\"p14 (mx2)\":\"P14 (MX2)\",\"petra iii, embl c/o desy beamline p14 (mx2)\":\"P14 (MX2)\",\"p13\":\"P13 (MX1)\",\"p13 (mx1)\":\"P13 (MX1)\",\"petra iii, embl c/o desy beamline p13 (mx1)\":\"P13 (MX1)\",\"proxima1\":\"PROXIMA 1\",\"proxima 1\":\"PROXIMA 1\",\"soleil beamline proxima 1\":\"PROXIMA 1\",\"proxima2a\":\"PROXIMA 2\",\"px2a\":\"PROXIMA 2\",\"proxima 2\":\"PROXIMA 2\",\"soleil beamline proxima 2\":\"PROXIMA 2\",\"i04\":\"I04\",\"diamond beamline i04\":\"I04\",\"i041\":\"I04-1\",\"i04-1\":\"I04-1\",\"diamond beamline i04-1\":\"I04-1\",\"i24\":\"I24\",\"diamond beamline i24\":\"I24\",\"x06sa\":\"X06SA\",\"sls beamline x06sa\":\"X06SA\"}[$b] // empty"
       }
     },
     {
@@ -213,7 +213,7 @@
       "target_category": "_diffrn_source",
       "target_items": "pdbx_synchrotron_y_n",
       "operation_parameters": {
-        "jq": "if .campaigns[0].crystals[0].datasets[0].datacollection_metadata.source == \"synchrotron\" then \"Y\" else empty end"
+        "jq": "if ((.campaigns[0].crystals[0].datasets[0].datacollection_metadata.source | ascii_upcase) == \"SYNCHROTRON\") then \"Y\" else empty end"
       }
     },
     {
