@@ -92,21 +92,7 @@ optional arguments:
   --output-folder OUTPUT_FOLDER
                         Output folder for mmCIF files
   --id ID               File identifier
-  --merge-file MERGE_FILE
-                        Existing mmCIF to merge generated categories into
 ```
-
-### Merging into an existing CIF
-
-`--merge-file` reads an existing mmCIF, adds the categories produced by the mapping, and writes the combined file to `--output-folder`. The file you pass is left unchanged.
-
-A category that already exists in that file is replaced by the generated category. Categories the mapping does not produce, such as `_atom_site`, stay as they are. The file must contain one data block.
-
-```bash
-mmcif-gen make-mmcif --json dls_metadata.json --output-folder ./out --id I_1234 --merge-file refined_model.cif dls --dls-json metadata-from-isypb.json
-```
-
-XChem writes two outputs. With `--merge-file`, both `{id}.cif` and `{id}_model.cif` start from that file and then receive their own categories.
 
 Each facility has its own set of required parameters, which can be checked by running the command with the `--help` flag.
 
@@ -154,7 +140,13 @@ mmcif-gen make-mmcif --json mmcif_gen/operations/xchem/xchem_operations.json xch
 ```bash
 # Using metadata from the CRIMS microservice
 mmcif-gen make-mmcif --json crims_metadata.json --output-folder ./out --id I_1234 crims --crims-json metadata-from-crims.json
+
+# Merge the generated categories into a copy of an existing mmCIF.
+# The file passed to --merge-file is left unchanged.
+mmcif-gen make-mmcif --json crims_metadata.json --output-folder ./out --id I_1234 crims --crims-json metadata-from-crims.json --merge-file refined_model.cif
 ```
+
+`--merge-file` is only available for CRIMS. Categories produced by the mapping replace the same categories in that file. Categories the mapping does not produce, such as `_atom_site`, stay as they are. The file must contain one data block.
 
 ### Working with Investigation Files
 

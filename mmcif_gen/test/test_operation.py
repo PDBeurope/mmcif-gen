@@ -23,6 +23,7 @@ from mmcif_gen.operations import (
     ItemDoNotExist
 )
 from investigation_io import InvestigationStorage, CIFReader
+from mmcif_gen.facilities.crims import InvestigationCrims
 
 
 class TestOperations(unittest.TestCase):
@@ -246,10 +247,10 @@ class TestOperations(unittest.TestCase):
             operation.perform_operation(operation_data)
             self.assertEqual(self.mock_storage.data["target"]["item"], ["inchi_key"])
 
-    def test_write_data_to_cif_merges_into_existing_file(self):
+    def test_crims_write_output_merges_into_existing_file(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             existing_path = os.path.join(temp_dir, "existing.cif")
-            output_path = os.path.join(temp_dir, "merged.cif")
+            json_path = os.path.join(temp_dir, "crims.json")
             with open(existing_path, "w") as existing_file:
                 existing_file.write(
                     "data_structure\n"
@@ -259,28 +260,35 @@ class TestOperations(unittest.TestCase):
                     "_audit_author.pdbx_ordinal\n"
                     "'Old, A.' 1\n"
                 )
-            original = open(existing_path).read()
+            with open(json_path, "w") as json_file:
+                json_file.write("{}")
+            with open(existing_path) as existing_file:
+                original = existing_file.read()
 
-            self.investigation_storage.data = {
+            crims = InvestigationCrims(json_path, "I_1", temp_dir, json_path, merge_file=existing_path)
+            crims.investigation_storage.data = {
                 "_audit_author": {"name": ["New, B."], "pdbx_ordinal": ["1"]},
                 "_diffrn_source": {"source": ["synchrotron"]},
             }
-            self.investigation_storage.write_data_to_cif(output_path, merge_file=existing_path)
+            crims.write_output()
 
-            self.assertEqual(open(existing_path).read(), original)
-            block = gemmi.cif.read(output_path).sole_block()
+            with open(existing_path) as existing_file:
+                self.assertEqual(existing_file.read(), original)
+            block = gemmi.cif.read(crims.get_output_file_name()).sole_block()
             self.assertEqual(block.name, "structure")
             self.assertEqual(list(block.get_mmcif_category("_atom_site")["id"]), ["1"])
             self.assertEqual(list(block.get_mmcif_category("_audit_author")["name"]), ["New, B."])
             self.assertEqual(list(block.get_mmcif_category("_diffrn_source")["source"]), ["synchrotron"])
 
-    def test_write_data_to_cif_merge_file_must_exist(self):
-        self.investigation_storage.data = {"_struct": {"entry_id": ["1ABC"]}}
-        with self.assertRaises(FileNotFoundError):
-            self.investigation_storage.write_data_to_cif(
-                "unused.cif",
-                merge_file="missing.cif",
-            )
+    def test_crims_write_output_merge_file_must_exist(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            json_path = os.path.join(temp_dir, "crims.json")
+            with open(json_path, "w") as json_file:
+                json_file.write("{}")
+            crims = InvestigationCrims(json_path, "I_1", temp_dir, json_path, merge_file="missing.cif")
+            crims.investigation_storage.data = {"_struct": {"entry_id": ["1ABC"]}}
+            with self.assertRaises(FileNotFoundError):
+                crims.write_output()
 
 
 if __name__ == '__main__':

@@ -32,7 +32,6 @@ class InvestigationEngine:
         self.investigation_storage = InvestigationStorage(investigation_id)
         self.output_path = output_path
         self.investigation_id = investigation_id
-        self.merge_file = None
         self.operations = []
 
     def pre_run(self) -> None:
@@ -119,11 +118,15 @@ class InvestigationEngine:
                 logging.error(f"Operation Failed:")
                 logging.exception(e)
                 
+        self.write_output(prefer_pairs)
+
+    def write_output(self, prefer_pairs: bool = False) -> None:
+        """Write the generated categories. Subclasses override this hook."""
         self.investigation_storage.write_data_to_cif(
             self.get_output_file_name(),
-            prefer_pairs=False,
-            merge_file=self.merge_file,
+            prefer_pairs=False
         )
+
     def get_output_file_name(self) -> str:
         return f"{self.output_path}/{self.investigation_id}.cif"
         

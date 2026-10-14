@@ -123,15 +123,6 @@ def setup_parsers():
         help="File identifier",
         default="I_1234"
     )
-    make_mmcif_parent.add_argument(
-        "--merge-file",
-        help=(
-            "Existing mmCIF to merge generated categories into. "
-            "Categories produced by the mapping replace the same categories in this file; "
-            "every other category is kept. The original file is not modified. "
-            "The merged file is written to the output folder."
-        ),
-    )
 
     # fetch-facility-json command
     fetch_parser = subparsers.add_parser(
@@ -239,15 +230,9 @@ def main():
                 print(f"  mmcif-gen fetch-facility-json {base_name}")
             sys.exit(1)
 
-        if args.merge_file and not os.path.isfile(args.merge_file):
-            print(f"Error: merge file not found: {args.merge_file}", file=sys.stderr)
-            sys.exit(1)
-
         # Create output directory
         os.makedirs(args.output_folder, exist_ok=True)
         print(f"Processing {args.facility} data using {args.json}...")
-        if args.merge_file:
-            print(f"Merging generated categories into a copy of {args.merge_file}")
 
         if args.output_folder:
             pathlib.Path(args.output_folder).mkdir(parents=True, exist_ok=True) 
