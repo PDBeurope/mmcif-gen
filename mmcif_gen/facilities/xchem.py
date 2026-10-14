@@ -253,11 +253,13 @@ def xchem_subparser(subparsers, parent_parser):
         help="Path to the .csv file for each data set"
     )
 
-def run(investigation_id: str, sqlite_path: str, data_csv: str,  output_path: str, json_path: str) -> None:
+def run(investigation_id: str, sqlite_path: str, data_csv: str,  output_path: str, json_path: str, merge_file: str = None) -> None:
     investigation = CifXChem(investigation_id, sqlite_path, data_csv, output_path, json_path, cif_type=CifType.Investigation)
+    investigation.merge_file = merge_file
     investigation.pre_run()
     investigation.run()
     model = CifXChem(investigation_id, sqlite_path, data_csv, output_path, json_path, cif_type=CifType.Model)
+    model.merge_file = merge_file
     model.pre_run()
     model.run()
     model.post_run()
@@ -266,4 +268,4 @@ def run_investigation_xchem(args):
     if not args.sqlite or not args.data_csv :
         logging.error("XChem facility requires path to --sqlite file, --data-csv")
         return 1
-    run(args.id, args.sqlite, args.data_csv, args.output_folder, args.json)
+    run(args.id, args.sqlite, args.data_csv, args.output_folder, args.json, args.merge_file)

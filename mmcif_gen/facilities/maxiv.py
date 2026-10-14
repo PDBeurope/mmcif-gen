@@ -289,8 +289,12 @@ class InvestigationMaxIV(InvestigationEngine):
 
 
 
-def run(sqlite_path : str, investigation_id: str, output_path: str) -> None:
-    im = InvestigationMaxIV(sqlite_path, investigation_id, output_path)
+def run(sqlite_path : str, investigation_id: str, output_path: str, json_path: str = None, merge_file: str = None) -> None:
+    if json_path:
+        im = InvestigationMaxIV(sqlite_path, investigation_id, output_path, json_path)
+    else:
+        im = InvestigationMaxIV(sqlite_path, investigation_id, output_path)
+    im.merge_file = merge_file
     im.pre_run()
     im.run()
     
@@ -306,7 +310,7 @@ def run_investigation_maxiv(args):
     if not args.sqlite:
         logging.error("Max IV facility requires path to --sqlite file")
         return 1
-    run(args.sqlite, args.id, args.output_folder,args.json)
+    run(args.sqlite, args.id, args.output_folder, args.json, args.merge_file)
 
 
     

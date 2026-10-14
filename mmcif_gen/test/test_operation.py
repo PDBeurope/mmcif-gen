@@ -1,5 +1,8 @@
+import os
+import tempfile
 import unittest
 from unittest.mock import MagicMock, patch
+import gemmi
 from mmcif_gen.operations import (
     UnionOperation,
     UnionDistinctOperation,
@@ -20,7 +23,6 @@ from mmcif_gen.operations import (
     ItemDoNotExist
 )
 from investigation_io import InvestigationStorage, CIFReader
-import os
 
 
 class TestOperations(unittest.TestCase):
@@ -243,6 +245,43 @@ class TestOperations(unittest.TestCase):
             mock_external.get_inchi_key.return_value = "inchi_key"
             operation.perform_operation(operation_data)
             self.assertEqual(self.mock_storage.data["target"]["item"], ["inchi_key"])
+
+    def test_write_data_to_cif_merges_into_existing_file(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            existing_path = os.path.join(temp_dir, "existing.cif")
+            output_path = os.path.join(temp_dir, "merged.cif")
+            with open(existing_path, "w") as existing_file:
+                existing_file.write(
+                    "data_structure\n"
+                    "_atom_site.id 1\n"
+                    "loop_\n"
+                    "_audit_author.name\n"
+                    "_audit_author.pdbx_ordinal\n"
+                    "'Old, A.' 1\n"
+                )
+            original = open(existing_path).read()
+
+            self.investigation_storage.data = {
+                "_audit_author": {"name": ["New, B."], "pdbx_ordinal": ["1"]},
+                "_diffrn_source": {"source": ["synchrotron"]},
+            }
+            self.investigation_storage.write_data_to_cif(output_path, merge_file=existing_path)
+
+            self.assertEqual(open(existing_path).read(), original)
+            block = gemmi.cif.read(output_path).sole_block()
+            self.assertEqual(block.name, "structure")
+            self.assertEqual(list(block.get_mmcif_category("_atom_site")["id"]), ["1"])
+            self.assertEqual(list(block.get_mmcif_category("_audit_author")["name"]), ["New, B."])
+            self.assertEqual(list(block.get_mmcif_category("_diffrn_source")["source"]), ["synchrotron"])
+
+    def test_write_data_to_cif_merge_file_must_exist(self):
+        self.investigation_storage.data = {"_struct": {"entry_id": ["1ABC"]}}
+        with self.assertRaises(FileNotFoundError):
+            self.investigation_storage.write_data_to_cif(
+                "unused.cif",
+                merge_file="missing.cif",
+            )
+
 
 if __name__ == '__main__':
     unittest.main()

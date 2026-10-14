@@ -32,6 +32,7 @@ class InvestigationEngine:
         self.investigation_storage = InvestigationStorage(investigation_id)
         self.output_path = output_path
         self.investigation_id = investigation_id
+        self.merge_file = None
         self.operations = []
 
     def pre_run(self) -> None:
@@ -120,7 +121,8 @@ class InvestigationEngine:
                 
         self.investigation_storage.write_data_to_cif(
             self.get_output_file_name(),
-            prefer_pairs=False
+            prefer_pairs=False,
+            merge_file=self.merge_file,
         )
     def get_output_file_name(self) -> str:
         return f"{self.output_path}/{self.investigation_id}.cif"

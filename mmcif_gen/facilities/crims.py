@@ -29,8 +29,9 @@ def crims_subparser(subparsers, parent_parser):
         help="Path to the .json file generated from CRIMS microservice endpoint"
     )
 
-def run(crims_json_path : str, id: str, output_path: str, operation_json_path: str) -> None:
+def run(crims_json_path : str, id: str, output_path: str, operation_json_path: str, merge_file: str = None) -> None:
     im = InvestigationCrims(crims_json_path, id, output_path, operation_json_path)
+    im.merge_file = merge_file
     im.pre_run()
     im.run(prefer_pairs=True)
 
@@ -38,4 +39,4 @@ def run_investigation_crims(args):
     if not args.crims_json:
         logging.error("Crims facility requires path to --crims-json file generated from microservice endpoint")
         return 1
-    run(args.crims_json, args.id, args.output_folder,args.json)
+    run(args.crims_json, args.id, args.output_folder, args.json, args.merge_file)

@@ -323,15 +323,30 @@ class InvestigationStorage:
     def get_item_order(self, category) -> list:
         return self.mmcif_order.get(category, [])
 
-    def write_data_to_cif(self, output_file, prefer_pairs: bool = False) -> None:
+    def write_data_to_cif(self, output_file, prefer_pairs: bool = False, merge_file: str = None) -> None:
         logging.info(f"Writing cif file: {output_file}")
         write_options = gemmi.cif.WriteOptions()
         write_options.align_loops = 50
         write_options.align_pairs = 50
         write_options.prefer_pairs = prefer_pairs
 
-        doc = gemmi.cif.Document()
-        block = doc.add_new_block(f"{self.investigation_id}")
+        existing_categories = set()
+        if merge_file:
+            if not os.path.isfile(merge_file):
+                raise FileNotFoundError(f"CIF file to merge into does not exist: {merge_file}")
+            logging.info(f"Merging generated categories into a copy of {merge_file}")
+            doc = gemmi.cif.read(merge_file)
+            try:
+                block = doc.sole_block()
+            except RuntimeError as error:
+                raise ValueError(
+                    f"{merge_file} must contain exactly one data block to merge into"
+                ) from error
+            existing_categories = set(block.get_mmcif_category_names())
+        else:
+            doc = gemmi.cif.Document()
+            block = doc.add_new_block(f"{self.investigation_id}")
+
         for category, items in self.data.items():
             ordered_category = {}
             ordered_items = self.get_item_order(category)
@@ -339,6 +354,11 @@ class InvestigationStorage:
                 if ordered_item in items:
                     ordered_category[ordered_item]  = items.pop(ordered_item)
             ordered_category.update(items)
+            category_name = category if category.endswith(".") else f"{category}."
+            if category_name in existing_categories:
+                logging.warning(
+                    f"Replacing category {category} already present in {merge_file}"
+                )
             block.set_mmcif_category(category, ordered_category)
         block.write_file(output_file, write_options)
 

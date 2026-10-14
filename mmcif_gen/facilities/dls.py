@@ -29,8 +29,9 @@ def dls_subparser(subparsers, parent_parser):
         help="Path to the .json file created from ISYPB"
     )
 
-def run(dls_json_path : str, id: str, output_path: str, operation_json_path: str) -> None:
+def run(dls_json_path : str, id: str, output_path: str, operation_json_path: str, merge_file: str = None) -> None:
     im = InvestigationDLS(dls_json_path, id, output_path, operation_json_path)
+    im.merge_file = merge_file
     im.pre_run()
     im.run(prefer_pairs=True)
 
@@ -38,4 +39,4 @@ def run_investigation_dls(args):
     if not args.dls_json:
         logging.error("DLS facility requires path to --dls-json file generated from ISYPB")
         return 1
-    run(args.dls_json, args.id, args.output_folder,args.json)
+    run(args.dls_json, args.id, args.output_folder, args.json, args.merge_file)

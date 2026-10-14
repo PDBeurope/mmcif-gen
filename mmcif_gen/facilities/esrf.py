@@ -18,8 +18,9 @@ class InvestigationESRF(InvestigationEngine):
         logging.info("Pre-running")
         super().pre_run()
 
-def run(esrf_json_path : str, id: str, output_path: str, operation_json_path: str) -> None:
+def run(esrf_json_path : str, id: str, output_path: str, operation_json_path: str, merge_file: str = None) -> None:
     im = InvestigationESRF(esrf_json_path, id, output_path, operation_json_path)
+    im.merge_file = merge_file
     im.pre_run()
     im.run() 
 
@@ -27,7 +28,7 @@ def run_investigation_esrf(args):
     if not args.esrf_json:
         logging.error("ESRF facility requires path to --esrf-json file generated from CRIMMS")
         return 1
-    run(args.esrf_json, args.id, args.output_folder,args.json)   
+    run(args.esrf_json, args.id, args.output_folder, args.json, args.merge_file)   
 
 def esrf_subparser(subparsers, parent_parser):
     parser_pdbe = subparsers.add_parser("esrf",help="Parameter requirements for investigation files from ESRF data", parents=[parent_parser])
