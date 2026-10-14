@@ -52,7 +52,7 @@ class CLIManager:
 
     def fetch_facility_json(self, json_path: str, output_dir: str = ".") -> str:
         """Fetch a specific facility JSON file."""
-        base_url = "https://raw.githubusercontent.com/PDBeurope/Investigations/main/mmcif_gen/"
+        base_url = "https://raw.githubusercontent.com/PDBeurope/mmcif-gen/main/mmcif_gen/"
         full_url = base_url + json_path
         
         os.makedirs(output_dir, exist_ok=True)
