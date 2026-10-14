@@ -44,13 +44,16 @@ mmcif-gen fetch-facility-json dls-metadata
 # Or
 mmcif-gen fetch-facility-json xchem_operations
 
+# Or
+mmcif-gen fetch-facility-json crims_metadata
+
 # Specify custom output directory
 mmcif-gen fetch-facility-json dls-metadata -o ./mapping_operations
 ```
 
 ### Generating metadata mmCIF Files
 
-Currently the valid facilities to generate mmcif files for are `pdbe`, `maxiv`, `dls`, and `xchem`.
+Currently the valid facilities to generate mmcif files for are `pdbe`, `maxiv`, `dls`, `xchem`, `crims`, and `esrf`.
 
 The general syntax for generating mmCIF files is:
 
@@ -64,10 +67,10 @@ Full list of options:
 [w3_pdb05@pdb-001 Investigations]$ mmcif-gen make-mmcif --help
 usage: mmcif-gen make-mmcif [-h] [--json JSON] [--output-folder OUTPUT_FOLDER]
                             [--id ID]
-                            {pdbe,maxiv,dls,xchem} ...
+                            {pdbe,maxiv,dls,xchem,crims,esrf} ...
 
 positional arguments:
-  {pdbe,maxiv,dls,xchem}
+  {pdbe,maxiv,dls,xchem,crims,esrf}
                         Specifies facility for which mmcif files will be used
                         for
     pdbe                Parameter requirements for investigation files from
@@ -78,6 +81,10 @@ positional arguments:
                         files from DLS data
     xchem               Parameter requirements for creating investigation
                         files from XChem data
+    crims               Parameter requirements for creating mmcif files from
+                        CRIMS data
+    esrf                Parameter requirements for investigation files from
+                        ESRF data
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -126,6 +133,13 @@ Or you can manually specifiy the operation json as follows:
 
 ```
 mmcif-gen make-mmcif --json mmcif_gen/operations/xchem/xchem_operations.json xchem --sqlite mmcif_gen/test/data/soakDBDataFile.sqlite --data-csv mmcif_gen/test/data/metadata.csv
+```
+
+#### CRIMS
+
+```bash
+# Using metadata from the CRIMS microservice
+mmcif-gen make-mmcif --json crims_metadata.json --output-folder ./out --id I_1234 crims --crims-json metadata-from-crims.json
 ```
 
 ### Working with Investigation Files
